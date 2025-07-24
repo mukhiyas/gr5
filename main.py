@@ -107,7 +107,11 @@ except ImportError as e:
     logger.warning(f"⚠️ Legacy integration modules not available: {e}")
     INTEGRATION_AVAILABLE = False
 
-# Complete application state isolation system
+# Complete application state isolation system with thread safety
+import threading
+
+# Thread-safe global dictionaries for multi-user deployment
+_global_lock = threading.RLock()  # Reentrant lock for nested calls
 USER_APP_INSTANCES = {}
 REQUEST_TO_USER_MAPPING = {}
 CLIENT_DATA_STORE = {}
@@ -156,16 +160,28 @@ class UserSessionManager:
         if user_id is None:
             user_id = UserSessionManager.get_user_id()
             
-        if user_id not in USER_APP_INSTANCES:
-            # Create completely new EntitySearchApp instance for this user
-            USER_APP_INSTANCES[user_id] = EntitySearchApp()
-            logger.info(f"Created new app instance for user {user_id}")
-        else:
-            # Update last activity for existing session
-            USER_APP_INSTANCES[user_id].last_activity = time.time()
-            
-        # Ensure the user instance has all required attributes for session persistence
-        app_instance = USER_APP_INSTANCES[user_id]
+        with _global_lock:
+            if user_id not in USER_APP_INSTANCES:
+                # Check if we have too many user instances to prevent memory exhaustion
+                max_users = 50  # Maximum concurrent user sessions
+                if len(USER_APP_INSTANCES) >= max_users:
+                    # Remove oldest inactive user to make room
+                    oldest_user = min(
+                        USER_APP_INSTANCES.keys(),
+                        key=lambda uid: getattr(USER_APP_INSTANCES[uid], 'last_activity', 0)
+                    )
+                    del USER_APP_INSTANCES[oldest_user]
+                    logger.warning(f"Removed oldest user {oldest_user} to prevent memory exhaustion")
+                
+                # Create completely new EntitySearchApp instance for this user
+                USER_APP_INSTANCES[user_id] = EntitySearchApp()
+                logger.info(f"Created new app instance for user {user_id}")
+            else:
+                # Update last activity for existing session
+                USER_APP_INSTANCES[user_id].last_activity = time.time()
+                
+            # Ensure the user instance has all required attributes for session persistence
+            app_instance = USER_APP_INSTANCES[user_id]
         if not hasattr(app_instance, 'current_results'):
             app_instance.current_results = []
         if not hasattr(app_instance, 'last_search_results'):
@@ -190,18 +206,19 @@ class UserSessionManager:
     
     @staticmethod
     def cleanup_old_instances():
-        """Remove inactive user instances (older than 2 hours)"""
+        """Remove inactive user instances (older than 2 hours) with thread safety"""
         current_time = time.time()
         expired_users = []
         
-        for user_id, app_inst in USER_APP_INSTANCES.items():
-            if hasattr(app_inst, 'last_activity'):
-                if current_time - app_inst.last_activity > 7200:  # 2 hours
-                    expired_users.append(user_id)
-        
-        for user_id in expired_users:
-            USER_APP_INSTANCES.pop(user_id, None)
-            logger.info(f"Cleaned up expired user instance: {user_id}")
+        with _global_lock:
+            for user_id, app_inst in USER_APP_INSTANCES.items():
+                if hasattr(app_inst, 'last_activity'):
+                    if current_time - app_inst.last_activity > 7200:  # 2 hours
+                        expired_users.append(user_id)
+            
+            for user_id in expired_users:
+                USER_APP_INSTANCES.pop(user_id, None)
+                logger.info(f"Cleaned up expired user instance: {user_id}")
 
 class ClientDataManager:
     """Completely isolated client data management"""
@@ -224,19 +241,42 @@ class ClientDataManager:
     
     @staticmethod
     def store_client_data(client_id: str, data: List[Dict]):
-        """Store data for specific client"""
-        CLIENT_DATA_STORE[client_id] = {
-            'entities': data.copy() if data else [],
-            'timestamp': time.time(),
-            'count': len(data) if data else 0
-        }
+        """Store data for specific client with thread safety and memory management"""
+        with _global_lock:
+            # Limit individual client data size to prevent memory exhaustion
+            max_entities_per_client = 10000  # Maximum entities per client
+            entities_to_store = data.copy() if data else []
+            
+            if len(entities_to_store) > max_entities_per_client:
+                logger.warning(f"Client {client_id} data exceeds limit ({len(entities_to_store)} > {max_entities_per_client}), truncating")
+                entities_to_store = entities_to_store[:max_entities_per_client]
+            
+            CLIENT_DATA_STORE[client_id] = {
+                'entities': entities_to_store,
+                'timestamp': time.time(),
+                'count': len(entities_to_store)
+            }
+            
+            # Clean up old entries if CLIENT_DATA_STORE gets too large
+            max_clients = 100  # Maximum number of clients to keep in memory
+            if len(CLIENT_DATA_STORE) > max_clients:
+                # Remove oldest entries to prevent memory growth
+                oldest_clients = sorted(
+                    CLIENT_DATA_STORE.keys(),
+                    key=lambda k: CLIENT_DATA_STORE[k]['timestamp']
+                )[:len(CLIENT_DATA_STORE) - max_clients]
+                
+                for old_client_id in oldest_clients:
+                    del CLIENT_DATA_STORE[old_client_id]
+                    logger.info(f"Removed old client data for {old_client_id} to prevent memory growth")
         
     @staticmethod
     def get_client_data(client_id: str) -> List[Dict]:
-        """Get data for specific client"""
-        if client_id in CLIENT_DATA_STORE:
-            return CLIENT_DATA_STORE[client_id]['entities']
-        return []
+        """Get data for specific client with thread safety"""
+        with _global_lock:
+            if client_id in CLIENT_DATA_STORE:
+                return CLIENT_DATA_STORE[client_id]['entities']
+            return []
     
     @staticmethod
     def clear_client_data(client_id: str = None):
@@ -248,14 +288,15 @@ class ClientDataManager:
     
     @staticmethod
     def cleanup_old_data():
-        """Remove data older than 1 hour"""
+        """Remove data older than 1 hour with thread safety"""
         current_time = time.time()
-        expired_clients = [
-            cid for cid, data in CLIENT_DATA_STORE.items() 
-            if current_time - data['timestamp'] > 3600
-        ]
-        for cid in expired_clients:
-            CLIENT_DATA_STORE.pop(cid, None)
+        with _global_lock:
+            expired_clients = [
+                cid for cid, data in CLIENT_DATA_STORE.items() 
+                if current_time - data['timestamp'] > 3600
+            ]
+            for cid in expired_clients:
+                CLIENT_DATA_STORE.pop(cid, None)
 
 class EntitySearchApp:
     """Enterprise Entity Search Application - Direct port of search_tool.py"""
@@ -1046,6 +1087,17 @@ class EntitySearchApp:
                    logical_operator='AND', include_relationships=True):
         """OPTIMIZED search function with ultra-fast 79M+ record handling"""
         if not self.connection:
+            logger.error("No database connection available for search")
+            return []
+        
+        # Validate connection health before executing query
+        try:
+            # Simple connection test
+            with self.connection.cursor() as test_cursor:
+                test_cursor.execute("SELECT 1")
+                test_cursor.fetchone()
+        except Exception as e:
+            logger.error(f"Database connection validation failed: {e}")
             return []
         
         # Clear stale cache entries if cache is getting too large
@@ -14004,45 +14056,87 @@ async def create_table_interface():
         ui.timer(3.0, check_for_client_data)
 
 if __name__ == '__main__':
-    # Initialize database modules first
-    _initialize_database_modules()
-    
-    # Initialize application with session isolation
-    
-    # Set up cleanup routine for expired user sessions
-    import threading
-    import time
-    
-    def cleanup_thread():
-        """Background thread to clean up expired user sessions"""
-        while True:
-            try:
-                time.sleep(600)  # Run every 10 minutes
-                UserSessionManager.cleanup_old_instances()
-                ClientDataManager.cleanup_old_data()
-                logger.info("Session cleanup completed")
-            except Exception as e:
-                logger.error(f"Session cleanup error: {e}")
-    
-    # Start cleanup thread
-    cleanup_daemon = threading.Thread(target=cleanup_thread, daemon=True)
-    cleanup_daemon.start()
-    
-    print("=" * 60)
-    print("🚀 GRID ENTITY SEARCH - PRODUCTION MODE")
-    print("=" * 60)
-    print("✅ Full Database Connectivity")
-    print("✅ Real Entity Search & Analysis")
-    print("✅ Complete Enterprise Functionality")
-    print("✅ User Session Isolation (Fixed Caching Issues)")
-    print(f"🌐 Access: http://localhost:{config.get('server.port', 8080)}")
-    print("=" * 60)
-    
-    ui.run(
-        title='Advanced Entity Search & Analysis',
-        favicon='🔍',
-        port=config.get('server.port', 8080),
-        reload=config.get('server.reload', False),
-        storage_secret='entity_search_secret_key_2024',  # Enable proper session storage
-        show=False  # Don't auto-open browser in production
-    )
+    try:
+        import sys
+        import traceback
+        
+        # Initialize database modules first
+        try:
+            _initialize_database_modules()
+        except Exception as e:
+            logger.error(f"Failed to initialize database modules: {e}")
+            logger.error(f"Traceback: {traceback.format_exc()}")
+            print("❌ Critical Error: Database initialization failed")
+            print(f"Error: {e}")
+            sys.exit(1)
+        
+        # Initialize application with session isolation
+        
+        # Set up cleanup routine for expired user sessions
+        import threading
+        import time
+        
+        def cleanup_thread():
+            """Background thread to clean up expired user sessions"""
+            while True:
+                try:
+                    time.sleep(600)  # Run every 10 minutes
+                    UserSessionManager.cleanup_old_instances()
+                    ClientDataManager.cleanup_old_data()
+                    logger.info("Session cleanup completed")
+                except Exception as e:
+                    logger.error(f"Session cleanup error: {e}")
+                    logger.error(f"Cleanup traceback: {traceback.format_exc()}")
+                    # Continue running even if cleanup fails
+        
+        # Start cleanup thread with error handling
+        try:
+            cleanup_daemon = threading.Thread(target=cleanup_thread, daemon=True)
+            cleanup_daemon.start()
+            logger.info("Background cleanup thread started successfully")
+        except Exception as e:
+            logger.error(f"Failed to start cleanup thread: {e}")
+            # Continue without cleanup thread if it fails
+        
+        print("=" * 60)
+        print("🚀 GRID ENTITY SEARCH - PRODUCTION MODE")
+        print("=" * 60)
+        print("✅ Full Database Connectivity")
+        print("✅ Real Entity Search & Analysis")
+        print("✅ Complete Enterprise Functionality")
+        print("✅ User Session Isolation (Fixed Caching Issues)")
+        print(f"🌐 Access: http://localhost:{config.get('server.port', 8080)}")
+        print("=" * 60)
+        
+        # Run application with comprehensive error handling
+        try:
+            ui.run(
+                title='Advanced Entity Search & Analysis',
+                favicon='🔍',
+                port=config.get('server.port', 8080),
+                reload=config.get('server.reload', False),
+                storage_secret='entity_search_secret_key_2024',  # Enable proper session storage
+                show=False  # Don't auto-open browser in production
+            )
+        except KeyboardInterrupt:
+            logger.info("Application shutdown requested by user")
+            print("\n⏹️  Application shutdown initiated by user")
+        except Exception as e:
+            logger.error(f"Application runtime error: {e}")
+            logger.error(f"Runtime traceback: {traceback.format_exc()}")
+            print(f"\n❌ Application crashed: {e}")
+            print("Check logs for detailed error information")
+            sys.exit(1)
+            
+    except Exception as e:
+        # Top-level exception handler - last resort
+        try:
+            logger.error(f"Critical application error: {e}")
+            logger.error(f"Critical traceback: {traceback.format_exc()}")
+        except:
+            # If logging fails, at least print to console
+            print(f"CRITICAL ERROR: {e}")
+            traceback.print_exc()
+        
+        print("\n💥 Critical application failure - check logs for details")
+        sys.exit(1)
