@@ -52,11 +52,17 @@ class SimpleTableView:
                 
                 # Create simple table data
                 if page_data:
-                    # Prepare rows for NiceGUI table
+                    # Prepare rows for NiceGUI table with None filtering
                     rows = []
                     for i, entity in enumerate(page_data):
+                        if entity is None:
+                            logger.warning(f"Skipping None entity at index {i}")
+                            continue
                         row = self._prepare_table_row(entity, i)
-                        rows.append(row)
+                        if row is not None:
+                            rows.append(row)
+                        else:
+                            logger.warning(f"Failed to prepare row for entity at index {i}")
                     
                     # Simple column definitions
                     columns = [
@@ -135,6 +141,14 @@ class SimpleTableView:
     def _prepare_table_row(self, entity: Dict[str, Any], index: int) -> Dict[str, Any]:
         """Prepare a single table row with safe data extraction"""
         try:
+            # Check if entity is None or not a dictionary
+            if entity is None:
+                logger.error(f"Entity at index {index} is None")
+                return None
+            if not isinstance(entity, dict):
+                logger.error(f"Entity at index {index} is not a dictionary: {type(entity)}")
+                return None
+                
             # Extract key fields safely
             entity_id = str(entity.get('entity_id', f'entity_{index}'))
             entity_name = str(entity.get('entity_name', 'Unknown'))
@@ -197,17 +211,24 @@ class SimpleTableView:
         ui.label("Entity Data (Table View Unavailable)").classes('text-h6 font-bold mb-4')
         
         for i, entity in enumerate(page_data):
+            if entity is None:
+                logger.warning(f"Skipping None entity at index {i} in fallback display")
+                continue
+                
             row = self._prepare_table_row(entity, i)
+            if row is None:
+                logger.warning(f"Failed to prepare row for entity at index {i} in fallback display")
+                continue
             
             with ui.card().classes('w-full mb-2 p-3'):
                 with ui.row().classes('w-full items-center justify-between'):
                     with ui.column().classes('flex-grow'):
-                        ui.label(f"{row['entity_name']} ({row['entity_id']})").classes('font-bold')
-                        ui.label(f"Type: {row['entity_type']} | Risk: {row['risk_score']} ({row['risk_severity']})").classes('text-sm text-gray-600')
+                        ui.label(f"{row.get('entity_name', 'Unknown')} ({row.get('entity_id', 'N/A')})").classes('font-bold')
+                        ui.label(f"Type: {row.get('entity_type', 'Unknown')} | Risk: {row.get('risk_score', 0)} ({row.get('risk_severity', 'Unknown')})").classes('text-sm text-gray-600')
                     
                     with ui.column().classes('text-right'):
-                        ui.label(f"Events: {row['event_count']}").classes('text-sm')
-                        ui.label(f"Relations: {row['relationship_count']}").classes('text-sm')
+                        ui.label(f"Events: {row.get('event_count', 0)}").classes('text-sm')
+                        ui.label(f"Relations: {row.get('relationship_count', 0)}").classes('text-sm')
     
     def _show_entity_details(self, entity_id: str):
         """Show entity details in a dialog"""

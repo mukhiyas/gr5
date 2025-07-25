@@ -46,8 +46,17 @@ class EntityTableView:
             
             # Log sample entity structure for debugging
             if data:
-                sample_entity = data[0]
-                logger.debug(f"Sample entity keys: {list(sample_entity.keys()) if isinstance(sample_entity, dict) else 'Not a dict'}")
+                # Filter out None entities first
+                valid_data = [entity for entity in data if entity is not None]
+                if valid_data:
+                    sample_entity = valid_data[0]
+                    logger.debug(f"Sample entity keys: {list(sample_entity.keys()) if isinstance(sample_entity, dict) else 'Not a dict'}")
+                    if len(valid_data) < len(data):
+                        logger.warning(f"Filtered out {len(data) - len(valid_data)} None entities from data")
+                    data = valid_data
+                else:
+                    logger.error("All entities in data are None")
+                    return
             
             self.current_data = data
             self.filtered_data = data.copy()

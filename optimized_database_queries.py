@@ -142,26 +142,85 @@ class OptimizedDatabaseQueries:
             base_filters.append("m.risk_id = %(risk_id)s")
             params['risk_id'] = search_params['risk_id']
         
-        # Name search with index optimization
+        # Name search with advanced matching logic for both individuals and organizations
         elif search_params.get('name'):
             name_term = search_params['name'].strip()
             logger.info(f"🔍 Name search for: '{name_term}' (length: {len(name_term)})")
             if len(name_term) >= 3:  # Minimum length for performance
-                # Use both exact match and pattern match for better results
-                base_filters.append(f"""
-                    (UPPER(m.entity_name) = UPPER(%(name_exact)s)
-                     OR UPPER(m.entity_name) LIKE UPPER(%(name_pattern)s)
-                     OR EXISTS (
-                         SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_aliases a 
-                         WHERE a.entity_id = m.entity_id 
-                         AND (UPPER(a.alias_name) = UPPER(%(name_exact)s)
-                              OR UPPER(a.alias_name) LIKE UPPER(%(name_pattern)s))
-                         LIMIT 1
-                     ))
-                """)
-                params['name_exact'] = name_term
-                params['name_pattern'] = f"%{name_term}%"
-                logger.info(f"✅ Added name filters - exact: '{params['name_exact']}', pattern: '{params['name_pattern']}'")
+                
+                # Determine search strategy based on entity type and name characteristics
+                if entity_type == 'organization':
+                    # Organizations: Prioritize exact matches and whole word matches
+                    base_filters.append(f"""
+                        (
+                            -- Exact match (highest priority)
+                            UPPER(m.entity_name) = UPPER(%(name_exact)s)
+                            
+                            -- Starts with search term (e.g., "Enron" matches "Enron Corporation")
+                            OR UPPER(m.entity_name) LIKE UPPER(%(name_starts_with)s)
+                            
+                            -- Contains as whole word (avoid partial matches like "Enron" in "Henronry")
+                            OR (
+                                UPPER(m.entity_name) LIKE UPPER(%(name_word_start)s)
+                                OR UPPER(m.entity_name) LIKE UPPER(%(name_word_middle)s)
+                                OR UPPER(m.entity_name) LIKE UPPER(%(name_word_end)s)
+                                OR UPPER(m.entity_name) = UPPER(%(name_exact)s)
+                            )
+                            
+                            -- Check aliases for exact or starts-with matches
+                            OR EXISTS (
+                                SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_aliases a 
+                                WHERE a.entity_id = m.entity_id 
+                                AND (
+                                    UPPER(a.alias_name) = UPPER(%(name_exact)s)
+                                    OR UPPER(a.alias_name) LIKE UPPER(%(name_starts_with)s)
+                                )
+                                LIMIT 1
+                            )
+                        )
+                    """)
+                    
+                    # Organization-specific parameters for precise matching
+                    params['name_exact'] = name_term
+                    params['name_starts_with'] = f"{name_term}%"
+                    params['name_word_start'] = f"{name_term} %"  # Word at start
+                    params['name_word_middle'] = f"% {name_term} %"  # Word in middle
+                    params['name_word_end'] = f"% {name_term}"  # Word at end
+                    
+                else:
+                    # Individuals: More flexible matching for name variations
+                    base_filters.append(f"""
+                        (
+                            -- Exact match
+                            UPPER(m.entity_name) = UPPER(%(name_exact)s)
+                            
+                            -- Contains search term (more flexible for individuals)
+                            OR UPPER(m.entity_name) LIKE UPPER(%(name_contains)s)
+                            
+                            -- First name or last name match (common for individuals)
+                            OR UPPER(m.entity_name) LIKE UPPER(%(name_starts_with)s)
+                            OR UPPER(m.entity_name) LIKE UPPER(%(name_ends_with)s)
+                            
+                            -- Check aliases (AKA, FKA) for individuals
+                            OR EXISTS (
+                                SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_aliases a 
+                                WHERE a.entity_id = m.entity_id 
+                                AND (
+                                    UPPER(a.alias_name) = UPPER(%(name_exact)s)
+                                    OR UPPER(a.alias_name) LIKE UPPER(%(name_contains)s)
+                                )
+                                LIMIT 1
+                            )
+                        )
+                    """)
+                    
+                    # Individual-specific parameters for flexible matching
+                    params['name_exact'] = name_term
+                    params['name_contains'] = f"%{name_term}%"
+                    params['name_starts_with'] = f"{name_term}%"
+                    params['name_ends_with'] = f"%{name_term}"
+                
+                logger.info(f"✅ Added {entity_type} name filters for: '{name_term}'")
             else:
                 logger.warning(f"⚠️ Name search term too short: '{name_term}' (min 3 chars)")
         
@@ -456,6 +515,12 @@ class OptimizedDatabaseQueries:
         all_filters = base_filters + performance_filters
         where_clause = "WHERE " + " AND ".join(all_filters) if all_filters else ""
         
+        # Ensure name parameters exist for ORDER BY clause (set to None if not searching by name)
+        if 'name_exact' not in params:
+            params['name_exact'] = None
+        if 'name_starts_with' not in params:
+            params['name_starts_with'] = None
+        
         # Debug logging
         logger.info(f"🔍 Query filters count: base={len(base_filters)}, performance={len(performance_filters)}, total={len(all_filters)}")
         logger.info(f"🔍 Query parameters: {list(params.keys())}")
@@ -679,7 +744,13 @@ class OptimizedDatabaseQueries:
         {where_clause}
         
         ORDER BY 
-            -- Prioritize by risk and PEP status
+            -- Prioritize exact name matches when doing name search
+            CASE 
+                WHEN %(name_exact)s IS NOT NULL AND UPPER(m.entity_name) = UPPER(%(name_exact)s) THEN 0
+                WHEN %(name_exact)s IS NOT NULL AND UPPER(m.entity_name) LIKE UPPER(%(name_starts_with)s) THEN 1
+                ELSE 2
+            END,
+            -- Then prioritize by risk and PEP status
             COALESCE(risk_calc.risk_score, 0) DESC,
             CASE WHEN pep_summary.entity_id IS NOT NULL THEN 1 ELSE 2 END,
             CASE WHEN critical_events.entity_id IS NOT NULL THEN 1 ELSE 2 END,
