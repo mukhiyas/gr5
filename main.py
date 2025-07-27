@@ -10101,10 +10101,14 @@ async def create_analysis_interface():
                     getattr(app_instance, 'last_search_results', [])
                 )
                 
-                # Only update if results changed
-                if len(current_results) != results_count:
-                    search_results = current_results
-                    results_count = len(search_results)
+                # Always update to ensure fresh data (not just when count changes)
+                old_count = results_count
+                old_results = search_results.copy() if search_results else []
+                search_results = current_results
+                results_count = len(search_results)
+                
+                # Refresh if count changed or if actual results are different
+                if results_count != old_count or search_results != old_results:
                     logger.info(f"AI Analysis: Updated to {results_count} search results")
                     refresh_status_display()
                     refresh_content()
@@ -10125,8 +10129,14 @@ async def create_analysis_interface():
                                 ui.label('From Entity Search results').classes('text-sm text-gray-600')
                                 
                                 # Manual refresh button
+                                def force_refresh():
+                                    nonlocal search_results, results_count
+                                    search_results = []  # Clear old results first
+                                    results_count = 0
+                                    update_search_results()
+                                
                                 ui.button('Refresh Now', 
-                                         on_click=lambda: (update_search_results()),
+                                         on_click=force_refresh,
                                          icon='refresh').props('outline')
                         else:
                             with ui.row().classes('items-center gap-3'):
@@ -10341,6 +10351,10 @@ async def create_analysis_interface():
         def on_search_update():
             """Handle search result updates"""
             logger.info("AI Analysis received search update notification")
+            # Force update regardless of count to ensure fresh results
+            nonlocal search_results, results_count
+            search_results = []  # Clear old results first
+            results_count = 0
             update_search_results()
         
         # Register the callback with the app instance
@@ -10378,10 +10392,14 @@ async def create_sql_analysis_interface():
                     getattr(user_app_instance, 'last_search_results', [])
                 )
                 
-                # Only update if results changed
-                if len(current_results) != results_count:
-                    search_results = current_results
-                    results_count = len(search_results)
+                # Always update to ensure fresh data (not just when count changes)
+                old_count = results_count
+                old_results = search_results.copy() if search_results else []
+                search_results = current_results
+                results_count = len(search_results)
+                
+                # Refresh if count changed or if actual results are different
+                if results_count != old_count or search_results != old_results:
                     logger.info(f"SQL Analysis: Updated to {results_count} search results")
                     refresh_status_display()
                     asyncio.create_task(refresh_content())
@@ -10403,8 +10421,14 @@ async def create_sql_analysis_interface():
                         with ui.row().classes('gap-2'):
                             if search_results:
                                 ui.badge(f'{len(search_results)} results analyzed', color='green').classes('px-3 py-1')
+                                def force_refresh():
+                                    nonlocal search_results, results_count
+                                    search_results = []  # Clear old results first
+                                    results_count = 0
+                                    update_search_results()
+                                
                                 ui.button('Refresh Now', 
-                                         on_click=lambda: update_search_results(),
+                                         on_click=force_refresh,
                                          icon='refresh').props('outline')
                             else:
                                 ui.badge('No search results', color='orange').classes('px-3 py-1')
@@ -10431,6 +10455,19 @@ async def create_sql_analysis_interface():
         with ui.column().classes('w-full gap-4 p-4'):
             status_container
             main_content
+        
+        # Register callback to update when search results change
+        def on_search_update():
+            """Handle search result updates"""
+            logger.info("SQL Analysis received search update notification")
+            # Force update regardless of count to ensure fresh results
+            nonlocal search_results, results_count
+            search_results = []  # Clear old results first
+            results_count = 0
+            update_search_results()
+        
+        # Register the callback with the app instance
+        user_app_instance.register_search_update_callback(on_search_update)
         
         # Initial load
         update_search_results()
@@ -10987,10 +11024,14 @@ async def create_dedicated_network_analysis_interface():
                     getattr(user_app_instance, 'last_search_results', [])
                 )
                 
-                # Only update if results changed
-                if len(current_results) != results_count:
-                    search_results = current_results
-                    results_count = len(search_results)
+                # Always update to ensure fresh data (not just when count changes)
+                old_count = results_count
+                old_results = search_results.copy() if search_results else []
+                search_results = current_results
+                results_count = len(search_results)
+                
+                # Refresh if count changed or if actual results are different
+                if results_count != old_count or search_results != old_results:
                     logger.info(f"Network Analysis: Updated to {results_count} search results")
                     refresh_status_display()
                     asyncio.create_task(refresh_content())
@@ -11012,8 +11053,14 @@ async def create_dedicated_network_analysis_interface():
                         with ui.row().classes('gap-2'):
                             if search_results:
                                 ui.badge(f'{len(search_results)} entities available', color='green').classes('px-3 py-1')
+                                def force_refresh():
+                                    nonlocal search_results, results_count
+                                    search_results = []  # Clear old results first
+                                    results_count = 0
+                                    update_search_results()
+                                
                                 ui.button('Refresh Now', 
-                                         on_click=lambda: update_search_results(),
+                                         on_click=force_refresh,
                                          icon='refresh').props('outline')
                             else:
                                 ui.badge('No search results', color='orange').classes('px-3 py-1')
@@ -11059,6 +11106,10 @@ async def create_dedicated_network_analysis_interface():
         def on_search_update():
             """Handle search result updates"""
             logger.info("Network Analysis received search update notification")
+            # Force update regardless of count to ensure fresh results
+            nonlocal search_results, results_count
+            search_results = []  # Clear old results first
+            results_count = 0
             update_search_results()
         
         # Register the callback with the app instance
