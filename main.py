@@ -303,6 +303,7 @@ class EntitySearchApp:
     
     def __init__(self):
         self.connection = None
+        self.search_update_callbacks = []  # Callbacks to notify when search results change
         self.code_dict = {}
         self.current_results = []
         self.filtered_data = []
@@ -1082,6 +1083,27 @@ class EntitySearchApp:
     def get_pep_description(self, pep_code):
         """Get PEP level description"""
         return self.pep_levels.get(pep_code, pep_code)
+    
+    def register_search_update_callback(self, callback):
+        """Register a callback to be notified when search results change"""
+        if callback not in self.search_update_callbacks:
+            self.search_update_callbacks.append(callback)
+            logger.info(f"Registered search update callback: {callback.__name__ if hasattr(callback, '__name__') else 'anonymous'}")
+    
+    def unregister_search_update_callback(self, callback):
+        """Unregister a search update callback"""
+        if callback in self.search_update_callbacks:
+            self.search_update_callbacks.remove(callback)
+            logger.info(f"Unregistered search update callback: {callback.__name__ if hasattr(callback, '__name__') else 'anonymous'}")
+    
+    def notify_search_update(self):
+        """Notify all registered callbacks that search results have been updated"""
+        logger.info(f"Notifying {len(self.search_update_callbacks)} callbacks of search update")
+        for callback in self.search_update_callbacks:
+            try:
+                callback()
+            except Exception as e:
+                logger.error(f"Error in search update callback: {e}")
     
     def search_data(self, search_criteria, entity_type, max_results=100, use_regex=False, 
                    logical_operator='AND', include_relationships=True):
@@ -8552,6 +8574,9 @@ async def create_search_interface():
                 app_instance.filtered_data = parsed_results
                 logger.info(f"JSON parsing completed for {len(parsed_results)} entities")
                 
+                # Notify all tabs that search results have been updated
+                app_instance.notify_search_update()
+                
                 # Display results with debugging
                 logger.info(f"About to display {len(parsed_results)} results in UI")
                 
@@ -10312,10 +10337,19 @@ async def create_analysis_interface():
                                 on_click=lambda q=question: setattr(question_input, 'value', q) or send_question()
                             ).props('clickable').classes('text-sm')
         
+        # Register callback to update when search results change
+        def on_search_update():
+            """Handle search result updates"""
+            logger.info("AI Analysis received search update notification")
+            update_search_results()
+        
+        # Register the callback with the app instance
+        app_instance.register_search_update_callback(on_search_update)
+        
         # Initial load
         update_search_results()
         
-        # Auto-refresh every 3 seconds to detect new search results
+        # Auto-refresh every 3 seconds to detect new search results (as backup)
         ui.timer(3.0, update_search_results)
 
 
@@ -11021,10 +11055,19 @@ async def create_dedicated_network_analysis_interface():
             status_container
             main_content
         
+        # Register callback to update when search results change
+        def on_search_update():
+            """Handle search result updates"""
+            logger.info("Network Analysis received search update notification")
+            update_search_results()
+        
+        # Register the callback with the app instance
+        user_app_instance.register_search_update_callback(on_search_update)
+        
         # Initial load
         update_search_results()
         
-        # Auto-refresh every 3 seconds to detect new search results
+        # Auto-refresh every 3 seconds to detect new search results (as backup)
         ui.timer(3.0, update_search_results)
     
     except Exception as e:
@@ -14052,7 +14095,21 @@ async def create_table_interface():
                 logger.warning(f"Could not load search data: {e}")
                 return False
         
-        # Check every 3 seconds for available client data
+        # Register callback to update when search results change
+        def on_search_update():
+            """Handle search result updates"""
+            nonlocal local_data, display_loaded
+            logger.info("Entity Browser received search update notification")
+            
+            # Load the new search results
+            if load_search_data():
+                display_loaded = False  # Force refresh of display
+                asyncio.create_task(load_and_display_hybrid_view())
+        
+        # Register the callback with the app instance
+        app_instance.register_search_update_callback(on_search_update)
+        
+        # Check every 3 seconds for available client data (as backup)
         ui.timer(3.0, check_for_client_data)
 
 if __name__ == '__main__':
