@@ -14216,6 +14216,70 @@ if __name__ == '__main__':
         print(f"🌐 Access: http://localhost:{config.get('server.port', 8080)}")
         print("=" * 60)
         
+        # Add health check endpoint for AWS load balancer
+        from fastapi import FastAPI
+        from fastapi.responses import JSONResponse
+        import time
+        
+        @app.get('/health')
+        async def health_check():
+            """Health check endpoint for AWS load balancer"""
+            try:
+                # Test database connectivity
+                db_status = "healthy"
+                if hasattr(app_instance, 'connection') and app_instance.connection:
+                    try:
+                        cursor = app_instance.connection.cursor()
+                        cursor.execute("SELECT 1")
+                        cursor.fetchone()
+                        cursor.close()
+                    except Exception as db_error:
+                        db_status = f"unhealthy: {str(db_error)}"
+                else:
+                    db_status = "no_connection"
+                
+                return JSONResponse(
+                    status_code=200,
+                    content={
+                        "status": "healthy",
+                        "timestamp": time.time(),
+                        "database": db_status,
+                        "service": "gr3-entity-search",
+                        "version": "1.0.0"
+                    }
+                )
+            except Exception as e:
+                return JSONResponse(
+                    status_code=503,
+                    content={
+                        "status": "unhealthy",
+                        "error": str(e),
+                        "timestamp": time.time(),
+                        "service": "gr3-entity-search"
+                    }
+                )
+        
+        @app.get('/health/ready')
+        async def readiness_check():
+            """Readiness check for Kubernetes/container orchestration"""
+            try:
+                # Check if application is fully initialized
+                if not hasattr(app_instance, 'connection'):
+                    return JSONResponse(
+                        status_code=503,
+                        content={"status": "not_ready", "reason": "database_not_initialized"}
+                    )
+                
+                return JSONResponse(
+                    status_code=200,
+                    content={"status": "ready", "timestamp": time.time()}
+                )
+            except Exception as e:
+                return JSONResponse(
+                    status_code=503,
+                    content={"status": "not_ready", "error": str(e)}
+                )
+        
         # Run application with comprehensive error handling
         try:
             ui.run(
