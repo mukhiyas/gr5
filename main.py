@@ -1573,7 +1573,7 @@ class EntitySearchApp:
                 e.entity_name,
                 e.systemId,
                 e.entityDate
-            FROM {table_mapping} e
+            FROM prd_bronze_catalog.grid.{entity_type}_mapping e
             LEFT JOIN prd_bronze_catalog.grid.{entity_type}_addresses addr ON e.entity_id = addr.entity_id
             LEFT JOIN prd_bronze_catalog.grid.{entity_type}_identifications id ON e.entity_id = id.entity_id
             LEFT JOIN prd_bronze_catalog.grid.{entity_type}_events ev ON e.entity_id = ev.entity_id
