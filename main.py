@@ -3185,7 +3185,7 @@ When analyzing entity data:
         
         try:
             cursor = self.connection.cursor()
-            logger.info(f"Starting clustering analysis for {entity_type} with max_results={max_results}")
+            logger.info(f"Starting clustering analysis for {entity_type}")
             
             # Enhanced Risk Code Clustering with Statistical Analysis
             # Use proper string formatting to avoid SQL parameter binding issues
@@ -3193,9 +3193,6 @@ When analyzing entity data:
             table_events = f"prd_bronze_catalog.grid.{entity_type}_events"
             table_attributes = f"prd_bronze_catalog.grid.{entity_type}_attributes"
             table_addresses = f"prd_bronze_catalog.grid.{entity_type}_addresses"
-            limit_quarter = max_results // 4
-            limit_fifth = max_results // 5
-            limit_sixth = max_results // 6
             
             risk_clustering_query = f"""
             WITH risk_code_stats AS (
@@ -3236,7 +3233,6 @@ When analyzing entity data:
                 recency_category
             FROM ranked_risks
             ORDER BY entity_count DESC, avg_days_old ASC
-            LIMIT {limit_quarter}
             """
             
             logger.debug(f"Executing risk clustering query for {entity_type}")
@@ -3257,7 +3253,6 @@ When analyzing entity data:
             GROUP BY attr.alias_code_type
             HAVING COUNT(DISTINCT e.entity_id) >= 2
             ORDER BY entity_count DESC
-            LIMIT {limit_quarter}
             """
             
             logger.debug(f"Executing PEP clustering query for {entity_type}")
@@ -3278,7 +3273,6 @@ When analyzing entity data:
             GROUP BY addr.address_country, addr.address_city
             HAVING COUNT(DISTINCT e.entity_id) >= 2
             ORDER BY entity_count DESC
-            LIMIT {limit_quarter}
             """
             
             logger.debug(f"Executing geographic clustering query for {entity_type}")
@@ -3298,7 +3292,6 @@ When analyzing entity data:
             GROUP BY e.systemId
             HAVING COUNT(DISTINCT e.entity_id) >= 2
             ORDER BY entity_count DESC
-            LIMIT {limit_quarter}
             """
             
             logger.debug(f"Executing source clustering query for {entity_type}")
@@ -3319,7 +3312,6 @@ When analyzing entity data:
             GROUP BY ev.event_sub_category_code
             HAVING COUNT(DISTINCT e.entity_id) >= 2
             ORDER BY entity_count DESC
-            LIMIT {limit_sixth}
             """
             
             logger.debug(f"Executing subcategory clustering query for {entity_type}")
@@ -3341,7 +3333,6 @@ When analyzing entity data:
             GROUP BY YEAR(ev.event_date)
             HAVING COUNT(DISTINCT e.entity_id) >= 3
             ORDER BY event_year DESC
-            LIMIT {limit_sixth}
             """
             
             logger.debug(f"Executing temporal clustering query for {entity_type}")
@@ -3362,7 +3353,6 @@ When analyzing entity data:
             GROUP BY attr.alias_code_type
             HAVING COUNT(DISTINCT e.entity_id) >= 2
             ORDER BY entity_count DESC
-            LIMIT {limit_fifth}
             """
             
             logger.debug(f"Executing attribute clustering query for {entity_type}")
