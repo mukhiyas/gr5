@@ -1573,7 +1573,7 @@ class EntitySearchApp:
                 e.entity_name,
                 e.systemId,
                 e.entityDate
-            FROM prd_bronze_catalog.grid.{entity_type}_mapping e
+            FROM {table_mapping} e
             LEFT JOIN prd_bronze_catalog.grid.{entity_type}_addresses addr ON e.entity_id = addr.entity_id
             LEFT JOIN prd_bronze_catalog.grid.{entity_type}_identifications id ON e.entity_id = id.entity_id
             LEFT JOIN prd_bronze_catalog.grid.{entity_type}_events ev ON e.entity_id = ev.entity_id
@@ -3188,6 +3188,15 @@ When analyzing entity data:
             logger.info(f"Starting clustering analysis for {entity_type} with max_results={max_results}")
             
             # Enhanced Risk Code Clustering with Statistical Analysis
+            # Use proper string formatting to avoid SQL parameter binding issues
+            table_mapping = f"prd_bronze_catalog.grid.{entity_type}_mapping"
+            table_events = f"prd_bronze_catalog.grid.{entity_type}_events"
+            table_attributes = f"prd_bronze_catalog.grid.{entity_type}_attributes"
+            table_addresses = f"prd_bronze_catalog.grid.{entity_type}_addresses"
+            limit_quarter = max_results // 4
+            limit_fifth = max_results // 5
+            limit_sixth = max_results // 6
+            
             risk_clustering_query = f"""
             WITH risk_code_stats AS (
                 SELECT 
@@ -3200,8 +3209,8 @@ When analyzing entity data:
                     COLLECT_LIST(DISTINCT e.entity_name) as sample_entities,
                     AVG(DATEDIFF(day, ev.event_date, CURRENT_DATE())) as avg_days_old,
                     COUNT(DISTINCT CONCAT(e.entity_id, '-', CAST(YEAR(ev.event_date) AS STRING), '-', CAST(MONTH(ev.event_date) AS STRING))) as monthly_occurrences
-                FROM prd_bronze_catalog.grid.{entity_type}_mapping e
-                INNER JOIN prd_bronze_catalog.grid.{entity_type}_events ev ON e.entity_id = ev.entity_id
+                FROM {table_mapping} e
+                INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
                 WHERE ev.event_category_code IS NOT NULL 
                 AND ev.event_date >= DATEADD(year, -10, CURRENT_DATE())
                 GROUP BY ev.event_category_code
@@ -3227,7 +3236,7 @@ When analyzing entity data:
                 recency_category
             FROM ranked_risks
             ORDER BY entity_count DESC, avg_days_old ASC
-            LIMIT {max_results//4}
+            LIMIT {limit_quarter}
             """
             
             logger.debug(f"Executing risk clustering query for {entity_type}")
@@ -3242,13 +3251,13 @@ When analyzing entity data:
                 COUNT(DISTINCT e.entity_id) as entity_count,
                 COUNT(attr.alias_code_type) as attribute_count,
                 COLLECT_LIST(DISTINCT e.entity_name) as sample_entities
-            FROM prd_bronze_catalog.grid.{entity_type}_mapping e
-            INNER JOIN prd_bronze_catalog.grid.{entity_type}_attributes attr ON e.entity_id = attr.entity_id
+            FROM {table_mapping} e
+            INNER JOIN {table_attributes} attr ON e.entity_id = attr.entity_id
             WHERE attr.alias_code_type IN ('HOS', 'CAB', 'INF', 'MUN', 'FAM', 'ASC', 'SPO', 'CHI', 'PAR', 'SIB', 'REL', 'CAS', 'BUS', 'POL', 'LEG', 'FIN', 'OTH')
             GROUP BY attr.alias_code_type
             HAVING COUNT(DISTINCT e.entity_id) >= 2
             ORDER BY entity_count DESC
-            LIMIT {max_results//4}
+            LIMIT {limit_quarter}
             """
             
             logger.debug(f"Executing PEP clustering query for {entity_type}")
@@ -3263,13 +3272,13 @@ When analyzing entity data:
                 addr.address_city as city,
                 COUNT(DISTINCT e.entity_id) as entity_count,
                 COLLECT_LIST(DISTINCT e.entity_name) as sample_entities
-            FROM prd_bronze_catalog.grid.{entity_type}_mapping e
-            INNER JOIN prd_bronze_catalog.grid.{entity_type}_addresses addr ON e.entity_id = addr.entity_id
+            FROM {table_mapping} e
+            INNER JOIN {table_addresses} addr ON e.entity_id = addr.entity_id
             WHERE addr.address_country IS NOT NULL
             GROUP BY addr.address_country, addr.address_city
             HAVING COUNT(DISTINCT e.entity_id) >= 2
             ORDER BY entity_count DESC
-            LIMIT {max_results//4}
+            LIMIT {limit_quarter}
             """
             
             logger.debug(f"Executing geographic clustering query for {entity_type}")
@@ -3284,12 +3293,12 @@ When analyzing entity data:
                 COUNT(DISTINCT e.entity_id) as entity_count,
                 COUNT(DISTINCT e.source_item_id) as source_items,
                 COLLECT_LIST(DISTINCT e.entity_name) as sample_entities
-            FROM prd_bronze_catalog.grid.{entity_type}_mapping e
+            FROM {table_mapping} e
             WHERE e.systemId IS NOT NULL
             GROUP BY e.systemId
             HAVING COUNT(DISTINCT e.entity_id) >= 2
             ORDER BY entity_count DESC
-            LIMIT {max_results//4}
+            LIMIT {limit_quarter}
             """
             
             logger.debug(f"Executing source clustering query for {entity_type}")
@@ -3304,13 +3313,13 @@ When analyzing entity data:
                 COUNT(DISTINCT e.entity_id) as entity_count,
                 COUNT(ev.event_sub_category_code) as event_count,
                 COLLECT_LIST(DISTINCT e.entity_name) as sample_entities
-            FROM prd_bronze_catalog.grid.{entity_type}_mapping e
-            INNER JOIN prd_bronze_catalog.grid.{entity_type}_events ev ON e.entity_id = ev.entity_id
+            FROM {table_mapping} e
+            INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
             WHERE ev.event_sub_category_code IS NOT NULL
             GROUP BY ev.event_sub_category_code
             HAVING COUNT(DISTINCT e.entity_id) >= 2
             ORDER BY entity_count DESC
-            LIMIT {max_results//6}
+            LIMIT {limit_sixth}
             """
             
             logger.debug(f"Executing subcategory clustering query for {entity_type}")
@@ -3325,14 +3334,14 @@ When analyzing entity data:
                 COUNT(DISTINCT e.entity_id) as entity_count,
                 COUNT(ev.event_date) as event_count,
                 COLLECT_LIST(DISTINCT e.entity_name) as sample_entities
-            FROM prd_bronze_catalog.grid.{entity_type}_mapping e
-            INNER JOIN prd_bronze_catalog.grid.{entity_type}_events ev ON e.entity_id = ev.entity_id
+            FROM {table_mapping} e
+            INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
             WHERE ev.event_date IS NOT NULL 
             AND ev.event_date >= DATEADD(year, -15, CURRENT_DATE())
             GROUP BY YEAR(ev.event_date)
             HAVING COUNT(DISTINCT e.entity_id) >= 3
             ORDER BY event_year DESC
-            LIMIT {max_results//6}
+            LIMIT {limit_sixth}
             """
             
             logger.debug(f"Executing temporal clustering query for {entity_type}")
@@ -3347,13 +3356,13 @@ When analyzing entity data:
                 COUNT(DISTINCT e.entity_id) as entity_count,
                 COUNT(attr.alias_code_type) as attribute_count,
                 COLLECT_LIST(DISTINCT e.entity_name) as sample_entities
-            FROM prd_bronze_catalog.grid.{entity_type}_mapping e
-            INNER JOIN prd_bronze_catalog.grid.{entity_type}_attributes attr ON e.entity_id = attr.entity_id
+            FROM {table_mapping} e
+            INNER JOIN {table_attributes} attr ON e.entity_id = attr.entity_id
             WHERE attr.alias_code_type IS NOT NULL
             GROUP BY attr.alias_code_type
             HAVING COUNT(DISTINCT e.entity_id) >= 2
             ORDER BY entity_count DESC
-            LIMIT {max_results//5}
+            LIMIT {limit_fifth}
             """
             
             logger.debug(f"Executing attribute clustering query for {entity_type}")
@@ -3526,14 +3535,18 @@ When analyzing entity data:
         try:
             cursor = self.connection.cursor()
             
+            # Define table names for this entity type
+            table_mapping = f"prd_bronze_catalog.grid.{entity_type}_mapping"
+            table_events = f"prd_bronze_catalog.grid.{entity_type}_events"
+            
             # Get risk code distribution with severity mapping
             severity_query = f"""
             SELECT 
                 ev.event_category_code,
                 COUNT(DISTINCT e.entity_id) as entity_count,
                 COUNT(ev.event_category_code) as event_count
-            FROM prd_bronze_catalog.grid.{entity_type}_mapping e
-            INNER JOIN prd_bronze_catalog.grid.{entity_type}_events ev ON e.entity_id = ev.entity_id
+            FROM {table_mapping} e
+            INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
             WHERE ev.event_category_code IS NOT NULL
             GROUP BY ev.event_category_code
             ORDER BY entity_count DESC

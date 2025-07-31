@@ -240,7 +240,7 @@ class OptimizedDatabaseQueries:
         
         # Specific event categories (highly selective when specific)
         elif search_params.get('event_categories'):
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_events ev
                     WHERE ev.entity_id = m.entity_id 
@@ -252,7 +252,7 @@ class OptimizedDatabaseQueries:
         
         # PEP-only filter (reduces to 6.3M entities)
         if search_params.get('pep_only'):
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_attributes attr
                     WHERE attr.entity_id = m.entity_id 
@@ -263,7 +263,7 @@ class OptimizedDatabaseQueries:
         
         # High-level PEPs only (L4, L5, L6 - very selective)
         if search_params.get('high_level_pep_only'):
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_attributes attr
                     WHERE attr.entity_id = m.entity_id 
@@ -278,7 +278,7 @@ class OptimizedDatabaseQueries:
         # Geographic filters
         if search_params.get('country'):
             country = search_params['country'].upper()
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_addresses addr
                     WHERE addr.entity_id = m.entity_id 
@@ -291,7 +291,7 @@ class OptimizedDatabaseQueries:
         # City filter
         if search_params.get('city'):
             city = search_params['city'].upper()
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_addresses addr
                     WHERE addr.entity_id = m.entity_id 
@@ -304,7 +304,7 @@ class OptimizedDatabaseQueries:
         # Province/State filter
         if search_params.get('province'):
             province = search_params['province'].upper()
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_addresses addr
                     WHERE addr.entity_id = m.entity_id 
@@ -318,7 +318,7 @@ class OptimizedDatabaseQueries:
         # Address filter
         if search_params.get('address'):
             address = search_params['address'].upper()
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_addresses addr
                     WHERE addr.entity_id = m.entity_id 
@@ -333,7 +333,7 @@ class OptimizedDatabaseQueries:
         # Identification filters
         if search_params.get('identification_type'):
             id_type = search_params['identification_type'].upper()
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_identifications iid
                     WHERE iid.entity_id = m.entity_id 
@@ -345,7 +345,7 @@ class OptimizedDatabaseQueries:
         
         if search_params.get('identification_value'):
             id_value = search_params['identification_value'].upper()
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_identifications iid
                     WHERE iid.entity_id = m.entity_id 
@@ -358,7 +358,7 @@ class OptimizedDatabaseQueries:
         # Source filters  
         if search_params.get('source_name'):
             source_name = search_params['source_name'].upper()
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.sources src
                     WHERE src.entity_id = m.entity_id 
@@ -370,7 +370,7 @@ class OptimizedDatabaseQueries:
         
         if search_params.get('source_key'):
             source_key = search_params['source_key'].upper()
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.sources src
                     WHERE src.entity_id = m.entity_id 
@@ -386,7 +386,7 @@ class OptimizedDatabaseQueries:
             params['system_id'] = search_params['systemId']
         
         if search_params.get('bvdid'):
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.grid_orbis_mapping bvd
                     WHERE bvd.entityid = m.entity_id 
@@ -397,7 +397,7 @@ class OptimizedDatabaseQueries:
             params['bvd_id'] = search_params['bvdid']
         
         if search_params.get('source_item_id'):
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_events ev
                     WHERE ev.entity_id = m.entity_id 
@@ -409,7 +409,7 @@ class OptimizedDatabaseQueries:
         
         # Single event category filter (different from event_categories list)
         if search_params.get('event_category'):
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_events ev
                     WHERE ev.entity_id = m.entity_id 
@@ -420,7 +420,7 @@ class OptimizedDatabaseQueries:
             params['event_category_single'] = search_params['event_category']
         
         if search_params.get('event_sub_category'):
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_events ev
                     WHERE ev.entity_id = m.entity_id 
@@ -459,7 +459,7 @@ class OptimizedDatabaseQueries:
             single_event_code = search_params.get('single_event_code')
             if single_event_code:
                 # Filter for entities with exactly one event of specific type
-                performance_filters.append("""
+                performance_filters.append(f"""
                     m.entity_id IN (
                         SELECT entity_id 
                         FROM prd_bronze_catalog.grid.{table_prefix}_events 
@@ -471,7 +471,7 @@ class OptimizedDatabaseQueries:
                 params['single_event_code'] = single_event_code.upper()
             else:
                 # Filter for entities with exactly one event (any type)
-                performance_filters.append("""
+                performance_filters.append(f"""
                     m.entity_id IN (
                         SELECT entity_id 
                         FROM prd_bronze_catalog.grid.{table_prefix}_events 
@@ -482,7 +482,7 @@ class OptimizedDatabaseQueries:
         
         # Recent events only (last 5 years for performance)
         if search_params.get('recent_only'):
-            performance_filters.append("""
+            performance_filters.append(f"""
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_events ev
                     WHERE ev.entity_id = m.entity_id 
