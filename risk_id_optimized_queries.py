@@ -361,6 +361,7 @@ class RiskIdOptimizedQueries:
                     e.event_date,
                     e.entity_id,
                     m.entityDate as entity_version_date,
+                    e.event_description,
                     SUBSTR(e.event_description, 1, 200) as event_description_short,
                     -- Enhanced timestamp information
                     s.createdDate as created_date,

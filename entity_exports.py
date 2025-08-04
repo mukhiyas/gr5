@@ -306,7 +306,7 @@ class EntityExporter:
                     flat[f'Event {i+1} Code'] = event_code
                     flat[f'Event {i+1} Sub Code'] = event.get('event_sub_category_code', '')
                     flat[f'Event {i+1} Date'] = event.get('event_date', '')
-                    flat[f'Event {i+1} Description'] = event.get('event_description_short', '')
+                    flat[f'Event {i+1} Description'] = event.get('event_description', event.get('event_description_short', ''))
                     
                     # Add database-driven description and risk score
                     try:
@@ -556,7 +556,7 @@ class EntityExporter:
                             'Event Category Code': event.get('event_category_code', ''),
                             'Event Sub Category Code': event.get('event_sub_category_code', ''),
                             'Event Date': event.get('event_date', ''),
-                            'Event Description': event.get('event_description_short', '')
+                            'Event Description': event.get('event_description', event.get('event_description_short', ''))
                         })
         
         return pd.DataFrame(events_data)

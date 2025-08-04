@@ -468,7 +468,7 @@ class DedicatedTableTab:
                         with ui.row().classes('w-full items-start justify-between'):
                             with ui.column().classes('flex-grow'):
                                 ui.label(f"{event.get('event_category_code', '')} - {event.get('event_sub_category_code', '')}").classes('font-bold')
-                                ui.label(event.get('event_description_short', event.get('event_description', ''))).classes('text-sm')
+                                ui.label(event.get('event_description', event.get('event_description_short', ''))).classes('text-sm')
                             ui.label(event.get('event_date', '')).classes('text-sm text-gray-600 whitespace-nowrap')
     
     def _create_relationships_panel(self, entity: Dict[str, Any]):
