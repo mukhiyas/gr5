@@ -3487,8 +3487,7 @@ When analyzing entity data:
                     {
                         'attribute_type': row[0] if row and len(row) > 0 else 'Unknown',
                         'entity_count': row[1] if row and len(row) > 1 else 0,
-                        'attribute_count': row[2] if row and len(row) > 2 else 0,
-                        'sample_entities': self._safe_extract_array(row, 3, 5),
+                        'sample_entities': str(row[2]) if row and len(row) > 2 and row[2] is not None else '',
                         'attribute_description': self.get_attribute_description(row[0]) if row and len(row) > 0 else 'Unknown'
                     }
                     for row in attribute_clusters if row
@@ -9945,7 +9944,6 @@ async def create_clustering_interface():
             {'name': 'pep_level', 'label': 'Level', 'field': 'pep_level', 'align': 'center'},
             {'name': 'description', 'label': 'Description', 'field': 'pep_description', 'align': 'left'},
             {'name': 'entities', 'label': 'Entities', 'field': 'entity_count', 'align': 'right'},
-            {'name': 'attributes', 'label': 'Attributes', 'field': 'attribute_count', 'align': 'right'},
             {'name': 'samples', 'label': 'Sample Entities', 'field': 'sample_entities', 'align': 'left'}
         ]
         
@@ -9959,7 +9957,6 @@ async def create_clustering_interface():
                 'pep_level': cluster['pep_level'],
                 'pep_description': cluster['pep_description'],
                 'entity_count': cluster['entity_count'],
-                'attribute_count': cluster['attribute_count'],
                 'sample_entities': sample_names
             })
         
