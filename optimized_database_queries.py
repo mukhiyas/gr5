@@ -273,6 +273,38 @@ class OptimizedDatabaseQueries:
                 )
             """)
         
+        # Specific PEP levels filter (HOS, CAB, MUN, FAM, etc.)
+        if search_params.get('pep_levels'):
+            pep_level_list = search_params['pep_levels']
+            if isinstance(pep_level_list, str):
+                pep_level_list = [pep_level_list]
+            
+            # Build PEP level conditions based on actual database patterns
+            pep_conditions = []
+            for pep_level in pep_level_list:
+                # Based on query results, PEP values are like 'MUN:L3', 'HOS:L1', 'FAM', 'ASC'
+                if pep_level in ['HOS', 'CAB', 'INF', 'MUN', 'REG', 'LEG', 'AMB', 'MIL', 'JUD', 'POL', 'GOE', 'GCO', 'IGO', 'ISO', 'NIO']:
+                    # These have :L# patterns
+                    pep_conditions.append(f"attr.alias_value LIKE '{pep_level}:%'")
+                elif pep_level in ['FAM', 'ASC']:
+                    # These are standalone values
+                    pep_conditions.append(f"attr.alias_value = '{pep_level}'")
+                else:
+                    # Handle any other PEP patterns
+                    pep_conditions.append(f"attr.alias_value LIKE '%{pep_level}%'")
+            
+            if pep_conditions:
+                pep_query = " OR ".join(pep_conditions)
+                performance_filters.append(f"""
+                    EXISTS (
+                        SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_attributes attr
+                        WHERE attr.entity_id = m.entity_id 
+                        AND attr.alias_code_type = 'PTY'
+                        AND ({pep_query})
+                        LIMIT 1
+                    )
+                """)
+        
         # === MEDIUM SELECTIVITY FILTERS ===
         
         # Geographic filters
@@ -510,6 +542,44 @@ class OptimizedDatabaseQueries:
                     LIMIT 1
                 )
             """)
+        
+        # Risk codes filter (specific event categories)
+        if search_params.get('risk_codes'):
+            risk_codes = search_params['risk_codes']
+            if isinstance(risk_codes, str):
+                risk_codes = [risk_codes]
+            
+            performance_filters.append(f"""
+                EXISTS (
+                    SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_events ev
+                    WHERE ev.entity_id = m.entity_id 
+                    AND ev.event_category_code IN %(risk_codes)s
+                    LIMIT 1
+                )
+            """)
+            params['risk_codes'] = tuple(risk_codes)
+        
+        # Entity date filter
+        if search_params.get('entity_date'):
+            if isinstance(search_params['entity_date'], tuple) and len(search_params['entity_date']) == 2:
+                year, range_years = search_params['entity_date']
+                start_date = f"{int(year) - int(range_years)}-01-01"
+                end_date = f"{int(year) + int(range_years)}-12-31"
+                performance_filters.append("m.entityDate BETWEEN %(entity_date_start)s AND %(entity_date_end)s")
+                params['entity_date_start'] = start_date
+                params['entity_date_end'] = end_date
+        
+        # Event sub-category filter
+        if search_params.get('event_sub_category'):
+            performance_filters.append(f"""
+                EXISTS (
+                    SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_events ev
+                    WHERE ev.entity_id = m.entity_id 
+                    AND UPPER(ev.event_sub_category_code) LIKE %(event_sub_category_pattern)s
+                    LIMIT 1
+                )
+            """)
+            params['event_sub_category_pattern'] = f"%{search_params['event_sub_category'].upper()}%"
         
         # Combine all filters with optimal order
         all_filters = base_filters + performance_filters

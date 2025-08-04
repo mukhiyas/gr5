@@ -1330,10 +1330,26 @@ class EntitySearchApp:
                 continue
             elif field == 'pep_ratings':
                 params['pep_ratings'] = value if isinstance(value, list) else [value]
+            elif field == 'pep_levels':
+                params['pep_levels'] = value if isinstance(value, list) else [value]
             elif field == 'single_event_only':
                 params['single_event_only'] = bool(value)
             elif field == 'single_event_code':
                 params['single_event_code'] = value
+            elif field == 'risk_codes':
+                params['risk_codes'] = value if isinstance(value, list) else [value]
+            elif field == 'entity_date':
+                params['entity_date'] = value
+            elif field == 'event_sub_category':
+                params['event_sub_category'] = value
+            elif field == 'source_key':
+                params['source_key'] = value
+            elif field == 'riskid':
+                params['risk_id'] = value  # Map riskid to risk_id
+            elif field == 'identification_type':
+                params['identification_type'] = value
+            elif field == 'identification_value':
+                params['identification_value'] = value
             else:
                 # Pass through other fields
                 params[field] = value
@@ -3194,51 +3210,25 @@ When analyzing entity data:
             table_attributes = f"prd_bronze_catalog.grid.{entity_type}_attributes"
             table_addresses = f"prd_bronze_catalog.grid.{entity_type}_addresses"
             
-            # Set reasonable limits to prevent timeouts while still showing comprehensive data
-            # These limits are generous enough to show patterns without overwhelming the system
-            risk_limit = 100  # Top 100 risk codes should cover most patterns
-            geo_limit = 200   # Top 200 geographic clusters
-            other_limit = 50  # Other categories with smaller limits
+            # Set aggressive limits to prevent timeouts on massive datasets (79M+ records)
+            # Optimized for performance over completeness - focus on top patterns only
+            risk_limit = 25   # Top 25 risk codes - covers critical patterns
+            geo_limit = 50    # Top 50 geographic clusters - major countries/cities
+            other_limit = 20  # Other categories with very small limits
             
             risk_clustering_query = f"""
-            WITH risk_code_stats AS (
-                SELECT 
-                    ev.event_category_code as risk_code,
-                    COUNT(DISTINCT e.entity_id) as entity_count,
-                    COUNT(ev.event_category_code) as event_count,
-                    COUNT(DISTINCT ev.systemId) as source_systems,
-                    MIN(ev.event_date) as earliest_event,
-                    MAX(ev.event_date) as latest_event,
-                    COLLECT_LIST(DISTINCT e.entity_name) as sample_entities,
-                    AVG(DATEDIFF(day, ev.event_date, CURRENT_DATE())) as avg_days_old,
-                    COUNT(DISTINCT CONCAT(e.entity_id, '-', CAST(YEAR(ev.event_date) AS STRING), '-', CAST(MONTH(ev.event_date) AS STRING))) as monthly_occurrences
-                FROM {table_mapping} e
-                INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
-                WHERE ev.event_category_code IS NOT NULL 
-                AND ev.event_date >= DATEADD(year, -10, CURRENT_DATE())
-                GROUP BY ev.event_category_code
-                HAVING COUNT(DISTINCT e.entity_id) >= 2
-            ),
-            ranked_risks AS (
-                SELECT *,
-                    RANK() OVER (ORDER BY entity_count DESC) as risk_rank,
-                    PERCENT_RANK() OVER (ORDER BY entity_count) as risk_percentile,
-                    CASE 
-                        WHEN avg_days_old <= 365 THEN 'Recent'
-                        WHEN avg_days_old <= 1825 THEN 'Moderate'
-                        ELSE 'Historical'
-                    END as recency_category
-                FROM risk_code_stats
-            )
             SELECT 
-                risk_code, entity_count, event_count, source_systems,
-                earliest_event, latest_event, sample_entities, 
-                ROUND(avg_days_old, 0) as avg_days_old,
-                monthly_occurrences, risk_rank, 
-                ROUND(risk_percentile * 100, 1) as risk_percentile,
-                recency_category
-            FROM ranked_risks
-            ORDER BY entity_count DESC, avg_days_old ASC
+                ev.event_category_code as risk_code,
+                COUNT(DISTINCT e.entity_id) as entity_count,
+                COUNT(ev.event_category_code) as event_count,
+                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
+            FROM {table_mapping} e
+            INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
+            WHERE ev.event_category_code IS NOT NULL 
+            AND ev.event_date >= DATEADD(year, -3, CURRENT_DATE())
+            GROUP BY ev.event_category_code
+            HAVING COUNT(DISTINCT e.entity_id) >= 10
+            ORDER BY entity_count DESC
             LIMIT {risk_limit}
             """
             
@@ -3247,18 +3237,35 @@ When analyzing entity data:
             risk_clusters = cursor.fetchall()
             logger.info(f"Risk clustering query returned {len(risk_clusters)} clusters")
             
-            # PEP Level Clustering
+            # PEP Level Clustering (optimized for PTY attribute type)
             pep_clustering_query = f"""
             SELECT 
-                attr.alias_code_type as pep_level,
+                CASE 
+                    WHEN attr.alias_value LIKE 'HOS:%' THEN 'HOS'
+                    WHEN attr.alias_value LIKE 'CAB:%' THEN 'CAB'
+                    WHEN attr.alias_value LIKE 'MUN:%' THEN 'MUN'
+                    WHEN attr.alias_value LIKE 'LEG:%' THEN 'LEG'
+                    WHEN attr.alias_value LIKE 'REG:%' THEN 'REG'
+                    WHEN attr.alias_value = 'FAM' THEN 'FAM'
+                    WHEN attr.alias_value = 'ASC' THEN 'ASC'
+                    ELSE 'OTHER'
+                END as pep_level,
                 COUNT(DISTINCT e.entity_id) as entity_count,
-                COUNT(attr.alias_code_type) as attribute_count,
-                COLLECT_LIST(DISTINCT e.entity_name) as sample_entities
+                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
             FROM {table_mapping} e
             INNER JOIN {table_attributes} attr ON e.entity_id = attr.entity_id
-            WHERE attr.alias_code_type IN ('HOS', 'CAB', 'INF', 'MUN', 'FAM', 'ASC', 'SPO', 'CHI', 'PAR', 'SIB', 'REL', 'CAS', 'BUS', 'POL', 'LEG', 'FIN', 'OTH')
-            GROUP BY attr.alias_code_type
-            HAVING COUNT(DISTINCT e.entity_id) >= 2
+            WHERE attr.alias_code_type = 'PTY' AND attr.alias_value IS NOT NULL
+            GROUP BY CASE 
+                    WHEN attr.alias_value LIKE 'HOS:%' THEN 'HOS'
+                    WHEN attr.alias_value LIKE 'CAB:%' THEN 'CAB'
+                    WHEN attr.alias_value LIKE 'MUN:%' THEN 'MUN'
+                    WHEN attr.alias_value LIKE 'LEG:%' THEN 'LEG'
+                    WHEN attr.alias_value LIKE 'REG:%' THEN 'REG'
+                    WHEN attr.alias_value = 'FAM' THEN 'FAM'
+                    WHEN attr.alias_value = 'ASC' THEN 'ASC'
+                    ELSE 'OTHER'
+                END
+            HAVING COUNT(DISTINCT e.entity_id) >= 50
             ORDER BY entity_count DESC
             LIMIT {other_limit}
             """
@@ -3268,18 +3275,17 @@ When analyzing entity data:
             pep_clusters = cursor.fetchall()
             logger.info(f"PEP clustering query returned {len(pep_clusters)} clusters")
             
-            # Geographic Clustering
+            # Geographic Clustering (simplified for performance)
             geo_clustering_query = f"""
             SELECT 
                 addr.address_country as country,
-                addr.address_city as city,
                 COUNT(DISTINCT e.entity_id) as entity_count,
-                COLLECT_LIST(DISTINCT e.entity_name) as sample_entities
+                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
             FROM {table_mapping} e
             INNER JOIN {table_addresses} addr ON e.entity_id = addr.entity_id
             WHERE addr.address_country IS NOT NULL
-            GROUP BY addr.address_country, addr.address_city
-            HAVING COUNT(DISTINCT e.entity_id) >= 2
+            GROUP BY addr.address_country
+            HAVING COUNT(DISTINCT e.entity_id) >= 100
             ORDER BY entity_count DESC
             LIMIT {geo_limit}
             """
@@ -3289,17 +3295,16 @@ When analyzing entity data:
             geo_clusters = cursor.fetchall()
             logger.info(f"Geographic clustering query returned {len(geo_clusters)} clusters")
             
-            # Source System Clustering
+            # Source System Clustering (simplified)
             source_clustering_query = f"""
             SELECT 
                 e.systemId as source_system,
                 COUNT(DISTINCT e.entity_id) as entity_count,
-                COUNT(DISTINCT e.source_item_id) as source_items,
-                COLLECT_LIST(DISTINCT e.entity_name) as sample_entities
+                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
             FROM {table_mapping} e
             WHERE e.systemId IS NOT NULL
             GROUP BY e.systemId
-            HAVING COUNT(DISTINCT e.entity_id) >= 2
+            HAVING COUNT(DISTINCT e.entity_id) >= 50
             ORDER BY entity_count DESC
             LIMIT {other_limit}
             """
@@ -3309,18 +3314,18 @@ When analyzing entity data:
             source_clusters = cursor.fetchall()
             logger.info(f"Source clustering query returned {len(source_clusters)} clusters")
             
-            # Additional Clustering Categories - Event Sub-category Clustering
+            # Event Sub-category Clustering (simplified)
             subcategory_clustering_query = f"""
             SELECT 
                 ev.event_sub_category_code as sub_category,
                 COUNT(DISTINCT e.entity_id) as entity_count,
-                COUNT(ev.event_sub_category_code) as event_count,
-                COLLECT_LIST(DISTINCT e.entity_name) as sample_entities
+                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
             FROM {table_mapping} e
             INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
             WHERE ev.event_sub_category_code IS NOT NULL
+            AND ev.event_date >= DATEADD(year, -3, CURRENT_DATE())
             GROUP BY ev.event_sub_category_code
-            HAVING COUNT(DISTINCT e.entity_id) >= 2
+            HAVING COUNT(DISTINCT e.entity_id) >= 20
             ORDER BY entity_count DESC
             LIMIT {other_limit}
             """
@@ -3330,19 +3335,18 @@ When analyzing entity data:
             subcategory_clusters = cursor.fetchall()
             logger.info(f"Subcategory clustering query returned {len(subcategory_clusters)} clusters")
             
-            # Temporal Clustering - Group by event years
+            # Temporal Clustering (simplified)
             temporal_clustering_query = f"""
             SELECT 
                 YEAR(ev.event_date) as event_year,
                 COUNT(DISTINCT e.entity_id) as entity_count,
-                COUNT(ev.event_date) as event_count,
-                COLLECT_LIST(DISTINCT e.entity_name) as sample_entities
+                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
             FROM {table_mapping} e
             INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
             WHERE ev.event_date IS NOT NULL 
-            AND ev.event_date >= DATEADD(year, -15, CURRENT_DATE())
+            AND ev.event_date >= DATEADD(year, -10, CURRENT_DATE())
             GROUP BY YEAR(ev.event_date)
-            HAVING COUNT(DISTINCT e.entity_id) >= 3
+            HAVING COUNT(DISTINCT e.entity_id) >= 100
             ORDER BY event_year DESC
             LIMIT {other_limit}
             """
@@ -3352,18 +3356,18 @@ When analyzing entity data:
             temporal_clusters = cursor.fetchall()
             logger.info(f"Temporal clustering query returned {len(temporal_clusters)} clusters")
             
-            # Attribute Type Clustering - Beyond just PEP levels
+            # Attribute Type Clustering (simplified)
             attribute_clustering_query = f"""
             SELECT 
                 attr.alias_code_type as attribute_type,
                 COUNT(DISTINCT e.entity_id) as entity_count,
-                COUNT(attr.alias_code_type) as attribute_count,
-                COLLECT_LIST(DISTINCT e.entity_name) as sample_entities
+                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
             FROM {table_mapping} e
             INNER JOIN {table_attributes} attr ON e.entity_id = attr.entity_id
             WHERE attr.alias_code_type IS NOT NULL
+            AND attr.alias_code_type IN ('PTY', 'PRT', 'URL', 'RMK', 'SEX')
             GROUP BY attr.alias_code_type
-            HAVING COUNT(DISTINCT e.entity_id) >= 2
+            HAVING COUNT(DISTINCT e.entity_id) >= 1000
             ORDER BY entity_count DESC
             LIMIT {other_limit}
             """
@@ -10375,7 +10379,7 @@ async def create_analysis_interface():
             update_search_results()
         
         # Register the callback with the app instance
-        app_instance.register_search_update_callback(on_search_update)
+        user_app_instance.register_search_update_callback(on_search_update)
         
         # Initial load
         update_search_results()
@@ -14175,7 +14179,7 @@ async def create_table_interface():
                 asyncio.create_task(load_and_display_hybrid_view())
         
         # Register the callback with the app instance
-        app_instance.register_search_update_callback(on_search_update)
+        user_app_instance.register_search_update_callback(on_search_update)
         
         # Check every 3 seconds for available client data (as backup)
         ui.timer(3.0, check_for_client_data)
