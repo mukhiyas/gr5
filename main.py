@@ -1158,6 +1158,36 @@ class EntitySearchApp:
         except Exception as e:
             logger.error(f"Error merging database codes: {e}")
     
+    def get_safe_event_description(self, event_dict):
+        """Safely get event description from event dict with proper fallbacks"""
+        if isinstance(event_dict, dict):
+            # Try event_description first, then event_description_short as fallback
+            return event_dict.get('event_description', event_dict.get('event_description_short', ''))
+        return ''
+    
+    def sanitize_query_fields(self, query):
+        """Sanitize query to fix common field reference issues"""
+        # Fix any direct references to event_description_short in queries
+        # This should not be accessed directly as a column, only within JSON structures
+        if 'ev.event_description_short' in query:
+            logger.warning("Fixing incorrect direct reference to ev.event_description_short in query")
+            query = query.replace('ev.event_description_short', 'ev.event_description')
+        
+        # Fix any other potential field reference issues
+        if '.event_description_short' in query:
+            logger.warning("Fixing incorrect reference to event_description_short field in query")
+            query = query.replace('.event_description_short', '.event_description')
+        
+        # Additional safety checks for other common field issues
+        if 'event_description_short' in query and 'SELECT' in query.upper():
+            # Check if it's trying to select the field directly without proper alias
+            lines = query.split('\n')
+            for i, line in enumerate(lines):
+                if 'event_description_short' in line and line.strip().count(',') > 0:
+                    logger.warning(f"Potential field reference issue on line {i+1}: {line.strip()}")
+        
+        return query
+    
     def get_event_description(self, event_code, event_subcode=None):
         """Get comprehensive event description with database-driven multi-layer fallback"""
         if not event_code:
@@ -3406,6 +3436,9 @@ When analyzing entity data:
             cursor = self.connection.cursor()
             logger.info(f"Starting clustering analysis for {entity_type}")
             
+            # Add defensive check for query field references
+            logger.info("🔧 Applying preventive fixes for clustering analysis queries")
+            
             # Enhanced Risk Code Clustering with Statistical Analysis
             # Use proper string formatting to avoid SQL parameter binding issues
             table_mapping = f"prd_bronze_catalog.grid.{entity_type}_mapping"
@@ -3436,6 +3469,8 @@ When analyzing entity data:
             """
             
             logger.debug(f"Executing risk clustering query for {entity_type}")
+            # Sanitize query to prevent field reference issues
+            risk_clustering_query = self.sanitize_query_fields(risk_clustering_query)
             cursor.execute(risk_clustering_query)
             risk_clusters = cursor.fetchall()
             logger.info(f"Risk clustering query returned {len(risk_clusters)} clusters")
@@ -3459,6 +3494,7 @@ When analyzing entity data:
                         WHERE ev.event_category_code = '{code}' 
                         AND ev.event_date >= DATEADD(year, -3, CURRENT_DATE())
                         """
+                        verify_query = self.sanitize_query_fields(verify_query)
                         cursor.execute(verify_query)
                         verify_result = cursor.fetchone()
                         actual_count = verify_result[0] if verify_result else 0
@@ -3471,7 +3507,7 @@ When analyzing entity data:
                 SELECT DISTINCT 
                     ev.event_category_code as code,
                     COUNT(DISTINCT e.entity_id) as entity_count,
-                    MIN(ev.event_description_short) as sample_description
+                    MIN(ev.event_description) as sample_description
                 FROM {table_mapping} e
                 INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
                 WHERE ev.event_category_code IS NOT NULL 
@@ -3481,6 +3517,7 @@ When analyzing entity data:
                 ORDER BY entity_count DESC
                 LIMIT 50
                 """
+                missing_codes_query = self.sanitize_query_fields(missing_codes_query)
                 cursor.execute(missing_codes_query)
                 all_codes = cursor.fetchall()
                 
@@ -3534,6 +3571,7 @@ When analyzing entity data:
             """
             
             logger.debug(f"Executing PEP clustering query for {entity_type}")
+            pep_clustering_query = self.sanitize_query_fields(pep_clustering_query)
             cursor.execute(pep_clustering_query)
             pep_clusters = cursor.fetchall()
             logger.info(f"PEP clustering query returned {len(pep_clusters)} clusters")
@@ -3564,6 +3602,7 @@ When analyzing entity data:
             """
             
             logger.debug(f"Executing geographic clustering query for {entity_type}")
+            geo_clustering_query = self.sanitize_query_fields(geo_clustering_query)
             cursor.execute(geo_clustering_query)
             geo_clusters = cursor.fetchall()
             logger.info(f"Geographic clustering query returned {len(geo_clusters)} clusters")
@@ -3583,6 +3622,7 @@ When analyzing entity data:
             """
             
             logger.debug(f"Executing source clustering query for {entity_type}")
+            source_clustering_query = self.sanitize_query_fields(source_clustering_query)
             cursor.execute(source_clustering_query)
             source_clusters = cursor.fetchall()
             logger.info(f"Source clustering query returned {len(source_clusters)} clusters")
@@ -3604,6 +3644,7 @@ When analyzing entity data:
             """
             
             logger.debug(f"Executing subcategory clustering query for {entity_type}")
+            subcategory_clustering_query = self.sanitize_query_fields(subcategory_clustering_query)
             cursor.execute(subcategory_clustering_query)
             subcategory_clusters = cursor.fetchall()
             logger.info(f"Subcategory clustering query returned {len(subcategory_clusters)} clusters")
@@ -3625,6 +3666,7 @@ When analyzing entity data:
             """
             
             logger.debug(f"Executing temporal clustering query for {entity_type}")
+            temporal_clustering_query = self.sanitize_query_fields(temporal_clustering_query)
             cursor.execute(temporal_clustering_query)
             temporal_clusters = cursor.fetchall()
             logger.info(f"Temporal clustering query returned {len(temporal_clusters)} clusters")
@@ -3646,6 +3688,7 @@ When analyzing entity data:
             """
             
             logger.debug(f"Executing attribute clustering query for {entity_type}")
+            attribute_clustering_query = self.sanitize_query_fields(attribute_clustering_query)
             cursor.execute(attribute_clustering_query)
             attribute_clusters = cursor.fetchall()
             logger.info(f"Attribute clustering query returned {len(attribute_clusters)} clusters")
