@@ -857,7 +857,7 @@ class EntitySearchApp:
         self.apply_environment_overrides()
         
         self.init_database_connection()
-        self.load_code_dictionary()
+        self.load_all_code_dictionaries()
         
         # MODULAR INTEGRATION: Initialize database integration modules
         if INTEGRATION_AVAILABLE:
@@ -1047,8 +1047,8 @@ class EntitySearchApp:
         self._update_integration_connection()
         logger.info("Database connection updated for app and integration modules")
     
-    def load_code_dictionary(self):
-        """Load comprehensive code dictionary for event categories, subcategories, and attributes"""
+    def load_all_code_dictionaries(self):
+        """Load all code dictionaries from database with smart caching"""
         if not self.connection:
             return
         
@@ -1058,49 +1058,192 @@ class EntitySearchApp:
             schema = self.database_config['schema_name']
             table = self.database_config['code_dictionary_table']
             
-            # Load event categories (start with basic query and expand as needed)
+            # Initialize all dictionary containers
+            self.db_event_codes = {}
+            self.db_relationship_types = {}
+            self.db_event_subcategories = {}
+            self.db_entity_attributes = {}
+            self.db_pep_codes = {}
+            self.db_risk_codes = {}
+            
+            # Load all codes from code_dictionary table grouped by type
             query = f"""
-            SELECT code, code_description, code_type
+            SELECT code_type, code, code_description, COUNT(*) as usage_count
             FROM {catalog}.{schema}.{table}
-            WHERE code_type = 'event_category'
+            WHERE code IS NOT NULL AND code_description IS NOT NULL
+            GROUP BY code_type, code, code_description
+            ORDER BY code_type, usage_count DESC
             """
             
             with self.connection.cursor() as cursor:
                 cursor.execute(query)
                 results = cursor.fetchall()
                 
-                # Load event category codes
+                # Organize codes by type
+                type_counts = {}
                 for row in results:
-                    code, desc, code_type = row
-                    self.code_dict[code] = desc
-                        
-                        
-            logger.info(f"Loaded {len(self.code_dict)} event codes from {catalog}.{schema}.{table}")
+                    code_type, code, description, usage_count = row
+                    
+                    # Track counts by type
+                    if code_type not in type_counts:
+                        type_counts[code_type] = 0
+                    type_counts[code_type] += 1
+                    
+                    # Store in appropriate dictionary
+                    if code_type == 'event_category':
+                        self.db_event_codes[code] = description
+                        # Also update main code_dict for backward compatibility
+                        self.code_dict[code] = description
+                    elif code_type == 'relationship_type':
+                        self.db_relationship_types[code] = description
+                    elif code_type == 'event_subcategory':
+                        self.db_event_subcategories[code] = description
+                    elif code_type == 'entity_attribute':
+                        self.db_entity_attributes[code] = description
+                    elif code_type in ['pep_level', 'pep_type']:
+                        self.db_pep_codes[code] = description
+                    elif code_type in ['risk_category', 'risk_type']:
+                        self.db_risk_codes[code] = description
+                
+                # Log loading summary
+                total_loaded = sum(type_counts.values())
+                logger.info(f"✅ Loaded {total_loaded} codes from database:")
+                for code_type, count in type_counts.items():
+                    logger.info(f"   - {code_type}: {count} codes")
+                
+                # Update hardcoded dictionaries with database values (preserve existing + add new)
+                self._merge_database_codes()
+                
+                logger.info(f"🔄 Merged database codes with existing dictionaries")
+                
         except Exception as e:
-            logger.error(f"Failed to load code dictionary: {e}")
+            logger.error(f"❌ Failed to load database code dictionaries: {e}")
+            # Ensure we still have the hardcoded fallbacks
+            if not hasattr(self, 'code_dict'):
+                self.code_dict = {}
+    
+    def _merge_database_codes(self):
+        """Merge database codes with existing hardcoded dictionaries"""
+        try:
+            # Merge risk codes (database takes precedence)
+            if hasattr(self, 'db_risk_codes'):
+                original_count = len(self.risk_codes)
+                self.risk_codes.update(self.db_risk_codes)
+                logger.info(f"   Risk codes: {original_count} → {len(self.risk_codes)} (+{len(self.risk_codes) - original_count} from DB)")
+            
+            # Merge PEP codes (database takes precedence)
+            if hasattr(self, 'db_pep_codes'):
+                original_count = len(self.pep_levels)
+                self.pep_levels.update(self.db_pep_codes)
+                logger.info(f"   PEP codes: {original_count} → {len(self.pep_levels)} (+{len(self.pep_levels) - original_count} from DB)")
+            
+            # Add missing codes that were found in debug but not in database
+            missing_risk_codes = {
+                'AST': 'Assault, Battery',
+                'MUR': 'Murder, Manslaughter (Committed, Planned or Attempted)',
+                'TFT': 'Theft (Larceny, Misappropriation, Embezzlement, Extortion)',
+                'REG': 'Regulatory Violation',
+                'OTHER': 'Other Risk Category'
+            }
+            
+            added_count = 0
+            for code, desc in missing_risk_codes.items():
+                if code not in self.risk_codes:
+                    self.risk_codes[code] = desc
+                    added_count += 1
+            
+            if added_count > 0:
+                logger.info(f"   Added {added_count} missing risk codes from debug analysis")
+                
+        except Exception as e:
+            logger.error(f"Error merging database codes: {e}")
     
     def get_event_description(self, event_code, event_subcode=None):
-        """Get comprehensive event description with multiple fallback layers"""
-        # Try external database-driven system first
-        if get_event_description is not None:
-            db_description = get_event_description(event_code, event_subcode)
-            if db_description != f"Event {event_code}":  # Not the fallback
-                return db_description
+        """Get comprehensive event description with database-driven multi-layer fallback"""
+        if not event_code:
+            return "Unknown"
         
-        # Try database-loaded code dictionary
+        # Layer 1: Database-loaded event codes (highest priority)
+        if hasattr(self, 'db_event_codes') and event_code in self.db_event_codes:
+            description = self.db_event_codes[event_code]
+            if event_subcode and hasattr(self, 'db_event_subcategories') and event_subcode in self.db_event_subcategories:
+                return f"{description} - {self.db_event_subcategories[event_subcode]}"
+            return description
+        
+        # Layer 2: Database-loaded risk codes
+        if hasattr(self, 'db_risk_codes') and event_code in self.db_risk_codes:
+            return self.db_risk_codes[event_code]
+        
+        # Layer 3: Main code dictionary (loaded from database)
         if hasattr(self, 'code_dict') and event_code in self.code_dict:
             return self.code_dict[event_code]
         
-        # Try hardcoded dictionary
+        # Layer 4: Hardcoded risk codes (legacy fallback)
         if event_code in self.risk_codes:
             return self.risk_codes[event_code]
         
-        # Final fallback
+        # Layer 5: Final fallback
         return f"Event {event_code}" + (f" - {event_subcode}" if event_subcode else "")
     
     def get_pep_description(self, pep_code):
-        """Get PEP level description"""
+        """Get PEP level description with database-driven fallback"""
+        if not pep_code:
+            return "Unknown"
+        
+        # Layer 1: Database-loaded PEP codes (highest priority)
+        if hasattr(self, 'db_pep_codes') and pep_code in self.db_pep_codes:
+            return self.db_pep_codes[pep_code]
+        
+        # Layer 2: Hardcoded PEP levels (legacy fallback)
         return self.pep_levels.get(pep_code, pep_code)
+    
+    def get_relationship_description(self, rel_type):
+        """Get relationship type description with database-driven fallback"""
+        if not rel_type:
+            return "Unknown"
+        
+        # Layer 1: Database-loaded relationship types (highest priority)
+        if hasattr(self, 'db_relationship_types') and rel_type in self.db_relationship_types:
+            return self.db_relationship_types[rel_type]
+        
+        # Layer 2: Basic fallback
+        return rel_type.replace('_', ' ').title()
+    
+    def get_entity_attribute_description(self, attr_code):
+        """Get entity attribute description with database-driven fallback"""
+        if not attr_code:
+            return "Unknown"
+        
+        # Layer 1: Database-loaded entity attributes (highest priority)
+        if hasattr(self, 'db_entity_attributes') and attr_code in self.db_entity_attributes:
+            return self.db_entity_attributes[attr_code]
+        
+        # Layer 2: Basic fallback
+        return attr_code.replace('_', ' ').title()
+    
+    def refresh_code_dictionaries(self):
+        """Refresh code dictionaries from database (for periodic cache updates)"""
+        try:
+            logger.info("🔄 Refreshing code dictionaries from database...")
+            self.load_all_code_dictionaries()
+            logger.info("✅ Code dictionaries refreshed successfully")
+        except Exception as e:
+            logger.error(f"❌ Failed to refresh code dictionaries: {e}")
+    
+    def get_database_code_statistics(self):
+        """Get statistics about loaded database codes"""
+        stats = {
+            'event_codes': len(getattr(self, 'db_event_codes', {})),
+            'risk_codes': len(getattr(self, 'db_risk_codes', {})),
+            'pep_codes': len(getattr(self, 'db_pep_codes', {})),
+            'relationship_types': len(getattr(self, 'db_relationship_types', {})),
+            'event_subcategories': len(getattr(self, 'db_event_subcategories', {})),
+            'entity_attributes': len(getattr(self, 'db_entity_attributes', {})),
+            'total_hardcoded_risk': len(self.risk_codes),
+            'total_hardcoded_pep': len(self.pep_levels),
+            'main_code_dict': len(getattr(self, 'code_dict', {}))
+        }
+        return stats
     
     def register_search_update_callback(self, callback):
         """Register a callback to be notified when search results change"""
