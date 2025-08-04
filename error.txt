@@ -1,585 +1,294 @@
-ategory_code': 'CHG', 'event_date': '2020-11-19', 'event_description_short': 'Hunter Biden was under the spotlight after being charged with receiving $3.5 million from Elena Baturina, second wife of former Moscow mayor Yuri Luzhkov, who is reported to have closed illegal constr', 'created_date': '11/20/2020', 'modified_date': '11/20/2020', 'publish_date': '11/19/2020', 'source_name': 'Acquire Media Article - 3c0731fa4e691078e4e8cd376258c4a83affb9fb', 'source_type': 'Media', 'source_publication': 'PanAm Post (Latin America) (Spanish)', 'source_publisher': 'ContentEngine, LLC', 'source_key': '3c0731fa4e691078e4e8cd376258c4a83affb9fb'}, {'event_category_code': 'BRB', 'event_sub_category_code': 'ACQ', 'event_date': '2019-10-14', 'event_description_short': "Ukraine oil and gas major Burisma facing a corruption investigation appointed  Joe Biden's lawyer and venture capitalist son Hunter as an independent director at $50,000 per month. Both Burisma and Hu", 'created_date': '10/14/2019', 'modified_date': '10/14/2019', 'publish_date': '10/14/2019', 'source_name': 'NewsBank Article - 176903BDDFD50C40', 'source_type': 'Media', 'source_publication': 'IANS-English (India)', 'source_publisher': 'IANS-English (India)', 'source_key': '176903BDDFD50C40'}, {'event_category_code': 'IGN', 'event_sub_category_code': 'DMS', 'event_date': '2023-07-13', 'event_description_short': 'In the midst of these wild accusations, Hunter Biden was indicted by a grand jury prosecuted by the DOJ. He agreed to plead guilty to two misdemeanor counts of willfully failing to pay federal taxes. ', 'created_date': '07/14/2023', 'modified_date': '07/20/2023', 'publish_date': '07/13/2023', 'source_name': 'NewsBank Article - 192C4DDBDFF9B6F8', 'source_type': 'Media', 'source_publication': 'State Journal, The (Frankfort, KY)', 'source_publisher': 'State Journal, The (Frankfort, KY)', 'source_key': '192C4DDBDFF9B6F8'}, {'event_category_code': 'TAX', 'event_sub_category_code': 'DMS', 'event_date': '2023-08-18', 'event_description_short': "Hunter Biden's tax charges have been dismissed by a federal judge after his so-called 'sweetheart' plea deal dramatically fell through. The dismissed charges were two tax misdemeanors for failing to p", 'created_date': '08/18/2023', 'modified_date': '08/24/2023', 'publish_date': '08/18/2023', 'source_name': 'NewsBank Article - 1937BF0AF5D7AD18', 'source_type': 'Media', 'source_publication': 'MailOnline (London, England)', 'source_publisher': 'MailOnline (London, England)', 'source_key': '1937BF0AF5D7AD18'}, {'event_category_code': 'SEX', 'event_sub_category_code': 'CVT', 'event_date': '2024-12-05', 'event_description_short': 'Hunter Biden was charged with that crime and convicted bought a gun without disclosing that he had a drug problem, has 34 felony convictions, was convicted of sexual assault and incited that insurrect', 'created_date': '12/06/2024', 'modified_date': '01/01/2025', 'publish_date': '12/05/2024', 'source_name': 'NewsBank Article - 19D486145A6654D0', 'source_type': 'Media', 'source_publication': 'Republican, The: Web Edition Articles (Springfield, MA)', 'source_publisher': 'Republican, The: Web Edition Articles (Springfield, MA)', 'source_key': '19D486145A6654D0'}, {'event_category_code': 'PEP', 'event_sub_category_code': 'ASC', 'event_date': '2021-01-07', 'event_description_short': 'This entity appears on the Public Register of Domestic Politically Exposed Persons of Ukraine.', 'created_date': '03/19/2019', 'modified_date': '07/19/2025', 'publish_date': '07/17/2025', 'source_name': 'Ukraine - Public Register - Politically Exposed Persons', 'source_type': 'PEP_Connect', 'source_key': 'ua_public_register_peps'}, {'event_category_code': 'TAX', 'event_sub_category_code': 'ACQ', 'event_date': '2024-12-12', 'event_description_short': 'Hunter Biden was convicted of gun and tax charges.', 'created_date': '12/12/2024', 'modified_date': '12/13/2024', 'publish_date': '12/12/2024', 'source_name': 'Acquire Media Article - 6678ebdc8e889ca8684eaedf0f051694b3c6d63e', 'source_type': 'Media', 'source_publication': 'AFP World News', 'source_publisher': 'Agence France Presse', 'source_key': '6678ebdc8e889ca8684eaedf0f051694b3c6d63e'}, {'event_category_code': 'IGN', 'event_sub_category_code': 'ACQ', 'event_date': '2024-12-12', 'event_description_short': 'Hunter Biden was convicted of gun and tax charges.', 'created_date': '12/12/2024', 'modified_date': '12/13/2024', 'publish_date': '12/12/2024', 'source_name': 'Acquire Media Article - 6678ebdc8e889ca8684eaedf0f051694b3c6d63e', 'source_type': 'Media', 'source_publication': 'AFP World News', 'source_publisher': 'Agence France Presse', 'source_key': '6678ebdc8e889ca8684eaedf0f051694b3c6d63e'}, {'event_category_code': 'FRD', 'event_sub_category_code': 'SET', 'event_date': '2008-08-24', 'event_description_short': 'lawsuits of defrauding a former business partner and an investor of millions of dollars in a hedge fund deal that went sour', 'created_date': '08/26/2008', 'modified_date': '12/21/2017', 'publish_date': '08/24/2008', 'source_name': 'Factiva Article - NFLK000020080824e48o0006f', 'source_type': 'Media', 'source_publication': 'The Virginian-Pilot(Norfolk, Va.)', 'source_key': 'NFLK000020080824e48o0006f'}, {'event_category_code': 'ORG', 'event_sub_category_code': 'ASC', 'event_date': '2020-09-24', 'event_description_short': 'Hunter Biden linked to prostitution or human trafficking ring. The New York Post reports Hunter Biden allegedly sent "thousands of dollars" to people who appear to be involved in the sex industry, acc', 'created_date': '09/24/2020', 'modified_date': '09/24/2020', 'publish_date': '09/24/2020', 'source_name': 'Acquire Media Article - afe5993ef02afcc6f7984d2f3c9060e49ccb0b7c', 'source_type': 'Media', 'source_publication': 'Arutz Sheva (Israel)', 'source_publisher': 'SyndiGate Media Inc.', 'source_key': 'afe5993ef02afcc6f7984d2f3c9060e49ccb0b7c'}, {'event_category_code': 'FRD', 'event_sub_category_code': 'PLE', 'event_date': '2023-06-20', 'event_description_short': 'Hunter Biden, son of U.S. President Joe Biden, pleaded guilty to fraud and carrying weapons. We tell you what happened. Today, Tuesday, June 20, the U.S. Department of Justice announced that Hunter Bi', 'created_date': '06/20/2023', 'modified_date': '06/21/2023', 'publish_date': '06/20/2023', 'source_name': 'Acquire Media Article - 8324aa316da3f787b927744866526619e8c239c2', 'source_type': 'Media', 'source_publication': 'CE Noticias Financieras (Latin America)', 'source_publisher': 'ContentEngine, LLC', 'source_key': '8324aa316da3f787b927744866526619e8c239c2'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2022-03-15', 'event_description_short': 'This entity appears on The Ministry of Foreign Affairs of the Russian Federation - News section for receiving a personal sanction.', 'created_date': '03/15/2022', 'modified_date': '06/07/2025', 'publish_date': '06/06/2025', 'source_name': 'Russian Federation Ministry of Foreign Affairs - Sanctions', 'source_type': 'Web', 'source_key': 'ru_mfa_sanctions'}], 'event_count': 25, 'event_codes': ['PRJ', 'IGN', 'SEX', 'SEC', 'DPS', 'WLT', 'ORG', 'PEP', 'TAX', 'BRB', 'FRD'], 'critical_events_count': 25, 'critical_events': [{'event_category_code': 'DPS', 'event_sub_category_code': 'CVT', 'event_date': '2020-08-28', 'event_description_short': "Ashley and Hunter Biden, both of whom are the children of the presidential candidate, have drug-related arrests on their record. Joe Biden's brother, Frank Biden, has also been arrested multiple times", 'created_date': '08/28/2020', 'modified_date': '08/28/2020', 'publish_date': '08/28/2020', 'source_name': 'Acquire Media Article - 2b53a867fcf31214ad06fdd40e0d559a406c7d96', 'source_type': 'Media', 'source_publication': 'Examiner, The (Washington, DC)', 'source_publisher': 'Proquest LLC', 'source_key': '2b53a867fcf31214ad06fdd40e0d559a406c7d96'}, {'event_category_code': 'FRD', 'event_sub_category_code': 'IND', 'event_date': '2024-01-11', 'event_description_short': 'Hunter Biden was indicted on nine counts related to a Justice Department investigation into his taxes, which marks the second indictment against him. The charges include failure to file and pay taxes,', 'created_date': '01/11/2024', 'modified_date': '01/12/2024', 'publish_date': '01/11/2024', 'source_name': 'Acquire Media Article - c9f1c10bb3f03e5cdbe8afaa1c42786acc0eb60e', 'source_type': 'Media', 'source_publication': "People's Daily Online (China)", 'source_publisher': 'Proquest LLC', 'source_key': 'c9f1c10bb3f03e5cdbe8afaa1c42786acc0eb60e'}, {'event_category_code': 'BRB', 'event_sub_category_code': 'ASC', 'event_date': '2023-03-18', 'event_description_short': "Wsj.com listed an article on 18 March 2023, re: Drawing from a bank subpoena, the House Oversight Committee released a memo that said the president's family indirectly received money from a Chinese oi", 'created_date': '05/10/2017', 'modified_date': '07/30/2025', 'publish_date': '07/10/2025', 'source_name': 'Global Online Media', 'source_type': 'Web', 'source_key': 'special_media_2'}, {'event_category_code': 'BRB', 'event_sub_category_code': 'ASC', 'event_date': '2023-02-04', 'event_description_short': "Wsj.com listed an article on 4 February 2023, re: House Republicans, meanwhile, are delving into the university's donations from China among other matters in what they cast as a national-security prob", 'created_date': '05/10/2017', 'modified_date': '07/30/2025', 'publish_date': '07/10/2025', 'source_name': 'Global Online Media', 'source_type': 'Web', 'source_key': 'special_media_2'}, {'event_category_code': 'BRB', 'event_sub_category_code': 'ASC', 'event_date': '2019-05-07', 'event_description_short': 'Bloomberg.com listed an article on 7 May 2019, re: A prosecutor had been investigating Burisma Holdings, where Hunter Biden, sat on the board and received substantial compensation.', 'created_date': '05/10/2017', 'modified_date': '07/30/2025', 'publish_date': '07/10/2025', 'source_name': 'Global Online Media', 'source_type': 'Web', 'source_key': 'special_media_2'}, {'event_category_code': 'SEC', 'event_sub_category_code': 'ASC', 'event_date': '2020-10-08', 'event_description_short': 'Wsj.com listed an article on 8 October 2020, re: The conviction of Devon Archer was reinstated by the court. He was convicted of securities fraud and conspiracy charges. A three-judge panel of the U.S', 'created_date': '05/10/2017', 'modified_date': '07/30/2025', 'publish_date': '07/10/2025', 'source_name': 'Global Online Media', 'source_type': 'Web', 'source_key': 'special_media_2'}, {'event_category_code': 'PEP', 'event_sub_category_code': 'ASC', 'event_date': '2025-07-15', 'event_description_short': 'On List [PEP Connect - United States]', 'created_date': '07/25/2011', 'modified_date': '08/03/2025', 'publish_date': '08/03/2025', 'source_name': 'PEP Connect - United States', 'source_type': 'PEP_Connect', 'source_key': 'pep_connect_us'}, {'event_category_code': 'TAX', 'event_sub_category_code': 'ASC', 'event_date': '2023-01-16', 'event_description_short': 'Ifeng News listed an article on February 16, 2023, re: Hunter Biden, son of U.S. President Joe Biden, was reported that federal prosecutors will likely soon decide whether to charge Hunt with tax crim', 'created_date': '05/13/2015', 'modified_date': '08/03/2025', 'publish_date': '07/31/2025', 'source_name': 'Global Online Media (Chinese Media)', 'source_type': 'Web', 'source_key': 'special_media_chinese'}, {'event_category_code': 'PRJ', 'event_sub_category_code': 'ACQ', 'event_date': '2024-12-02', 'event_description_short': 'U.S. President Joe Biden said on Sunday he had pardoned his son, Hunter Biden, who pleaded guilty to tax violations and was convicted on firearms-related charges. The grant of clemency said Biden had ', 'created_date': '12/02/2024', 'modified_date': '12/02/2024', 'publish_date': '12/02/2024', 'source_name': 'Acquire Media Article - 8e2261763f904138923714a5c8e91dda95e96573', 'source_type': 'Media', 'source_publication': 'Hiru News (Sri Lanka)', 'source_publisher': 'HT Media Ltd.', 'source_key': '8e2261763f904138923714a5c8e91dda95e96573'}, {'event_category_code': 'TAX', 'event_sub_category_code': 'CVT', 'event_date': '2025-01-17', 'event_description_short': 'Hunter Biden issuing a full and unconditional pardon over federal gun and tax crimes.', 'created_date': '01/17/2025', 'modified_date': '01/22/2025', 'publish_date': '01/17/2025', 'source_name': 'Acquire Media Article - 77abd78e4582f177a1e7dc594d7a9a0724b58e4e', 'source_type': 'Media', 'source_publication': 'Idaho Capital Sun', 'source_publisher': 'ACI Information Group', 'source_key': '77abd78e4582f177a1e7dc594d7a9a0724b58e4e'}, {'event_category_code': 'IGN', 'event_sub_category_code': 'CVT', 'event_date': '2025-01-17', 'event_description_short': 'Hunter Biden issuing a full and unconditional pardon over federal gun and tax crimes.', 'created_date': '01/17/2025', 'modified_date': '01/22/2025', 'publish_date': '01/17/2025', 'source_name': 'Acquire Media Article - 77abd78e4582f177a1e7dc594d7a9a0724b58e4e', 'source_type': 'Media', 'source_publication': 'Idaho Capital Sun', 'source_publisher': 'ACI Information Group', 'source_key': '77abd78e4582f177a1e7dc594d7a9a0724b58e4e'}, {'event_category_code': 'PRJ', 'event_sub_category_code': 'TRL', 'event_date': '2024-06-05', 'event_description_short': 'Chinese Television System listed an article on June 6, 2024, re: Hunter Biden stood on trial for illegally possessing weapons and falsely reporting the purchase of a gun. Reportedly, Hunter lied to a ', 'created_date': '08/08/2024', 'modified_date': '08/03/2025', 'publish_date': '08/01/2025', 'source_name': 'Global Online Media (Chinese Media Backfill)', 'source_type': 'Web', 'source_key': 'special_media_chinese_backfill'}, {'event_category_code': 'PRJ', 'event_sub_category_code': 'TRL', 'event_date': '2024-06-04', 'event_description_short': 'World Journal listed an article on June 5, 2024, re: Hunter Biden stood on trial for illegally possessing weapons and falsely reporting the purchase of a gun. Reportedly, Hunter lied to a federally li', 'created_date': '08/08/2024', 'modified_date': '08/03/2025', 'publish_date': '08/01/2025', 'source_name': 'Global Online Media (Chinese Media Backfill)', 'source_type': 'Web', 'source_key': 'special_media_chinese_backfill'}, {'event_category_code': 'BRB', 'event_sub_category_code': 'CHG', 'event_date': '2020-11-19', 'event_description_short': 'Hunter Biden was under the spotlight after being charged with receiving $3.5 million from Elena Baturina, second wife of former Moscow mayor Yuri Luzhkov, who is reported to have closed illegal constr', 'created_date': '11/20/2020', 'modified_date': '11/20/2020', 'publish_date': '11/19/2020', 'source_name': 'Acquire Media Article - 3c0731fa4e691078e4e8cd376258c4a83affb9fb', 'source_type': 'Media', 'source_publication': 'PanAm Post (Latin America) (Spanish)', 'source_publisher': 'ContentEngine, LLC', 'source_key': '3c0731fa4e691078e4e8cd376258c4a83affb9fb'}, {'event_category_code': 'BRB', 'event_sub_category_code': 'ACQ', 'event_date': '2019-10-14', 'event_description_short': "Ukraine oil and gas major Burisma facing a corruption investigation appointed  Joe Biden's lawyer and venture capitalist son Hunter as an independent director at $50,000 per month. Both Burisma and Hu", 'created_date': '10/14/2019', 'modified_date': '10/14/2019', 'publish_date': '10/14/2019', 'source_name': 'NewsBank Article - 176903BDDFD50C40', 'source_type': 'Media', 'source_publication': 'IANS-English (India)', 'source_publisher': 'IANS-English (India)', 'source_key': '176903BDDFD50C40'}, {'event_category_code': 'IGN', 'event_sub_category_code': 'DMS', 'event_date': '2023-07-13', 'event_description_short': 'In the midst of these wild accusations, Hunter Biden was indicted by a grand jury prosecuted by the DOJ. He agreed to plead guilty to two misdemeanor counts of willfully failing to pay federal taxes. ', 'created_date': '07/14/2023', 'modified_date': '07/20/2023', 'publish_date': '07/13/2023', 'source_name': 'NewsBank Article - 192C4DDBDFF9B6F8', 'source_type': 'Media', 'source_publication': 'State Journal, The (Frankfort, KY)', 'source_publisher': 'State Journal, The (Frankfort, KY)', 'source_key': '192C4DDBDFF9B6F8'}, {'event_category_code': 'TAX', 'event_sub_category_code': 'DMS', 'event_date': '2023-08-18', 'event_description_short': "Hunter Biden's tax charges have been dismissed by a federal judge after his so-called 'sweetheart' plea deal dramatically fell through. The dismissed charges were two tax misdemeanors for failing to p", 'created_date': '08/18/2023', 'modified_date': '08/24/2023', 'publish_date': '08/18/2023', 'source_name': 'NewsBank Article - 1937BF0AF5D7AD18', 'source_type': 'Media', 'source_publication': 'MailOnline (London, England)', 'source_publisher': 'MailOnline (London, England)', 'source_key': '1937BF0AF5D7AD18'}, {'event_category_code': 'SEX', 'event_sub_category_code': 'CVT', 'event_date': '2024-12-05', 'event_description_short': 'Hunter Biden was charged with that crime and convicted bought a gun without disclosing that he had a drug problem, has 34 felony convictions, was convicted of sexual assault and incited that insurrect', 'created_date': '12/06/2024', 'modified_date': '01/01/2025', 'publish_date': '12/05/2024', 'source_name': 'NewsBank Article - 19D486145A6654D0', 'source_type': 'Media', 'source_publication': 'Republican, The: Web Edition Articles (Springfield, MA)', 'source_publisher': 'Republican, The: Web Edition Articles (Springfield, MA)', 'source_key': '19D486145A6654D0'}, {'event_category_code': 'PEP', 'event_sub_category_code': 'ASC', 'event_date': '2021-01-07', 'event_description_short': 'This entity appears on the Public Register of Domestic Politically Exposed Persons of Ukraine.', 'created_date': '03/19/2019', 'modified_date': '07/19/2025', 'publish_date': '07/17/2025', 'source_name': 'Ukraine - Public Register - Politically Exposed Persons', 'source_type': 'PEP_Connect', 'source_key': 'ua_public_register_peps'}, {'event_category_code': 'TAX', 'event_sub_category_code': 'ACQ', 'event_date': '2024-12-12', 'event_description_short': 'Hunter Biden was convicted of gun and tax charges.', 'created_date': '12/12/2024', 'modified_date': '12/13/2024', 'publish_date': '12/12/2024', 'source_name': 'Acquire Media Article - 6678ebdc8e889ca8684eaedf0f051694b3c6d63e', 'source_type': 'Media', 'source_publication': 'AFP World News', 'source_publisher': 'Agence France Presse', 'source_key': '6678ebdc8e889ca8684eaedf0f051694b3c6d63e'}, {'event_category_code': 'IGN', 'event_sub_category_code': 'ACQ', 'event_date': '2024-12-12', 'event_description_short': 'Hunter Biden was convicted of gun and tax charges.', 'created_date': '12/12/2024', 'modified_date': '12/13/2024', 'publish_date': '12/12/2024', 'source_name': 'Acquire Media Article - 6678ebdc8e889ca8684eaedf0f051694b3c6d63e', 'source_type': 'Media', 'source_publication': 'AFP World News', 'source_publisher': 'Agence France Presse', 'source_key': '6678ebdc8e889ca8684eaedf0f051694b3c6d63e'}, {'event_category_code': 'FRD', 'event_sub_category_code': 'SET', 'event_date': '2008-08-24', 'event_description_short': 'lawsuits of defrauding a former business partner and an investor of millions of dollars in a hedge fund deal that went sour', 'created_date': '08/26/2008', 'modified_date': '12/21/2017', 'publish_date': '08/24/2008', 'source_name': 'Factiva Article - NFLK000020080824e48o0006f', 'source_type': 'Media', 'source_publication': 'The Virginian-Pilot(Norfolk, Va.)', 'source_key': 'NFLK000020080824e48o0006f'}, {'event_category_code': 'ORG', 'event_sub_category_code': 'ASC', 'event_date': '2020-09-24', 'event_description_short': 'Hunter Biden linked to prostitution or human trafficking ring. The New York Post reports Hunter Biden allegedly sent "thousands of dollars" to people who appear to be involved in the sex industry, acc', 'created_date': '09/24/2020', 'modified_date': '09/24/2020', 'publish_date': '09/24/2020', 'source_name': 'Acquire Media Article - afe5993ef02afcc6f7984d2f3c9060e49ccb0b7c', 'source_type': 'Media', 'source_publication': 'Arutz Sheva (Israel)', 'source_publisher': 'SyndiGate Media Inc.', 'source_key': 'afe5993ef02afcc6f7984d2f3c9060e49ccb0b7c'}, {'event_category_code': 'FRD', 'event_sub_category_code': 'PLE', 'event_date': '2023-06-20', 'event_description_short': 'Hunter Biden, son of U.S. President Joe Biden, pleaded guilty to fraud and carrying weapons. We tell you what happened. Today, Tuesday, June 20, the U.S. Department of Justice announced that Hunter Bi', 'created_date': '06/20/2023', 'modified_date': '06/21/2023', 'publish_date': '06/20/2023', 'source_name': 'Acquire Media Article - 8324aa316da3f787b927744866526619e8c239c2', 'source_type': 'Media', 'source_publication': 'CE Noticias Financieras (Latin America)', 'source_publisher': 'ContentEngine, LLC', 'source_key': '8324aa316da3f787b927744866526619e8c239c2'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2022-03-15', 'event_description_short': 'This entity appears on The Ministry of Foreign Affairs of the Russian Federation - News section for receiving a personal sanction.', 'created_date': '03/15/2022', 'modified_date': '06/07/2025', 'publish_date': '06/06/2025', 'source_name': 'Russian Federation Ministry of Foreign Affairs - Sanctions', 'source_type': 'Web', 'source_key': 'ru_mfa_sanctions'}], 'latest_event_date': '2025-07-15', 'primary_country': 'UNITED STATES', 'primary_city': None, 'country': 'UNITED STATES', 'addresses': [{'address_country': 'UNITED STATES'}], 'aliases': ['Joe Biden', 'Baiden Hanter', 'Байден Хантер', 'Хантер Байден', 'Robert Hunter Biden', 'Robert H. Biden', 'Hunter Biden Jnr', 'R. Hunter Biden', '杭特‧拜登', '亨特‧拜登', '韓特．拜登'], 'key_aliases': [{'alias_name': 'Joe Biden', 'alias_code_type': 'AKA'}, {'alias_name': 'Baiden Hanter', 'alias_code_type': 'AKA'}, {'alias_name': 'Байден Хантер', 'alias_code_type': 'AKA'}, {'alias_name': 'Хантер Байден', 'alias_code_type': 'LOC'}, {'alias_name': 'Robert Hunter Biden', 'alias_code_type': 'AKA'}, {'alias_name': 'Robert H. Biden', 'alias_code_type': 'AKA'}, {'alias_name': 'Hunter Biden Jnr', 'alias_code_type': 'AKA'}, {'alias_name': 'R. Hunter Biden', 'alias_code_type': 'AKA'}, {'alias_name': '杭特‧拜登', 'alias_code_type': 'AKA'}, {'alias_name': '亨特‧拜登', 'alias_code_type': 'AKA'}, {'alias_name': '韓特．拜登', 'alias_code_type': 'AKA'}], 'alias_count': 11, 'identifications': [], 'relationships': [{'related_entity_id': '254653129', 'related_entity_name': 'Joseph Robinette Biden Junior', 'type': 'SON', 'direction': 'TO'}, {'related_entity_id': '254653133', 'related_entity_name': 'Mikola Vladislavovich Elochevsvkii', 'type': 'ASSOCIATE', 'direction': 'TO'}, {'related_entity_id': '253020326', 'related_entity_name': 'Joseph Robinette Biden Junior', 'type': 'SON', 'direction': 'TO'}, {'related_entity_id': '145818734', 'related_entity_name': 'Alan Bret Apter', 'type': 'ASSOCIATE', 'direction': 'TO'}, {'related_entity_id': '252678268', 'related_entity_name': 'Joseph Robinette Biden III', 'type': 'BROTHER', 'direction': 'TO'}, {'related_entity_id': '254555219', 'related_entity_name': 'National Railroad Passenger Corporation', 'type': 'ASSOCIATE', 'direction': 'TO'}, {'related_entity_id': '251717798', 'related_entity_name': 'Devon Archer', 'type': 'ASSOCIATE', 'direction': 'TO'}, {'related_entity_id': '254173446', 'related_entity_name': 'Mikola Vladislavovich Elochevsvkii', 'type': 'ASSOCIATE', 'direction': 'TO'}, {'related_entity_id': '145796258', 'related_entity_name': 'Aleksandr Kvasnevskyi', 'type': 'ASSOCIATE', 'direction': 'FROM'}], 'sources': [], 'date_of_birth': {'date_of_birth_year': '1970', 'date_of_birth_month': '2', 'date_of_birth_day': '4'}, 'source_count': 0, 'relationship_count': 9, 'bvd_id': '', 'source_item_id': '', 'created_date': datetime.date(2025, 7, 15), 'attributes': [], 'date_of_births': [], 'bvd_mapping': [], 'reverse_relationships': []}
-INFO:__main__:Displaying entity results as cards
-INFO:__main__:Processing 5 results for card display
-INFO:__main__:Card view: Displaying 5 entities (showing up to 50)
-INFO:__main__:Successfully created 5 entity cards
-INFO:hybrid_entity_display:✅ Hybrid entity display created with 5 entities
-INFO:__main__:✅ Hybrid entity display created successfully
-INFO:__main__:Final search criteria: ['entity_name', 'pep_levels', 'pep_ratings', 'risk_score_min', 'risk_score_max'] with logical operator: AND
-INFO:__main__:🔍 DEBUG: search_criteria = {'entity_name': 'hunter biden', 'pep_levels': ['HOS - Head of State', 'FAM - Family Member', 'ASC - Close Associate'], 'pep_ratings': ['A - High Priority', 'B - Medium Priority', 'C - Low Priority', 'D - Minimal Priority'], 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 DEBUG: Converting search_criteria to optimized params: {'entity_name': 'hunter biden', 'pep_levels': ['HOS - Head of State', 'FAM - Family Member', 'ASC - Close Associate'], 'pep_ratings': ['A - High Priority', 'B - Medium Priority', 'C - Low Priority', 'D - Minimal Priority'], 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:__main__:🚀 Using optimized search for 5 parameters
-INFO:optimized_database_queries:🔍 Searching individual tables with prefix: individual
-INFO:optimized_database_queries:🔍 Name search for: 'hunter biden' (length: 12)
-INFO:optimized_database_queries:✅ Added individual name filters for: 'hunter biden'
-INFO:optimized_database_queries:🔍 Query filters count: base=1, performance=2, total=3
-INFO:optimized_database_queries:🔍 Query parameters: ['name_exact', 'name_contains', 'name_starts_with', 'name_ends_with', 'pep_rating_0', 'pep_rating_1', 'pep_rating_2', 'pep_rating_3']
-INFO:optimized_database_queries:🔧 Using config-based events - Critical: 8, High: 10, Medium: 10, Low: 8
-INFO:optimized_database_queries:📋 Query built with 3 filters, limit: 5
-INFO:__main__:🔌 Executing query with connection: True
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Query executed in 16.59s, returned 0 raw results
-WARNING:__main__:⚠️ Query returned no results for params: {'name_exact': 'hunter biden', 'name_contains': '%hunter biden%', 'name_starts_with': 'hunter biden%', 'name_ends_with': '%hunter biden', 'pep_rating_0': 'A - High Priority', 'pep_rating_1': 'B - Medium Priority', 'pep_rating_2': 'C - Low Priority', 'pep_rating_3': 'D - Minimal Priority'}
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 Query returned columns: ['entity_id', 'risk_id', 'entity_name', 'recordDefinitionType', 'systemId', 'entityDate', 'pep_data', 'critical_events', 'primary_address', 'key_aliases', 'relationships', 'date_of_birth', 'calculated_risk_score']
-INFO:optimized_database_queries:🔄 Processing 0 raw results
-WARNING:optimized_database_queries:🔍 No raw results to process
-INFO:__main__:✅ Optimized search returned 0 results
-INFO:__main__:Stored 0 results for client 1eb8a826a867
-INFO:__main__:JSON parsing completed for 0 entities
-INFO:__main__:Notifying 8 callbacks of search update
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:No search data available to load
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:No search data available to load
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:About to display 0 results in UI
-INFO:__main__:Final search criteria: ['pep_levels', 'pep_ratings', 'risk_score_min', 'risk_score_max'] with logical operator: AND
-INFO:__main__:🔍 DEBUG: search_criteria = {'pep_levels': ['HOS - Head of State', 'FAM - Family Member', 'ASC - Close Associate'], 'pep_ratings': ['A - High Priority', 'B - Medium Priority', 'C - Low Priority', 'D - Minimal Priority'], 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 DEBUG: Converting search_criteria to optimized params: {'pep_levels': ['HOS - Head of State', 'FAM - Family Member', 'ASC - Close Associate'], 'pep_ratings': ['A - High Priority', 'B - Medium Priority', 'C - Low Priority', 'D - Minimal Priority'], 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:__main__:🚀 Using optimized search for 4 parameters
-INFO:optimized_database_queries:🔍 Searching individual tables with prefix: individual
-INFO:optimized_database_queries:🔍 Query filters count: base=0, performance=2, total=2
-INFO:optimized_database_queries:🔍 Query parameters: ['pep_rating_0', 'pep_rating_1', 'pep_rating_2', 'pep_rating_3', 'name_exact', 'name_starts_with']
-INFO:optimized_database_queries:🔧 Using config-based events - Critical: 8, High: 10, Medium: 10, Low: 8
-INFO:optimized_database_queries:📋 Query built with 2 filters, limit: 5
-INFO:__main__:🔌 Executing query with connection: True
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Query executed in 15.03s, returned 0 raw results
-WARNING:__main__:⚠️ Query returned no results for params: {'pep_rating_0': 'A - High Priority', 'pep_rating_1': 'B - Medium Priority', 'pep_rating_2': 'C - Low Priority', 'pep_rating_3': 'D - Minimal Priority', 'name_exact': None, 'name_starts_with': None}
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 Query returned columns: ['entity_id', 'risk_id', 'entity_name', 'recordDefinitionType', 'systemId', 'entityDate', 'pep_data', 'critical_events', 'primary_address', 'key_aliases', 'relationships', 'date_of_birth', 'calculated_risk_score']
-INFO:optimized_database_queries:🔄 Processing 0 raw results
-WARNING:optimized_database_queries:🔍 No raw results to process
-INFO:__main__:✅ Optimized search returned 0 results
-INFO:__main__:Stored 0 results for client 6da739948734
-INFO:__main__:JSON parsing completed for 0 entities
-INFO:__main__:Notifying 8 callbacks of search update
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:No search data available to load
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:No search data available to load
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:About to display 0 results in UI
-INFO:__main__:Final search criteria: ['pep_levels', 'pep_ratings', 'risk_score_min', 'risk_score_max'] with logical operator: AND
-INFO:__main__:🔍 DEBUG: search_criteria = {'pep_levels': ['HOS - Head of State'], 'pep_ratings': ['A - High Priority', 'B - Medium Priority', 'C - Low Priority', 'D - Minimal Priority'], 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 DEBUG: Converting search_criteria to optimized params: {'pep_levels': ['HOS - Head of State'], 'pep_ratings': ['A - High Priority', 'B - Medium Priority', 'C - Low Priority', 'D - Minimal Priority'], 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:__main__:🚀 Using optimized search for 4 parameters
-INFO:optimized_database_queries:🔍 Searching individual tables with prefix: individual
-INFO:optimized_database_queries:🔍 Query filters count: base=0, performance=2, total=2
-INFO:optimized_database_queries:🔍 Query parameters: ['pep_rating_0', 'pep_rating_1', 'pep_rating_2', 'pep_rating_3', 'name_exact', 'name_starts_with']
-INFO:optimized_database_queries:🔧 Using config-based events - Critical: 8, High: 10, Medium: 10, Low: 8
-INFO:optimized_database_queries:📋 Query built with 2 filters, limit: 5
-INFO:__main__:🔌 Executing query with connection: True
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Query executed in 15.17s, returned 0 raw results
-WARNING:__main__:⚠️ Query returned no results for params: {'pep_rating_0': 'A - High Priority', 'pep_rating_1': 'B - Medium Priority', 'pep_rating_2': 'C - Low Priority', 'pep_rating_3': 'D - Minimal Priority', 'name_exact': None, 'name_starts_with': None}
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 Query returned columns: ['entity_id', 'risk_id', 'entity_name', 'recordDefinitionType', 'systemId', 'entityDate', 'pep_data', 'critical_events', 'primary_address', 'key_aliases', 'relationships', 'date_of_birth', 'calculated_risk_score']
-INFO:optimized_database_queries:🔄 Processing 0 raw results
-WARNING:optimized_database_queries:🔍 No raw results to process
-INFO:__main__:✅ Optimized search returned 0 results
-INFO:__main__:Stored 0 results for client 6789297b726c
-INFO:__main__:JSON parsing completed for 0 entities
-INFO:__main__:Notifying 8 callbacks of search update
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:No search data available to load
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:No search data available to load
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:About to display 0 results in UI
-INFO:__main__:Final search criteria: ['pep_levels', 'pep_ratings', 'risk_score_min', 'risk_score_max'] with logical operator: OR
-INFO:__main__:🔍 DEBUG: search_criteria = {'pep_levels': ['HOS - Head of State'], 'pep_ratings': ['A - High Priority', 'B - Medium Priority', 'C - Low Priority', 'D - Minimal Priority'], 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 DEBUG: Converting search_criteria to optimized params: {'pep_levels': ['HOS - Head of State'], 'pep_ratings': ['A - High Priority', 'B - Medium Priority', 'C - Low Priority', 'D - Minimal Priority'], 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:__main__:🚀 Using optimized search for 4 parameters
-INFO:optimized_database_queries:🔍 Searching individual tables with prefix: individual
-INFO:optimized_database_queries:🔍 Query filters count: base=0, performance=2, total=2
-INFO:optimized_database_queries:🔍 Query parameters: ['pep_rating_0', 'pep_rating_1', 'pep_rating_2', 'pep_rating_3', 'name_exact', 'name_starts_with']
-INFO:optimized_database_queries:🔧 Using config-based events - Critical: 8, High: 10, Medium: 10, Low: 8
-INFO:optimized_database_queries:📋 Query built with 2 filters, limit: 5
-INFO:__main__:🔌 Executing query with connection: True
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Query executed in 0.67s, returned 0 raw results
-WARNING:__main__:⚠️ Query returned no results for params: {'pep_rating_0': 'A - High Priority', 'pep_rating_1': 'B - Medium Priority', 'pep_rating_2': 'C - Low Priority', 'pep_rating_3': 'D - Minimal Priority', 'name_exact': None, 'name_starts_with': None}
-INFO:__main__:🔍 Query returned columns: ['entity_id', 'risk_id', 'entity_name', 'recordDefinitionType', 'systemId', 'entityDate', 'pep_data', 'critical_events', 'primary_address', 'key_aliases', 'relationships', 'date_of_birth', 'calculated_risk_score']
-INFO:optimized_database_queries:🔄 Processing 0 raw results
-WARNING:optimized_database_queries:🔍 No raw results to process
-INFO:__main__:✅ Optimized search returned 0 results
-INFO:__main__:Stored 0 results for client dbf5306fd092
-INFO:__main__:JSON parsing completed for 0 entities
-INFO:__main__:Notifying 8 callbacks of search update
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:No search data available to load
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:No search data available to load
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:About to display 0 results in UI
-INFO:__main__:Final search criteria: ['pep_levels', 'pep_ratings', 'risk_score_min', 'risk_score_max'] with logical operator: OR
-INFO:__main__:🔍 DEBUG: search_criteria = {'pep_levels': ['HOS - Head of State'], 'pep_ratings': ['A - High Priority'], 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 DEBUG: Converting search_criteria to optimized params: {'pep_levels': ['HOS - Head of State'], 'pep_ratings': ['A - High Priority'], 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:__main__:🚀 Using optimized search for 4 parameters
-INFO:optimized_database_queries:🔍 Searching individual tables with prefix: individual
-INFO:optimized_database_queries:🔍 Query filters count: base=0, performance=2, total=2
-INFO:optimized_database_queries:🔍 Query parameters: ['pep_rating_0', 'name_exact', 'name_starts_with']
-INFO:optimized_database_queries:🔧 Using config-based events - Critical: 8, High: 10, Medium: 10, Low: 8
-INFO:optimized_database_queries:📋 Query built with 2 filters, limit: 5
-INFO:__main__:🔌 Executing query with connection: True
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Query executed in 14.77s, returned 0 raw results
-WARNING:__main__:⚠️ Query returned no results for params: {'pep_rating_0': 'A - High Priority', 'name_exact': None, 'name_starts_with': None}
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 Query returned columns: ['entity_id', 'risk_id', 'entity_name', 'recordDefinitionType', 'systemId', 'entityDate', 'pep_data', 'critical_events', 'primary_address', 'key_aliases', 'relationships', 'date_of_birth', 'calculated_risk_score']
-INFO:optimized_database_queries:🔄 Processing 0 raw results
-WARNING:optimized_database_queries:🔍 No raw results to process
-INFO:__main__:✅ Optimized search returned 0 results
-INFO:__main__:Stored 0 results for client d1757747a98d
-INFO:__main__:JSON parsing completed for 0 entities
-INFO:__main__:Notifying 8 callbacks of search update
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:No search data available to load
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:No search data available to load
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:About to display 0 results in UI
-INFO:__main__:Final search criteria: ['event_category', 'event_sub_category', 'risk_score_min', 'risk_score_max'] with logical operator: OR
-INFO:__main__:🔍 DEBUG: search_criteria = {'event_category': 'WLT', 'event_sub_category': 'SAN', 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 DEBUG: Converting search_criteria to optimized params: {'event_category': 'WLT', 'event_sub_category': 'SAN', 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:__main__:🚀 Using optimized search for 4 parameters
-INFO:optimized_database_queries:🔍 Searching individual tables with prefix: individual
-INFO:optimized_database_queries:🔍 Query filters count: base=0, performance=3, total=3
-INFO:optimized_database_queries:🔍 Query parameters: ['event_category_single', 'event_sub_category_pattern', 'name_exact', 'name_starts_with']
-INFO:optimized_database_queries:🔧 Using config-based events - Critical: 8, High: 10, Medium: 10, Low: 8
-INFO:optimized_database_queries:📋 Query built with 3 filters, limit: 5
-INFO:__main__:🔌 Executing query with connection: True
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Query executed in 28.50s, returned 5 raw results
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 Query returned columns: ['entity_id', 'risk_id', 'entity_name', 'recordDefinitionType', 'systemId', 'entityDate', 'pep_data', 'critical_events', 'primary_address', 'key_aliases', 'relationships', 'date_of_birth', 'calculated_risk_score']
-INFO:__main__:🔍 First row data sample - entity_id: 254716553, has events: True
-INFO:optimized_database_queries:🔄 Processing 5 raw results
-INFO:optimized_database_queries:✅ Processed 5 results successfully
-INFO:__main__:✅ Optimized search returned 5 results
-INFO:__main__:Entity 254716553: events_raw=25, bvd_mapping=None
-INFO:__main__:Entity 254716553: First event sample: {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2017-01-12', 'event_description_short': "This individual appears on the United States Treasury Department's Office of Foreign Assets Control (OFAC) SDN List, on the legal basis of Executive Order 13894 (Syria-related), on the legal basis of ", 'created_date': '12/13/2010', 'modified_date': '08/03/2025', 'publish_date': '07/31/2025', 'source_name': 'Treasury Dept. OFAC Specially Designated Nationals List', 'source_type': 'Web', 'source_key': 'OFAC_LIST'}
-INFO:__main__:✅ Using optimized risk score for entity 254716553: 61
-INFO:__main__:✅ Using optimized PEP status for entity 254716553: NOT_PEP
-INFO:__main__:Entity 254716553: events_raw=25, bvd_mapping=None
-INFO:__main__:Entity 254716553: First event sample: {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2017-01-12', 'event_description_short': "This individual appears on the United States Treasury Department's Office of Foreign Assets Control (OFAC) SDN List, on the legal basis of Executive Order 13894 (Syria-related), on the legal basis of ", 'created_date': '12/13/2010', 'modified_date': '08/03/2025', 'publish_date': '07/31/2025', 'source_name': 'Treasury Dept. OFAC Specially Designated Nationals List', 'source_type': 'Web', 'source_key': 'OFAC_LIST'}
-INFO:__main__:✅ Using optimized risk score for entity 254716553: 61
-INFO:__main__:✅ Using optimized PEP status for entity 254716553: NOT_PEP
-INFO:__main__:Entity 254716553: events_raw=25, bvd_mapping=None
-INFO:__main__:Entity 254716553: First event sample: {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2017-01-12', 'event_description_short': "This individual appears on the United States Treasury Department's Office of Foreign Assets Control (OFAC) SDN List, on the legal basis of Executive Order 13894 (Syria-related), on the legal basis of ", 'created_date': '12/13/2010', 'modified_date': '08/03/2025', 'publish_date': '07/31/2025', 'source_name': 'Treasury Dept. OFAC Specially Designated Nationals List', 'source_type': 'Web', 'source_key': 'OFAC_LIST'}
-INFO:__main__:✅ Using optimized risk score for entity 254716553: 61
-INFO:__main__:✅ Using optimized PEP status for entity 254716553: NOT_PEP
-INFO:__main__:Entity 251541160: events_raw=25, bvd_mapping=None
-INFO:__main__:Entity 251541160: First event sample: {'event_category_code': 'ORG', 'event_sub_category_code': 'CVT', 'event_date': '2024-03-31', 'event_description_short': 'Russia\'s most notorious mafia king quietly freed from jail almost four years early -as a "thank you from Vladimir Putin".Crime boss Shakro Molodoyv had the power to disrupt the recruitment of convicts', 'created_date': '03/31/2024', 'modified_date': '04/01/2024', 'publish_date': '03/31/2024', 'source_name': 'Acquire Media Article - 4e8bc00c3661198c0100297fe6963edf07ceeb21', 'source_type': 'Media', 'source_publication': 'Mirror, The (UK)', 'source_publisher': 'NewsBank', 'source_key': '4e8bc00c3661198c0100297fe6963edf07ceeb21'}
-INFO:__main__:✅ Using optimized risk score for entity 251541160: 63
-INFO:__main__:✅ Using optimized PEP status for entity 251541160: NOT_PEP
-INFO:__main__:Entity 248682132: events_raw=5, bvd_mapping=None
-INFO:__main__:Entity 248682132: First event sample: {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2024-11-19', 'event_description_short': "This individual appears on the United States Treasury Department's Office of Foreign Assets Control (OFAC) SDN List, on the legal basis of Executive Order 14059 (Illicit Drugs) and under program ILLIC", 'created_date': '12/13/2010', 'modified_date': '08/03/2025', 'publish_date': '07/31/2025', 'source_name': 'Treasury Dept. OFAC Specially Designated Nationals List', 'source_type': 'Web', 'source_key': 'OFAC_LIST'}
-INFO:__main__:✅ Using optimized risk score for entity 248682132: 62
-INFO:__main__:✅ Using optimized PEP status for entity 248682132: NOT_PEP
-INFO:__main__:Stored 5 results for client 47245d2a4aa2
-INFO:__main__:JSON parsing completed for 5 entities
-INFO:__main__:Notifying 8 callbacks of search update
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:Loaded 5 entities from app_instance.current_results
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:AI Analysis: Updated to 5 search results
-ERROR:__main__:AI Analysis update error: 722
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:SQL Analysis: Updated to 5 search results
-ERROR:__main__:SQL Analysis update error: 791
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:Network Analysis: Updated to 5 search results
-ERROR:__main__:Network Analysis update error: 799
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:Loaded 5 entities from app_instance.current_results
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:AI Analysis: Updated to 5 search results
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:SQL Analysis: Updated to 5 search results
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:Network Analysis: Updated to 5 search results
-INFO:__main__:About to display 5 results in UI
-INFO:__main__:Displaying 5 entities for client 7b8139d5c0b5
-INFO:__main__:Loading hybrid display for 5 entities
-ERROR:__main__:❌ Error in hybrid display: 1006
-ERROR:asyncio:Task exception was never retrieved
-future: <Task finished name='Task-2171' coro=<create_table_interface.<locals>.load_and_display_hybrid_view() done, defined at /Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr3-new-master/main.py:13915> exception=KeyError(1006)>
-Traceback (most recent call last):
-  File "/Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr3-new-master/main.py", line 13930, in load_and_display_hybrid_view
-    display_container.clear()
-  File "/Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr3-new-master/.venv/lib/python3.9/site-packages/nicegui/element.py", line 432, in clear
-    self.client.remove_elements(self.descendants())
-  File "/Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr3-new-master/.venv/lib/python3.9/site-packages/nicegui/client.py", line 314, in remove_elements
-    del self.elements[element.id]
-KeyError: 1006
+-- COMPREHENSIVE DEBUG QUERIES FOR GR3 ENTITY SEARCH
+-- Run these queries to understand the actual data structure and patterns
+-- for all filters including PEP, boolean, and clustering analysis
 
-During handling of the above exception, another exception occurred:
+-- =============================================================================
+-- 1. PEP RATING (PRT) DATA STRUCTURE ANALYSIS
+-- =============================================================================
 
-Traceback (most recent call last):
-  File "/Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr3-new-master/main.py", line 13992, in load_and_display_hybrid_view
-    display_container.clear()
-  File "/Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr3-new-master/.venv/lib/python3.9/site-packages/nicegui/element.py", line 432, in clear
-    self.client.remove_elements(self.descendants())
-  File "/Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr3-new-master/.venv/lib/python3.9/site-packages/nicegui/client.py", line 314, in remove_elements
-    del self.elements[element.id]
-KeyError: 1006
-INFO:__main__:Displaying 5 entities for client 55946a48556f
-INFO:__main__:Loading hybrid display for 5 entities
-INFO:__main__:Creating SQL analysis for 5 results
-INFO:optimized_database_queries:🔍 Searching individual tables with prefix: individual
-INFO:optimized_database_queries:🔍 Name search for: 'Suheil Salman HASSAN' (length: 20)
-INFO:optimized_database_queries:✅ Added individual name filters for: 'Suheil Salman HASSAN'
-INFO:optimized_database_queries:🔍 Query filters count: base=1, performance=0, total=1
-INFO:optimized_database_queries:🔍 Query parameters: ['name_exact', 'name_contains', 'name_starts_with', 'name_ends_with']
-INFO:optimized_database_queries:🔧 Using config-based events - Critical: 8, High: 10, Medium: 10, Low: 8
-INFO:optimized_database_queries:📋 Query built with 1 filters, limit: 500
-INFO:__main__:Parsed results sample: {'entity_id': '254716553', 'risk_id': 'R16839484', 'entity_name': 'Suheil Salman HASSAN', 'entity_type': 'INDIVIDUAL', 'system_id': '3b7c99b50420f4eacf242a016016466d', 'entity_date': datetime.date(2026, 3, 7), 'risk_score': 61, 'risk_level': 'Medium-High', 'risk_severity': 'Valuable', 'calculated_risk_score': 100, 'final_risk_score': 61, 'risk_factors': {'event_risk': 90, 'pep_risk': 50, 'geographic_risk': 10, 'temporal_risk': 0}, 'is_pep': False, 'pep_status': 'NOT_PEP', 'pep_codes': [], 'pep_levels': [], 'pep_descriptions': ['Ali Mhanna SULEIMAN, Associate', 'Associate of AIR FORCE INTELLIGENCE AGENCY', 'Associate of Ali Mhanna SULEIMAN'], 'pep_type': None, 'pep_level': None, 'highest_pep_level': None, 'pep_associations': ['Ali Mhanna SULEIMAN, Associate', 'Associate of AIR FORCE INTELLIGENCE AGENCY', 'Associate of Ali Mhanna SULEIMAN'], 'prt_ratings': [], 'events': [{'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2017-01-12', 'event_description_short': "This individual appears on the United States Treasury Department's Office of Foreign Assets Control (OFAC) SDN List, on the legal basis of Executive Order 13894 (Syria-related), on the legal basis of ", 'created_date': '12/13/2010', 'modified_date': '08/03/2025', 'publish_date': '07/31/2025', 'source_name': 'Treasury Dept. OFAC Specially Designated Nationals List', 'source_type': 'Web', 'source_key': 'OFAC_LIST'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2025-06-23', 'event_description_short': 'Entity appears on the consolidated list of persons, groups and entities subject to EU financial sanctions to help prevent the financing of terrorism.', 'created_date': '12/15/2008', 'modified_date': '08/02/2025', 'publish_date': '08/01/2025', 'source_name': 'EU Consolidated List of Sanctioned Persons, Groups, & Entities', 'source_type': 'Web', 'source_key': 'CFSP_LIST'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2017-04-20', 'event_description_short': "This entity appears on Canada's List of Special Economic Measures Act Sanctions. Under Canada's Special Economic Measures Act, the Governor in Council may order that the property in Canada of a foreig", 'created_date': '11/07/2017', 'modified_date': '07/26/2025', 'publish_date': '07/18/2025', 'source_name': 'Canada Consolidated Autonomous Sanctions List', 'source_type': 'Web', 'source_key': 'canada_sema_sanctions_list'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2014-07-23', 'event_description_short': 'This entity appears on the EU Official Journal sanctions listing concerning restrictive measures in view of the situation in Syria.', 'created_date': '09/03/2015', 'modified_date': '08/02/2025', 'publish_date': '07/30/2025', 'source_name': 'Official Journal of the European Union - EU International, Economic, Military Sanctions', 'source_type': 'Web', 'source_key': 'eur_lex'}, {'event_category_code': 'HUM', 'event_sub_category_code': 'ACC', 'event_date': '2026-03-07', 'event_description_short': 'aawsat.com listed an article on 7 March 2025, re: Suhail al-Hassan.  The armed groups that the Syrian security forces were clashing with in the Latakia countryside were affiliated with the war crimina', 'created_date': '05/12/2015', 'modified_date': '08/01/2025', 'publish_date': '07/18/2025', 'source_name': 'Global Online Media (Arabic Media)', 'source_type': 'Web', 'source_key': 'special_media_arabic'}, {'event_category_code': 'REG', 'event_sub_category_code': 'ACT', 'event_date': '2025-04-09', 'event_description_short': 'This entity appears on the UK Register of Disqualifications published list of directors who fall under the Company Directors Disqualification Act 1986 (Section 7).', 'created_date': '06/09/2014', 'modified_date': '07/29/2025', 'publish_date': '07/15/2025', 'source_name': 'UK Disqualified Directors', 'source_type': 'Web', 'source_key': 'UKDD_LIST'}, {'event_category_code': 'DEN', 'event_sub_category_code': 'ASC', 'event_date': '2017-01-12', 'event_description_short': 'Entity appears on the Excluded Parties List System (EPLS) site.', 'created_date': '02/16/2023', 'modified_date': '08/02/2025', 'publish_date': '05/13/2025', 'source_name': 'US Excluded Parties List System', 'source_type': 'Web', 'source_key': 'us_excluded_parties'}, {'event_category_code': 'HUM', 'event_sub_category_code': 'ACT', 'event_date': '2017-01-12', 'event_description_short': "OFAC is taking action in response to the findings that Syrian regime used industrial chlorine as a weapon against its own people. OFAC is designating 18 senior regime officials connected to Syria's we", 'created_date': '02/05/2025', 'modified_date': '07/30/2025', 'publish_date': '07/16/2025', 'source_name': 'US Treasury Department - Press Releases', 'source_type': 'Web', 'source_key': 'ofac_press_releases'}, {'event_category_code': 'REG', 'event_sub_category_code': 'ACT', 'event_date': '2017-01-12', 'event_description_short': "OFAC is taking action in response to the findings that Syrian regime used industrial chlorine as a weapon against its own people. OFAC is designating 18 senior regime officials connected to Syria's we", 'created_date': '02/05/2025', 'modified_date': '07/30/2025', 'publish_date': '07/16/2025', 'source_name': 'US Treasury Department - Press Releases', 'source_type': 'Web', 'source_key': 'ofac_press_releases'}, {'event_category_code': 'IGN', 'event_sub_category_code': 'ACT', 'event_date': '2017-01-12', 'event_description_short': "OFAC is taking action in response to the findings that Syrian regime used industrial chlorine as a weapon against its own people. OFAC is designating 18 senior regime officials connected to Syria's we", 'created_date': '02/05/2025', 'modified_date': '07/30/2025', 'publish_date': '07/16/2025', 'source_name': 'US Treasury Department - Press Releases', 'source_type': 'Web', 'source_key': 'ofac_press_releases'}, {'event_category_code': 'HUM', 'event_sub_category_code': 'SAN', 'event_date': '2017-01-12', 'event_description_short': 'US sanctions him for his role in three Syrian regime chemical attacks between 2014 and 2015 on people in Talmenes, Qmenas and Sarmin.', 'created_date': '01/13/2017', 'modified_date': '01/14/2017', 'publish_date': '01/12/2017', 'source_name': 'NewsBank Article - 161E0AD177683FF8', 'source_type': 'Media', 'source_publication': 'Kuna News Agency (Safat, Kuwait)', 'source_publisher': 'Kuna News Agency (Safat, Kuwait)', 'source_key': '161E0AD177683FF8'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2025-07-17', 'event_description_short': 'This entity appears on the Monaco National Funds Freeze List.', 'created_date': '01/22/2025', 'modified_date': '08/02/2025', 'publish_date': '07/17/2025', 'source_name': 'Monaco Financial Circuits Information and Control Service - National Asset Freeze List', 'source_type': 'Web', 'source_key': 'all_data_mc_gov_national_asset_freeze_list'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2023-08-02', 'event_description_short': 'This entity appears on the Australia Department of Foreign Affairs and Trade (DFAT) published list of all persons and entities who are subject to targeted financial sanctions under Australian sanction', 'created_date': '12/15/2008', 'modified_date': '08/01/2025', 'publish_date': '07/01/2025', 'source_name': 'Australia DFAT Consolidated Sanctions List', 'source_type': 'Web', 'source_key': 'DFAT_LIST'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2025-06-23', 'event_description_short': "Designated by Regulation 3945, (UE)2025/1256 du 23/06/2025 (UE Violation des droits de l'homme - R (UE) 2020/1998)", 'created_date': '05/09/2015', 'modified_date': '08/02/2025', 'publish_date': '07/31/2025', 'source_name': 'France Directorate General of the Treasury - Terrorism', 'source_type': 'Web', 'source_key': 'all_data_france_directorate_general_treasury_terrorism'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2014-07-22', 'event_description_short': 'Designated by Regulation 169, (UE) 793/2014 du 22/07/2014 (UE Syria - R (UE) 36/2012 ),176, (UE) 2016/1735 du 29/09/2016 (UE Syria - R (UE) 36/2012 ),191, (UE) 2020/716 du 28/05/2020 (UE Syria - R (UE', 'created_date': '05/09/2015', 'modified_date': '08/02/2025', 'publish_date': '07/31/2025', 'source_name': 'France Directorate General of the Treasury - Terrorism', 'source_type': 'Web', 'source_key': 'all_data_france_directorate_general_treasury_terrorism'}, {'event_category_code': 'SNX', 'event_sub_category_code': 'ASC', 'event_date': '2023-08-02', 'event_description_short': "On August 02, 2023, Suhayl Hasan Al Hasan was sanctioned by the Australia Government's Department of Foreign Affairs and Trade (DFAT) pursuant to resolution Autonomous (Syria).", 'created_date': '12/30/2015', 'modified_date': '08/02/2025', 'publish_date': '08/01/2025', 'source_name': 'Sanctions Connect', 'source_type': 'Web', 'source_key': 'sanctions_connect'}, {'event_category_code': 'SNX', 'event_sub_category_code': 'ASC', 'event_date': '2017-04-20', 'event_description_short': 'On April 20, 2017, Suhayl Hasan Al Hasan was sanctioned by the Canadian Government pursuant to subsections 4(1) to (3) of the Special Economic Measures Act under the Special Economic Measures (Syria) ', 'created_date': '12/30/2015', 'modified_date': '08/02/2025', 'publish_date': '08/01/2025', 'source_name': 'Sanctions Connect', 'source_type': 'Web', 'source_key': 'sanctions_connect'}, {'event_category_code': 'SNX', 'event_sub_category_code': 'ASC', 'event_date': '2017-01-12', 'event_description_short': 'On January 12, 2017, Suhayl Hasan Al Hasan was sanctioned by the United States Department of the Treasury\'s Office of Foreign Assets Control (OFAC), pursuant to Executive Order 13338 for "Blocking Pro', 'created_date': '12/30/2015', 'modified_date': '08/02/2025', 'publish_date': '08/01/2025', 'source_name': 'Sanctions Connect', 'source_type': 'Web', 'source_key': 'sanctions_connect'}, {'event_category_code': 'SNX', 'event_sub_category_code': 'ASC', 'event_date': '2014-07-23', 'event_description_short': 'On July 23, 2014, Suhayl Hasan Al Hasan was sanctioned by the UK HMT pursuant to consolidated list of financial sanctions targets in the UK.', 'created_date': '12/30/2015', 'modified_date': '08/02/2025', 'publish_date': '08/01/2025', 'source_name': 'Sanctions Connect', 'source_type': 'Web', 'source_key': 'sanctions_connect'}, {'event_category_code': 'SNX', 'event_sub_category_code': 'ASC', 'event_date': '2014-07-23', 'event_description_short': 'On July 23, 2014, Suhayl Hasan Al Hasan was sanctioned by the European Union (EU) pursuant to implementing Decision 2013/255/CFSP concerning restrictive measures against Syria.', 'created_date': '12/30/2015', 'modified_date': '08/02/2025', 'publish_date': '08/01/2025', 'source_name': 'Sanctions Connect', 'source_type': 'Web', 'source_key': 'sanctions_connect'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2020-12-31', 'event_description_short': 'This entity appears on the UK HM Treasury Office of Financial Sanctions Implementation published list of designations specified under Sanctions Regulations or the Anti-Money Laundering Act 2018.', 'created_date': '03/02/2022', 'modified_date': '07/31/2025', 'publish_date': '07/31/2025', 'source_name': 'UK HM Treasury Sanctions Target List', 'source_type': 'Web', 'source_key': 'uk_hm_sanctions_list'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2020-12-31', 'event_description_short': 'This entity appears on the UK HM Treasury Office of Financial Sanctions Implementation published list of all asset freeze targets.', 'created_date': '12/04/2008', 'modified_date': '07/31/2025', 'publish_date': '07/31/2025', 'source_name': 'UK HM Treasury Financial Sanctions Target List', 'source_type': 'Web', 'source_key': 'UK_SANCTIONS_LIST'}, {'event_category_code': 'REG', 'event_sub_category_code': 'ACT', 'event_date': '2014-07-23', 'event_description_short': 'This entity appears on the Netherlands Bank Enforcement Actions list. The Netherlands Bank informs the public on the status of European and National sanctions.', 'created_date': '09/19/2017', 'modified_date': '08/03/2025', 'publish_date': '08/01/2025', 'source_name': 'Netherlands Bank - Enforcement Actions', 'source_type': 'Web', 'source_key': 'all_data_netherlands_bank_enforcement_actions'}, {'event_category_code': 'HUM', 'event_sub_category_code': 'WTD', 'event_date': '2025-04-28', 'event_description_short': 'Suhail al-Hasan is wanted for potential war crimes and crimes against humanity.', 'created_date': '04/28/2025', 'modified_date': '04/28/2025', 'publish_date': '04/28/2025', 'source_name': 'Acquire Media Article - 079eb100e29ecc6c212ef3163ab3fd712eaccdf9', 'source_type': 'Media', 'source_publication': 'New Arab, The (UK)', 'source_publisher': 'SyndiGate Media Inc.', 'source_key': '079eb100e29ecc6c212ef3163ab3fd712eaccdf9'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2025-06-21', 'event_description_short': 'Entity was found in Switzerland State Secretariat for Economic Affairs (SECO) Sanctions List', 'created_date': '05/02/2014', 'modified_date': '07/30/2025', 'publish_date': '07/11/2025', 'source_name': 'Switzerland State Secretariat for Economic Affairs (SECO) Sanctions List', 'source_type': 'Web', 'source_key': 'all_data_seco'}], 'event_count': 25, 'event_codes': ['DEN', 'IGN', 'REG', 'SNX', 'WLT', 'HUM'], 'critical_events_count': 25, 'critical_events': [{'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2017-01-12', 'event_description_short': "This individual appears on the United States Treasury Department's Office of Foreign Assets Control (OFAC) SDN List, on the legal basis of Executive Order 13894 (Syria-related), on the legal basis of ", 'created_date': '12/13/2010', 'modified_date': '08/03/2025', 'publish_date': '07/31/2025', 'source_name': 'Treasury Dept. OFAC Specially Designated Nationals List', 'source_type': 'Web', 'source_key': 'OFAC_LIST'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2025-06-23', 'event_description_short': 'Entity appears on the consolidated list of persons, groups and entities subject to EU financial sanctions to help prevent the financing of terrorism.', 'created_date': '12/15/2008', 'modified_date': '08/02/2025', 'publish_date': '08/01/2025', 'source_name': 'EU Consolidated List of Sanctioned Persons, Groups, & Entities', 'source_type': 'Web', 'source_key': 'CFSP_LIST'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2017-04-20', 'event_description_short': "This entity appears on Canada's List of Special Economic Measures Act Sanctions. Under Canada's Special Economic Measures Act, the Governor in Council may order that the property in Canada of a foreig", 'created_date': '11/07/2017', 'modified_date': '07/26/2025', 'publish_date': '07/18/2025', 'source_name': 'Canada Consolidated Autonomous Sanctions List', 'source_type': 'Web', 'source_key': 'canada_sema_sanctions_list'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2014-07-23', 'event_description_short': 'This entity appears on the EU Official Journal sanctions listing concerning restrictive measures in view of the situation in Syria.', 'created_date': '09/03/2015', 'modified_date': '08/02/2025', 'publish_date': '07/30/2025', 'source_name': 'Official Journal of the European Union - EU International, Economic, Military Sanctions', 'source_type': 'Web', 'source_key': 'eur_lex'}, {'event_category_code': 'HUM', 'event_sub_category_code': 'ACC', 'event_date': '2026-03-07', 'event_description_short': 'aawsat.com listed an article on 7 March 2025, re: Suhail al-Hassan.  The armed groups that the Syrian security forces were clashing with in the Latakia countryside were affiliated with the war crimina', 'created_date': '05/12/2015', 'modified_date': '08/01/2025', 'publish_date': '07/18/2025', 'source_name': 'Global Online Media (Arabic Media)', 'source_type': 'Web', 'source_key': 'special_media_arabic'}, {'event_category_code': 'REG', 'event_sub_category_code': 'ACT', 'event_date': '2025-04-09', 'event_description_short': 'This entity appears on the UK Register of Disqualifications published list of directors who fall under the Company Directors Disqualification Act 1986 (Section 7).', 'created_date': '06/09/2014', 'modified_date': '07/29/2025', 'publish_date': '07/15/2025', 'source_name': 'UK Disqualified Directors', 'source_type': 'Web', 'source_key': 'UKDD_LIST'}, {'event_category_code': 'DEN', 'event_sub_category_code': 'ASC', 'event_date': '2017-01-12', 'event_description_short': 'Entity appears on the Excluded Parties List System (EPLS) site.', 'created_date': '02/16/2023', 'modified_date': '08/02/2025', 'publish_date': '05/13/2025', 'source_name': 'US Excluded Parties List System', 'source_type': 'Web', 'source_key': 'us_excluded_parties'}, {'event_category_code': 'HUM', 'event_sub_category_code': 'ACT', 'event_date': '2017-01-12', 'event_description_short': "OFAC is taking action in response to the findings that Syrian regime used industrial chlorine as a weapon against its own people. OFAC is designating 18 senior regime officials connected to Syria's we", 'created_date': '02/05/2025', 'modified_date': '07/30/2025', 'publish_date': '07/16/2025', 'source_name': 'US Treasury Department - Press Releases', 'source_type': 'Web', 'source_key': 'ofac_press_releases'}, {'event_category_code': 'REG', 'event_sub_category_code': 'ACT', 'event_date': '2017-01-12', 'event_description_short': "OFAC is taking action in response to the findings that Syrian regime used industrial chlorine as a weapon against its own people. OFAC is designating 18 senior regime officials connected to Syria's we", 'created_date': '02/05/2025', 'modified_date': '07/30/2025', 'publish_date': '07/16/2025', 'source_name': 'US Treasury Department - Press Releases', 'source_type': 'Web', 'source_key': 'ofac_press_releases'}, {'event_category_code': 'IGN', 'event_sub_category_code': 'ACT', 'event_date': '2017-01-12', 'event_description_short': "OFAC is taking action in response to the findings that Syrian regime used industrial chlorine as a weapon against its own people. OFAC is designating 18 senior regime officials connected to Syria's we", 'created_date': '02/05/2025', 'modified_date': '07/30/2025', 'publish_date': '07/16/2025', 'source_name': 'US Treasury Department - Press Releases', 'source_type': 'Web', 'source_key': 'ofac_press_releases'}, {'event_category_code': 'HUM', 'event_sub_category_code': 'SAN', 'event_date': '2017-01-12', 'event_description_short': 'US sanctions him for his role in three Syrian regime chemical attacks between 2014 and 2015 on people in Talmenes, Qmenas and Sarmin.', 'created_date': '01/13/2017', 'modified_date': '01/14/2017', 'publish_date': '01/12/2017', 'source_name': 'NewsBank Article - 161E0AD177683FF8', 'source_type': 'Media', 'source_publication': 'Kuna News Agency (Safat, Kuwait)', 'source_publisher': 'Kuna News Agency (Safat, Kuwait)', 'source_key': '161E0AD177683FF8'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2025-07-17', 'event_description_short': 'This entity appears on the Monaco National Funds Freeze List.', 'created_date': '01/22/2025', 'modified_date': '08/02/2025', 'publish_date': '07/17/2025', 'source_name': 'Monaco Financial Circuits Information and Control Service - National Asset Freeze List', 'source_type': 'Web', 'source_key': 'all_data_mc_gov_national_asset_freeze_list'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2023-08-02', 'event_description_short': 'This entity appears on the Australia Department of Foreign Affairs and Trade (DFAT) published list of all persons and entities who are subject to targeted financial sanctions under Australian sanction', 'created_date': '12/15/2008', 'modified_date': '08/01/2025', 'publish_date': '07/01/2025', 'source_name': 'Australia DFAT Consolidated Sanctions List', 'source_type': 'Web', 'source_key': 'DFAT_LIST'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2025-06-23', 'event_description_short': "Designated by Regulation 3945, (UE)2025/1256 du 23/06/2025 (UE Violation des droits de l'homme - R (UE) 2020/1998)", 'created_date': '05/09/2015', 'modified_date': '08/02/2025', 'publish_date': '07/31/2025', 'source_name': 'France Directorate General of the Treasury - Terrorism', 'source_type': 'Web', 'source_key': 'all_data_france_directorate_general_treasury_terrorism'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2014-07-22', 'event_description_short': 'Designated by Regulation 169, (UE) 793/2014 du 22/07/2014 (UE Syria - R (UE) 36/2012 ),176, (UE) 2016/1735 du 29/09/2016 (UE Syria - R (UE) 36/2012 ),191, (UE) 2020/716 du 28/05/2020 (UE Syria - R (UE', 'created_date': '05/09/2015', 'modified_date': '08/02/2025', 'publish_date': '07/31/2025', 'source_name': 'France Directorate General of the Treasury - Terrorism', 'source_type': 'Web', 'source_key': 'all_data_france_directorate_general_treasury_terrorism'}, {'event_category_code': 'SNX', 'event_sub_category_code': 'ASC', 'event_date': '2023-08-02', 'event_description_short': "On August 02, 2023, Suhayl Hasan Al Hasan was sanctioned by the Australia Government's Department of Foreign Affairs and Trade (DFAT) pursuant to resolution Autonomous (Syria).", 'created_date': '12/30/2015', 'modified_date': '08/02/2025', 'publish_date': '08/01/2025', 'source_name': 'Sanctions Connect', 'source_type': 'Web', 'source_key': 'sanctions_connect'}, {'event_category_code': 'SNX', 'event_sub_category_code': 'ASC', 'event_date': '2017-04-20', 'event_description_short': 'On April 20, 2017, Suhayl Hasan Al Hasan was sanctioned by the Canadian Government pursuant to subsections 4(1) to (3) of the Special Economic Measures Act under the Special Economic Measures (Syria) ', 'created_date': '12/30/2015', 'modified_date': '08/02/2025', 'publish_date': '08/01/2025', 'source_name': 'Sanctions Connect', 'source_type': 'Web', 'source_key': 'sanctions_connect'}, {'event_category_code': 'SNX', 'event_sub_category_code': 'ASC', 'event_date': '2017-01-12', 'event_description_short': 'On January 12, 2017, Suhayl Hasan Al Hasan was sanctioned by the United States Department of the Treasury\'s Office of Foreign Assets Control (OFAC), pursuant to Executive Order 13338 for "Blocking Pro', 'created_date': '12/30/2015', 'modified_date': '08/02/2025', 'publish_date': '08/01/2025', 'source_name': 'Sanctions Connect', 'source_type': 'Web', 'source_key': 'sanctions_connect'}, {'event_category_code': 'SNX', 'event_sub_category_code': 'ASC', 'event_date': '2014-07-23', 'event_description_short': 'On July 23, 2014, Suhayl Hasan Al Hasan was sanctioned by the UK HMT pursuant to consolidated list of financial sanctions targets in the UK.', 'created_date': '12/30/2015', 'modified_date': '08/02/2025', 'publish_date': '08/01/2025', 'source_name': 'Sanctions Connect', 'source_type': 'Web', 'source_key': 'sanctions_connect'}, {'event_category_code': 'SNX', 'event_sub_category_code': 'ASC', 'event_date': '2014-07-23', 'event_description_short': 'On July 23, 2014, Suhayl Hasan Al Hasan was sanctioned by the European Union (EU) pursuant to implementing Decision 2013/255/CFSP concerning restrictive measures against Syria.', 'created_date': '12/30/2015', 'modified_date': '08/02/2025', 'publish_date': '08/01/2025', 'source_name': 'Sanctions Connect', 'source_type': 'Web', 'source_key': 'sanctions_connect'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2020-12-31', 'event_description_short': 'This entity appears on the UK HM Treasury Office of Financial Sanctions Implementation published list of designations specified under Sanctions Regulations or the Anti-Money Laundering Act 2018.', 'created_date': '03/02/2022', 'modified_date': '07/31/2025', 'publish_date': '07/31/2025', 'source_name': 'UK HM Treasury Sanctions Target List', 'source_type': 'Web', 'source_key': 'uk_hm_sanctions_list'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2020-12-31', 'event_description_short': 'This entity appears on the UK HM Treasury Office of Financial Sanctions Implementation published list of all asset freeze targets.', 'created_date': '12/04/2008', 'modified_date': '07/31/2025', 'publish_date': '07/31/2025', 'source_name': 'UK HM Treasury Financial Sanctions Target List', 'source_type': 'Web', 'source_key': 'UK_SANCTIONS_LIST'}, {'event_category_code': 'REG', 'event_sub_category_code': 'ACT', 'event_date': '2014-07-23', 'event_description_short': 'This entity appears on the Netherlands Bank Enforcement Actions list. The Netherlands Bank informs the public on the status of European and National sanctions.', 'created_date': '09/19/2017', 'modified_date': '08/03/2025', 'publish_date': '08/01/2025', 'source_name': 'Netherlands Bank - Enforcement Actions', 'source_type': 'Web', 'source_key': 'all_data_netherlands_bank_enforcement_actions'}, {'event_category_code': 'HUM', 'event_sub_category_code': 'WTD', 'event_date': '2025-04-28', 'event_description_short': 'Suhail al-Hasan is wanted for potential war crimes and crimes against humanity.', 'created_date': '04/28/2025', 'modified_date': '04/28/2025', 'publish_date': '04/28/2025', 'source_name': 'Acquire Media Article - 079eb100e29ecc6c212ef3163ab3fd712eaccdf9', 'source_type': 'Media', 'source_publication': 'New Arab, The (UK)', 'source_publisher': 'SyndiGate Media Inc.', 'source_key': '079eb100e29ecc6c212ef3163ab3fd712eaccdf9'}, {'event_category_code': 'WLT', 'event_sub_category_code': 'SAN', 'event_date': '2025-06-21', 'event_description_short': 'Entity was found in Switzerland State Secretariat for Economic Affairs (SECO) Sanctions List', 'created_date': '05/02/2014', 'modified_date': '07/30/2025', 'publish_date': '07/11/2025', 'source_name': 'Switzerland State Secretariat for Economic Affairs (SECO) Sanctions List', 'source_type': 'Web', 'source_key': 'all_data_seco'}], 'latest_event_date': '2026-03-07', 'primary_country': 'SYRIAN ARAB REPUBLIC', 'primary_city': 'Jableh', 'country': 'SYRIAN ARAB REPUBLIC', 'addresses': [{'address_country': 'SYRIAN ARAB REPUBLIC', 'address_city': 'Jableh', 'address_type': 'birth'}], 'aliases': ['Brigadier General Suhayl HASSAN', 'Lieutenant Colonel Suhayl HASSAN', 'Colonel Suhayl HASAN', 'Suhayl Hasan Al Hasan', 'Souheil al-Hassan', 'Al Nimr i.e Tiger', 'سهيل الحسن', 'Suheil al-Hasan', 'Sohail al-Hassan', 'Salman', 'الحسن النمر', 'الحسن', 'Sohail HASAN', 'Suhail HASAN', 'Suheil HASAN', 'النمر', 'Sohail AL-HASAN', 'Suhail AL-HASAN', 'Suhail AL-HASSAN', 'Suhayl AL-HASSAN', 'Suheil AL-HASSAN', 'AL-NIMR', 'سهيل', 'The TIGER', 'سلمان', 'Tiiger', '»Tigeren«', '"Le Tigre"', "'Tigern'", "‚Tygr'", "‚Tiger'", '«Tigrul»', 'Tigar', '"el Tigre"', '"O Tigre"', 'Тигъра', '"Τίγρης"', "'The Tiger'", 'Suhail', 'Suheil', 'Sohail', 'al-Hasan', 'Hasan', 'Suhail  Hasan', 'Suhail HASSAN', 'Suheil HASSAN', 'Sohail HASSAN', 'سهيل سلمان الحسن', 'Suhail Salman AL-HASAN', 'Suheil Hassan', 'Suhayl Hasan Al-Hasan', 'سهيل سلمان الحسن', 'Suhayl Hasan', 'Suhayl al-Hasan', 'Suhayl', 'al-Hassan', 'Le Tigre', 'Suhayl al-Nimr', 'Suhayl HASSAN'], 'key_aliases': [{'alias_name': 'Brigadier General Suhayl HASSAN', 'alias_code_type': 'AKA'}, {'alias_name': 'Lieutenant Colonel Suhayl HASSAN', 'alias_code_type': 'AKA'}, {'alias_name': 'Colonel Suhayl HASAN', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhayl Hasan Al Hasan', 'alias_code_type': 'AKA'}, {'alias_name': 'Souheil al-Hassan', 'alias_code_type': 'AKA'}, {'alias_name': 'Al Nimr i.e Tiger', 'alias_code_type': 'AKA'}, {'alias_name': 'سهيل الحسن', 'alias_code_type': 'LOC'}, {'alias_name': 'Suheil al-Hasan', 'alias_code_type': 'AKA'}, {'alias_name': 'Sohail al-Hassan', 'alias_code_type': 'AKA'}, {'alias_name': 'Salman', 'alias_code_type': 'AKA'}, {'alias_name': 'الحسن النمر', 'alias_code_type': 'AKA'}, {'alias_name': 'الحسن', 'alias_code_type': 'AKA'}, {'alias_name': 'Sohail HASAN', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhail HASAN', 'alias_code_type': 'AKA'}, {'alias_name': 'Suheil HASAN', 'alias_code_type': 'AKA'}, {'alias_name': 'النمر', 'alias_code_type': 'AKA'}, {'alias_name': 'Sohail AL-HASAN', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhail AL-HASAN', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhail AL-HASSAN', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhayl AL-HASSAN', 'alias_code_type': 'AKA'}, {'alias_name': 'Suheil AL-HASSAN', 'alias_code_type': 'AKA'}, {'alias_name': 'AL-NIMR', 'alias_code_type': 'AKA'}, {'alias_name': 'سهيل', 'alias_code_type': 'AKA'}, {'alias_name': 'The TIGER', 'alias_code_type': 'AKA'}, {'alias_name': 'سلمان', 'alias_code_type': 'AKA'}, {'alias_name': 'Tiiger', 'alias_code_type': 'AKA'}, {'alias_name': '»Tigeren«', 'alias_code_type': 'AKA'}, {'alias_name': '"Le Tigre"', 'alias_code_type': 'AKA'}, {'alias_name': "'Tigern'", 'alias_code_type': 'AKA'}, {'alias_name': "‚Tygr'", 'alias_code_type': 'AKA'}, {'alias_name': "‚Tiger'", 'alias_code_type': 'AKA'}, {'alias_name': '«Tigrul»', 'alias_code_type': 'AKA'}, {'alias_name': 'Tigar', 'alias_code_type': 'AKA'}, {'alias_name': '"el Tigre"', 'alias_code_type': 'AKA'}, {'alias_name': '"O Tigre"', 'alias_code_type': 'AKA'}, {'alias_name': 'Тигъра', 'alias_code_type': 'AKA'}, {'alias_name': '"Τίγρης"', 'alias_code_type': 'AKA'}, {'alias_name': "'The Tiger'", 'alias_code_type': 'AKA'}, {'alias_name': 'Suhail', 'alias_code_type': 'AKA'}, {'alias_name': 'Suheil', 'alias_code_type': 'AKA'}, {'alias_name': 'Sohail', 'alias_code_type': 'AKA'}, {'alias_name': 'al-Hasan', 'alias_code_type': 'AKA'}, {'alias_name': 'Hasan', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhail  Hasan', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhail HASSAN', 'alias_code_type': 'AKA'}, {'alias_name': 'Suheil HASSAN', 'alias_code_type': 'AKA'}, {'alias_name': 'Sohail HASSAN', 'alias_code_type': 'AKA'}, {'alias_name': 'سهيل سلمان الحسن', 'alias_code_type': 'LOC'}, {'alias_name': 'Suhail Salman AL-HASAN', 'alias_code_type': 'AKA'}, {'alias_name': 'Suheil Hassan', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhayl Hasan Al-Hasan', 'alias_code_type': 'AKA'}, {'alias_name': 'سهيل سلمان الحسن', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhayl Hasan', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhayl al-Hasan', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhayl', 'alias_code_type': 'AKA'}, {'alias_name': 'al-Hassan', 'alias_code_type': 'AKA'}, {'alias_name': 'Le Tigre', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhayl al-Nimr', 'alias_code_type': 'AKA'}, {'alias_name': 'Suhayl HASSAN', 'alias_code_type': 'AKA'}], 'alias_count': 59, 'identifications': [], 'relationships': [{'related_entity_id': '254359001', 'related_entity_name': 'AIR FORCE INTELLIGENCE AGENCY', 'type': 'ASSOCIATE', 'direction': 'TO'}, {'related_entity_id': '254697532', 'related_entity_name': 'Ali Mhanna SULEIMAN', 'type': 'ASSOCIATE', 'direction': 'FROM'}, {'related_entity_id': '254697532', 'related_entity_name': 'Ali Mhanna SULEIMAN', 'type': 'ASSOCIATE', 'direction': 'TO'}], 'sources': [], 'date_of_birth': {'date_of_birth_year': '1964', 'date_of_birth_circa': True}, 'source_count': 0, 'relationship_count': 3, 'bvd_id': '', 'source_item_id': '', 'created_date': datetime.date(2026, 3, 7), 'attributes': [], 'date_of_births': [], 'bvd_mapping': [], 'reverse_relationships': []}
-INFO:__main__:Displaying entity results as cards
-INFO:__main__:Processing 5 results for card display
-INFO:__main__:Card view: Displaying 5 entities (showing up to 50)
-INFO:__main__:Successfully created 5 entity cards
-INFO:hybrid_entity_display:✅ Hybrid entity display created with 5 entities
-INFO:__main__:✅ Hybrid entity display created successfully
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Starting clustering analysis for individual
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-ERROR:__main__:Clustering analysis error: [UNRESOLVED_ROUTINE] Cannot resolve routine `ARRAY_SLICE` on search path [`system`.`builtin`, `system`.`session`, `hive_metastore`.`default`].
-Verify the spelling of `ARRAY_SLICE`, check that the routine exists, and confirm you have `USE` privilege on the catalog and schema, and EXECUTE on the routine. SQLSTATE: 42883; line 6 pos 27
-INFO:__main__:Session cleanup completed
-^Z
-zsh: suspended  python3 main.py
-(.venv) mukhiyas@Y2GM2Y75K7 gr3-new-master % lsof -i :8080  
-COMMAND     PID     USER   FD   TYPE             DEVICE SIZE/OFF NODE NAME
-Python    77646 mukhiyas   37u  IPv4 0xe298046c345fd9dd      0t0  TCP *:http-alt (LISTEN)
-Python    77646 mukhiyas   39u  IPv4 0xe232180163a6d46b      0t0  TCP localhost:http-alt->localhost:49720 (ESTABLISHED)
-Python    77646 mukhiyas   40u  IPv4 0xed032e65a5ab6d5e      0t0  TCP localhost:http-alt->localhost:49747 (ESTABLISHED)
-Google    78767 mukhiyas   23u  IPv4 0xb6b821d0642c5d55      0t0  TCP localhost:49720->localhost:http-alt (ESTABLISHED)
-Google    78767 mukhiyas   68u  IPv4 0xd85267202a0cabba      0t0  TCP localhost:49747->localhost:http-alt (ESTABLISHED)
-(.venv) mukhiyas@Y2GM2Y75K7 gr3-new-master % kill -9 77646  
-[1]  + killed     python3 main.py                                                                                                             
-(.venv) mukhiyas@Y2GM2Y75K7 gr3-new-master % python3 main.py
-/Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr3-new-master/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
-  warnings.warn(
-INFO:optimized_database_queries:✅ Loaded 36 event risk scores from configuration
-INFO:optimized_database_queries:✅ Loaded PEP level scores from configuration: {'L1': 55, 'L2': 60, 'L3': 65, 'L4': 70, 'L5': 75, 'L6': 80}
-INFO:optimized_database_queries:✅ Loaded PRT rating scores: {'A': 90, 'B': 75, 'C': 60, 'D': 45}
-INFO:optimized_database_queries:✅ Loaded 14 priority countries from configuration
-INFO:__main__:✅ Optimized database query modules loaded successfully
-INFO:__main__:✅ Legacy database integration modules loaded successfully
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.client:Successfully opened session 01f0716d-ea84-13ec-8352-32e8f2eb0a66
-INFO:database_driven_codes:✅ Connected to database for live code extraction
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:database_driven_codes:📋 Loaded 67 event category codes from database
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:database_driven_codes:📊 Loaded usage statistics for 63 codes
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:database_driven_codes:📋 Loaded 36 event sub-category codes
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:database_driven_codes:📋 Loaded 29 entity attribute codes
-INFO:database_driven_codes:✅ Successfully loaded all codes from database
-INFO:database_driven_codes:📝 No user customizations found - using database defaults
-INFO:__main__:✅ Database modules initialized successfully
-INFO:__main__:Background cleanup thread started successfully
-============================================================
-🚀 GRID ENTITY SEARCH - PRODUCTION MODE
-============================================================
-✅ Full Database Connectivity
-✅ Real Entity Search & Analysis
-✅ Complete Enterprise Functionality
-✅ User Session Isolation (Fixed Caching Issues)
-🌐 Access: http://localhost:8080
-============================================================
-NiceGUI ready to go on http://localhost:8080, http://10.27.173.20:8080, and http://192.168.1.127:8080
-INFO:__main__:✅ Optimized DatabaseQueries initialized
-INFO:dynamic_config_manager:✅ Loaded configuration from user_config.json
-INFO:__main__:Loaded 1 risk scores from dynamic configuration
-INFO:__main__:Loaded 1 PEP priorities from dynamic configuration
-INFO:__main__:Loaded 2 geographic multipliers from dynamic configuration
-INFO:__main__:Settings file not found, using defaults
-INFO:__main__:Applying environment variable overrides...
-INFO:__main__:Environment variable overrides applied
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.client:Successfully opened session 01f0716d-ebdb-1bce-9841-c54755674a01
-INFO:__main__:Database connection successful (timeout: 30s)
-INFO:__main__:✅ Optimized database queries ready for use
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Loaded 67 event codes from prd_bronze_catalog.grid.code_dictionary
-INFO:__main__:✅ Database integration initialized successfully
-INFO:__main__:Created new app instance for user c14c822db79f57b4
-INFO:__main__:Main page accessed by user c14c822db79f57b4
-INFO:__main__:Created Entity Browser for client 683fceb4f9d8
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Displaying 0 entities for client 683fceb4f9d8
-INFO:__main__:Browser 683fceb4f9d8 showing empty state (available data: 0)
-INFO:__main__:✅ Optimized DatabaseQueries initialized
-INFO:__main__:Loaded 1 risk scores from dynamic configuration
-INFO:__main__:Loaded 1 PEP priorities from dynamic configuration
-INFO:__main__:Loaded 2 geographic multipliers from dynamic configuration
-INFO:__main__:Settings file not found, using defaults
-INFO:__main__:Applying environment variable overrides...
-INFO:__main__:Environment variable overrides applied
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.client:Successfully opened session 01f0716d-eee1-1cea-a1d1-460ab1bcbca3
-INFO:__main__:Database connection successful (timeout: 30s)
-INFO:__main__:✅ Optimized database queries ready for use
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Loaded 67 event codes from prd_bronze_catalog.grid.code_dictionary
-INFO:__main__:✅ Database integration initialized successfully
-INFO:__main__:Created new app instance for user ae83e49186324290
-INFO:__main__:Main page accessed by user ae83e49186324290
-INFO:__main__:Created Entity Browser for client f49146ad35f4
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Displaying 0 entities for client f49146ad35f4
-INFO:__main__:Browser f49146ad35f4 showing empty state (available data: 0)
-INFO:__main__:Main page accessed by user c14c822db79f57b4
-INFO:__main__:Created Entity Browser for client c442e1d094e0
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Displaying 0 entities for client c442e1d094e0
-INFO:__main__:Browser c442e1d094e0 showing empty state (available data: 0)
-INFO:__main__:Final search criteria: ['pep_levels', 'risk_score_min', 'risk_score_max'] with logical operator: AND
-INFO:__main__:🔍 DEBUG: search_criteria = {'pep_levels': ['HOS - Head of State'], 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 DEBUG: Converting search_criteria to optimized params: {'pep_levels': ['HOS - Head of State'], 'risk_score_min': 0, 'risk_score_max': 100}
-INFO:__main__:🚀 Using optimized search for 3 parameters
-INFO:optimized_database_queries:🔍 Searching individual tables with prefix: individual
-INFO:optimized_database_queries:🔍 DEBUG: PEP levels filter requested: ['HOS - Head of State']
-INFO:optimized_database_queries:🔍 DEBUG: Processing PEP level: 'HOS - Head of State'
-INFO:optimized_database_queries:🔍 DEBUG: Added generic condition: attr.alias_value LIKE '%HOS - Head of State%'
-INFO:optimized_database_queries:🔍 DEBUG: Final PEP query: attr.alias_value LIKE '%HOS - Head of State%'
-INFO:optimized_database_queries:🔍 DEBUG: Added PEP filter to performance_filters
-INFO:optimized_database_queries:🔍 Query filters count: base=0, performance=1, total=1
-INFO:optimized_database_queries:🔍 Query parameters: ['name_exact', 'name_starts_with']
-INFO:optimized_database_queries:🔧 Using config-based events - Critical: 8, High: 10, Medium: 10, Low: 8
-INFO:optimized_database_queries:📋 Query built with 1 filters, limit: 5
-INFO:__main__:🔌 Executing query with connection: True
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Query executed in 14.49s, returned 0 raw results
-WARNING:__main__:⚠️ Query returned no results for params: {'name_exact': None, 'name_starts_with': None}
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:🔍 Query returned columns: ['entity_id', 'risk_id', 'entity_name', 'recordDefinitionType', 'systemId', 'entityDate', 'pep_data', 'critical_events', 'primary_address', 'key_aliases', 'relationships', 'date_of_birth', 'calculated_risk_score']
-INFO:optimized_database_queries:🔄 Processing 0 raw results
-WARNING:optimized_database_queries:🔍 No raw results to process
-INFO:__main__:✅ Optimized search returned 0 results
-INFO:__main__:Stored 0 results for client b088a4cffbb9
-INFO:__main__:JSON parsing completed for 0 entities
-INFO:__main__:Notifying 8 callbacks of search update
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:No search data available to load
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:Entity Browser received search update notification
-INFO:__main__:No search data available to load
-INFO:__main__:AI Analysis received search update notification
-INFO:__main__:SQL Analysis received search update notification
-INFO:__main__:Network Analysis received search update notification
-INFO:__main__:About to display 0 results in UI
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Starting clustering analysis for individual
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Risk clustering query returned 25 clusters
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:PEP clustering query returned 8 clusters
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Geographic clustering query returned 50 clusters
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Source clustering query returned 0 clusters
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Subcategory clustering query returned 20 clusters
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Temporal clustering query returned 11 clusters
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Attribute clustering query returned 5 clusters
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Risk severity distribution calculated with 4 categories
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Clustering analysis completed for individual
+-- Query 1A: PEP Rating patterns and distribution
+SELECT 
+    'PRT_PATTERNS' as query_type,
+    alias_code_type,
+    alias_value,
+    COUNT(DISTINCT entity_id) as entity_count,
+    LEFT(alias_value, 10) as pattern_sample
+FROM prd_bronze_catalog.grid.individual_attributes 
+WHERE alias_code_type = 'PRT'
+GROUP BY alias_code_type, alias_value
+ORDER BY entity_count DESC
+LIMIT 50;
+
+-- Query 1B: PEP Rating letter distribution (A,B,C,D)
+SELECT 
+    'PRT_LETTERS' as query_type,
+    CASE 
+        WHEN alias_value LIKE 'A%' THEN 'A'
+        WHEN alias_value LIKE 'B%' THEN 'B' 
+        WHEN alias_value LIKE 'C%' THEN 'C'
+        WHEN alias_value LIKE 'D%' THEN 'D'
+        ELSE 'OTHER'
+    END as rating_letter,
+    COUNT(DISTINCT entity_id) as entity_count,
+    COLLECT_SET(LEFT(alias_value, 20)) as sample_values
+FROM prd_bronze_catalog.grid.individual_attributes 
+WHERE alias_code_type = 'PRT'
+GROUP BY CASE 
+    WHEN alias_value LIKE 'A%' THEN 'A'
+    WHEN alias_value LIKE 'B%' THEN 'B' 
+    WHEN alias_value LIKE 'C%' THEN 'C'
+    WHEN alias_value LIKE 'D%' THEN 'D'
+    ELSE 'OTHER'
+END
+ORDER BY entity_count DESC;
+
+-- =============================================================================
+-- 2. PEP LEVEL (PTY) DATA STRUCTURE ANALYSIS  
+-- =============================================================================
+
+-- Query 2A: PEP Level patterns and distribution
+SELECT 
+    'PTY_PATTERNS' as query_type,
+    alias_code_type,
+    alias_value,
+    COUNT(DISTINCT entity_id) as entity_count
+FROM prd_bronze_catalog.grid.individual_attributes 
+WHERE alias_code_type = 'PTY'
+GROUP BY alias_code_type, alias_value
+ORDER BY entity_count DESC
+LIMIT 50;
+
+-- Query 2B: PEP Level categories (HOS, CAB, etc.) with L1-L6 breakdown
+SELECT 
+    'PTY_CATEGORIES' as query_type,
+    CASE 
+        WHEN alias_value LIKE 'HOS:%' THEN 'HOS'
+        WHEN alias_value LIKE 'CAB:%' THEN 'CAB'
+        WHEN alias_value LIKE 'MUN:%' THEN 'MUN'
+        WHEN alias_value LIKE 'LEG:%' THEN 'LEG'
+        WHEN alias_value = 'FAM' THEN 'FAM'
+        WHEN alias_value = 'ASC' THEN 'ASC'
+        ELSE 'OTHER'
+    END as pep_category,
+    CASE 
+        WHEN alias_value LIKE '%:L1' THEN 'L1'
+        WHEN alias_value LIKE '%:L2' THEN 'L2'
+        WHEN alias_value LIKE '%:L3' THEN 'L3'
+        WHEN alias_value LIKE '%:L4' THEN 'L4'
+        WHEN alias_value LIKE '%:L5' THEN 'L5'
+        WHEN alias_value LIKE '%:L6' THEN 'L6'
+        ELSE 'NO_LEVEL'
+    END as risk_level,
+    COUNT(DISTINCT entity_id) as entity_count,
+    COLLECT_SET(alias_value) as sample_values
+FROM prd_bronze_catalog.grid.individual_attributes 
+WHERE alias_code_type = 'PTY'
+GROUP BY 
+    CASE 
+        WHEN alias_value LIKE 'HOS:%' THEN 'HOS'
+        WHEN alias_value LIKE 'CAB:%' THEN 'CAB'
+        WHEN alias_value LIKE 'MUN:%' THEN 'MUN'
+        WHEN alias_value LIKE 'LEG:%' THEN 'LEG'
+        WHEN alias_value = 'FAM' THEN 'FAM'
+        WHEN alias_value = 'ASC' THEN 'ASC'
+        ELSE 'OTHER'
+    END,
+    CASE 
+        WHEN alias_value LIKE '%:L1' THEN 'L1'
+        WHEN alias_value LIKE '%:L2' THEN 'L2'
+        WHEN alias_value LIKE '%:L3' THEN 'L3'
+        WHEN alias_value LIKE '%:L4' THEN 'L4'
+        WHEN alias_value LIKE '%:L5' THEN 'L5'
+        WHEN alias_value LIKE '%:L6' THEN 'L6'
+        ELSE 'NO_LEVEL'
+    END
+ORDER BY entity_count DESC;
+
+-- =============================================================================
+-- 3. PEP RATING TO LEVEL CORRELATION ANALYSIS
+-- =============================================================================
+
+-- Query 3: Entities with both PRT and PTY data - correlation analysis
+SELECT 
+    'PRT_PTY_CORRELATION' as query_type,
+    prt.alias_value as prt_rating,
+    pty.alias_value as pty_level,
+    COUNT(DISTINCT m.entity_id) as entity_count,
+    COLLECT_SET(m.entity_name) as sample_names
+FROM prd_bronze_catalog.grid.individual_mapping m
+INNER JOIN prd_bronze_catalog.grid.individual_attributes prt ON m.entity_id = prt.entity_id AND prt.alias_code_type = 'PRT'
+INNER JOIN prd_bronze_catalog.grid.individual_attributes pty ON m.entity_id = pty.entity_id AND pty.alias_code_type = 'PTY'
+GROUP BY prt.alias_value, pty.alias_value
+ORDER BY entity_count DESC
+LIMIT 100;
+
+-- =============================================================================
+-- 4. EVENT CATEGORY AND RISK CODE ANALYSIS
+-- =============================================================================
+
+-- Query 4A: Event categories and risk codes distribution
+SELECT 
+    'EVENT_CATEGORIES' as query_type,
+    event_category_code,
+    event_sub_category_code,
+    COUNT(DISTINCT entity_id) as entity_count,
+    COUNT(*) as event_count
+FROM prd_bronze_catalog.grid.individual_events
+GROUP BY event_category_code, event_sub_category_code
+ORDER BY entity_count DESC
+LIMIT 50;
+
+-- Query 4B: Boolean search patterns for events
+SELECT 
+    'EVENT_BOOLEAN_PATTERNS' as query_type,
+    event_category_code,
+    CASE 
+        WHEN event_sub_category_code IN ('ACQ', 'DMS') THEN 'ACQUITTED'
+        WHEN event_category_code IN ('SAN', 'ENF', 'PEP') THEN 'HIGH_RISK'
+        WHEN event_category_code IN ('REG', 'LIC') THEN 'REGULATORY'
+        ELSE 'OTHER'
+    END as risk_pattern,
+    COUNT(DISTINCT entity_id) as entity_count
+FROM prd_bronze_catalog.grid.individual_events
+GROUP BY event_category_code, CASE 
+    WHEN event_sub_category_code IN ('ACQ', 'DMS') THEN 'ACQUITTED'
+    WHEN event_category_code IN ('SAN', 'ENF', 'PEP') THEN 'HIGH_RISK'
+    WHEN event_category_code IN ('REG', 'LIC') THEN 'REGULATORY'
+    ELSE 'OTHER'
+END
+ORDER BY entity_count DESC;
+
+-- =============================================================================
+-- 5. GEOGRAPHIC AND ADDRESS FILTERING ANALYSIS
+-- =============================================================================
+
+-- Query 5: Geographic distribution and patterns
+SELECT 
+    'GEOGRAPHIC_PATTERNS' as query_type,
+    address_country,
+    address_city,
+    address_province,
+    COUNT(DISTINCT entity_id) as entity_count
+FROM prd_bronze_catalog.grid.individual_addresses
+WHERE address_country IS NOT NULL
+GROUP BY address_country, address_city, address_province
+ORDER BY entity_count DESC
+LIMIT 50;
+
+-- =============================================================================
+-- 6. IDENTIFICATION AND SOURCE ANALYSIS
+-- =============================================================================
+
+-- Query 6A: Identification types and patterns
+SELECT 
+    'IDENTIFICATION_PATTERNS' as query_type,
+    identification_type,
+    COUNT(DISTINCT entity_id) as entity_count,
+    COUNT(*) as id_count
+FROM prd_bronze_catalog.grid.individual_identifications
+GROUP BY identification_type
+ORDER BY entity_count DESC;
+
+-- Query 6B: Source systems and keys
+SELECT 
+    'SOURCE_PATTERNS' as query_type,
+    source_key,
+    source_name,
+    COUNT(DISTINCT entity_id) as entity_count
+FROM prd_bronze_catalog.grid.sources s
+INNER JOIN prd_bronze_catalog.grid.individual_mapping m ON s.source_id = m.source_id
+GROUP BY source_key, source_name
+ORDER BY entity_count DESC
+LIMIT 30;
+
+-- =============================================================================
+-- 7. CLUSTERING ANALYSIS DATA STRUCTURE
+-- =============================================================================
+
+-- Query 7A: Entity relationships for clustering
+SELECT 
+    'CLUSTERING_RELATIONSHIPS' as query_type,
+    relationship_type,
+    COUNT(*) as relationship_count,
+    COUNT(DISTINCT entity_id) as unique_entities,
+    COUNT(DISTINCT related_entity_id) as unique_related_entities
+FROM prd_bronze_catalog.grid.relationships
+GROUP BY relationship_type
+ORDER BY relationship_count DESC;
+
+-- Query 7B: Sample clustering data structure
+SELECT 
+    'CLUSTERING_SAMPLE' as query_type,
+    m.entity_name,
+    COUNT(r.related_entity_id) as relationship_count,
+    COLLECT_SET(r.relationship_type) as relationship_types,
+    COLLECT_SET(rm.entity_name) as related_entities
+FROM prd_bronze_catalog.grid.individual_mapping m
+LEFT JOIN prd_bronze_catalog.grid.relationships r ON m.entity_id = r.entity_id
+LEFT JOIN prd_bronze_catalog.grid.individual_mapping rm ON r.related_entity_id = rm.entity_id
+GROUP BY m.entity_name, m.entity_id
+HAVING COUNT(r.related_entity_id) > 0
+ORDER BY relationship_count DESC
+LIMIT 20;
+
+-- =============================================================================
+-- 8. DATE AND TIME FILTERING ANALYSIS
+-- =============================================================================
+
+-- Query 8: Date patterns for filtering
+SELECT 
+    'DATE_PATTERNS' as query_type,
+    date_of_birth_year,
+    COUNT(DISTINCT entity_id) as entity_count
+FROM prd_bronze_catalog.grid.individual_date_of_births
+WHERE date_of_birth_year IS NOT NULL
+GROUP BY date_of_birth_year
+ORDER BY date_of_birth_year DESC
+LIMIT 50;
+
+-- =============================================================================
+-- 9. BOOLEAN LOGIC AND COMBINED FILTER TESTING
+-- =============================================================================
+
+-- Query 9A: Test combined PEP rating + level filtering
+SELECT 
+    'COMBINED_PEP_TEST' as query_type,
+    'A_RATING_WITH_LEVELS' as test_case,
+    COUNT(DISTINCT m.entity_id) as entity_count,
+    COLLECT_SET(CONCAT(m.entity_name, ' (PRT:', prt.alias_value, ', PTY:', pty.alias_value, ')')) as sample_entities
+FROM prd_bronze_catalog.grid.individual_mapping m
+INNER JOIN prd_bronze_catalog.grid.individual_attributes prt ON m.entity_id = prt.entity_id 
+    AND prt.alias_code_type = 'PRT' 
+    AND (prt.alias_value LIKE 'A:%' OR prt.alias_value = 'A' OR prt.alias_value LIKE 'A-%')
+INNER JOIN prd_bronze_catalog.grid.individual_attributes pty ON m.entity_id = pty.entity_id 
+    AND pty.alias_code_type = 'PTY'
+GROUP BY 1, 2
+LIMIT 1;
+
+-- Query 9B: Test name + PEP filter combination
+SELECT 
+    'NAME_PEP_COMBINATION' as query_type,
+    COUNT(DISTINCT m.entity_id) as entity_count,
+    COLLECT_SET(CONCAT(m.entity_name, ' (PTY:', attr.alias_value, ')')) as sample_entities
+FROM prd_bronze_catalog.grid.individual_mapping m
+INNER JOIN prd_bronze_catalog.grid.individual_attributes attr ON m.entity_id = attr.entity_id 
+    AND attr.alias_code_type = 'PTY'
+WHERE LOWER(m.entity_name) LIKE '%john%'
+LIMIT 1;
+
+-- =============================================================================
+-- 10. PERFORMANCE AND OPTIMIZATION ANALYSIS
+-- =============================================================================
+
+-- Query 10: Large dataset sampling for performance testing
+SELECT 
+    'PERFORMANCE_SAMPLE' as query_type,
+    COUNT(DISTINCT m.entity_id) as total_entities,
+    COUNT(DISTINCT attr.entity_id) as entities_with_attributes,
+    COUNT(DISTINCT ev.entity_id) as entities_with_events,
+    COUNT(DISTINCT r.entity_id) as entities_with_relationships
+FROM prd_bronze_catalog.grid.individual_mapping m
+LEFT JOIN prd_bronze_catalog.grid.individual_attributes attr ON m.entity_id = attr.entity_id
+LEFT JOIN prd_bronze_catalog.grid.individual_events ev ON m.entity_id = ev.entity_id
+LEFT JOIN prd_bronze_catalog.grid.relationships r ON m.entity_id = r.entity_id
+LIMIT 1;
