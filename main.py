@@ -3221,7 +3221,7 @@ When analyzing entity data:
                 ev.event_category_code as risk_code,
                 COUNT(DISTINCT e.entity_id) as entity_count,
                 COUNT(ev.event_category_code) as event_count,
-                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
+                SUBSTR(CONCAT_WS(', ', COLLECT_SET(e.entity_name)), 1, 200) as sample_entities
             FROM {table_mapping} e
             INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
             WHERE ev.event_category_code IS NOT NULL 
@@ -3251,7 +3251,7 @@ When analyzing entity data:
                     ELSE 'OTHER'
                 END as pep_level,
                 COUNT(DISTINCT e.entity_id) as entity_count,
-                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
+                SUBSTR(CONCAT_WS(', ', COLLECT_SET(e.entity_name)), 1, 200) as sample_entities
             FROM {table_mapping} e
             INNER JOIN {table_attributes} attr ON e.entity_id = attr.entity_id
             WHERE attr.alias_code_type = 'PTY' AND attr.alias_value IS NOT NULL
@@ -3280,7 +3280,7 @@ When analyzing entity data:
             SELECT 
                 addr.address_country as country,
                 COUNT(DISTINCT e.entity_id) as entity_count,
-                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
+                SUBSTR(CONCAT_WS(', ', COLLECT_SET(e.entity_name)), 1, 200) as sample_entities
             FROM {table_mapping} e
             INNER JOIN {table_addresses} addr ON e.entity_id = addr.entity_id
             WHERE addr.address_country IS NOT NULL
@@ -3300,7 +3300,7 @@ When analyzing entity data:
             SELECT 
                 e.systemId as source_system,
                 COUNT(DISTINCT e.entity_id) as entity_count,
-                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
+                SUBSTR(CONCAT_WS(', ', COLLECT_SET(e.entity_name)), 1, 200) as sample_entities
             FROM {table_mapping} e
             WHERE e.systemId IS NOT NULL
             GROUP BY e.systemId
@@ -3319,7 +3319,7 @@ When analyzing entity data:
             SELECT 
                 ev.event_sub_category_code as sub_category,
                 COUNT(DISTINCT e.entity_id) as entity_count,
-                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
+                SUBSTR(CONCAT_WS(', ', COLLECT_SET(e.entity_name)), 1, 200) as sample_entities
             FROM {table_mapping} e
             INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
             WHERE ev.event_sub_category_code IS NOT NULL
@@ -3340,7 +3340,7 @@ When analyzing entity data:
             SELECT 
                 YEAR(ev.event_date) as event_year,
                 COUNT(DISTINCT e.entity_id) as entity_count,
-                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
+                SUBSTR(CONCAT_WS(', ', COLLECT_SET(e.entity_name)), 1, 200) as sample_entities
             FROM {table_mapping} e
             INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
             WHERE ev.event_date IS NOT NULL 
@@ -3361,7 +3361,7 @@ When analyzing entity data:
             SELECT 
                 attr.alias_code_type as attribute_type,
                 COUNT(DISTINCT e.entity_id) as entity_count,
-                ARRAY_JOIN(ARRAY_SLICE(COLLECT_SET(e.entity_name), 1, 3), ', ') as sample_entities
+                SUBSTR(CONCAT_WS(', ', COLLECT_SET(e.entity_name)), 1, 200) as sample_entities
             FROM {table_mapping} e
             INNER JOIN {table_attributes} attr ON e.entity_id = attr.entity_id
             WHERE attr.alias_code_type IS NOT NULL

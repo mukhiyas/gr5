@@ -279,22 +279,32 @@ class OptimizedDatabaseQueries:
             if isinstance(pep_level_list, str):
                 pep_level_list = [pep_level_list]
             
+            logger.info(f"🔍 DEBUG: PEP levels filter requested: {pep_level_list}")
+            
             # Build PEP level conditions based on actual database patterns
             pep_conditions = []
             for pep_level in pep_level_list:
+                logger.info(f"🔍 DEBUG: Processing PEP level: '{pep_level}'")
                 # Based on query results, PEP values are like 'MUN:L3', 'HOS:L1', 'FAM', 'ASC'
                 if pep_level in ['HOS', 'CAB', 'INF', 'MUN', 'REG', 'LEG', 'AMB', 'MIL', 'JUD', 'POL', 'GOE', 'GCO', 'IGO', 'ISO', 'NIO']:
                     # These have :L# patterns
-                    pep_conditions.append(f"attr.alias_value LIKE '{pep_level}:%'")
+                    condition = f"attr.alias_value LIKE '{pep_level}:%'"
+                    pep_conditions.append(condition)
+                    logger.info(f"🔍 DEBUG: Added pattern condition: {condition}")
                 elif pep_level in ['FAM', 'ASC']:
                     # These are standalone values
-                    pep_conditions.append(f"attr.alias_value = '{pep_level}'")
+                    condition = f"attr.alias_value = '{pep_level}'"
+                    pep_conditions.append(condition)
+                    logger.info(f"🔍 DEBUG: Added exact condition: {condition}")
                 else:
                     # Handle any other PEP patterns
-                    pep_conditions.append(f"attr.alias_value LIKE '%{pep_level}%'")
+                    condition = f"attr.alias_value LIKE '%{pep_level}%'"
+                    pep_conditions.append(condition)
+                    logger.info(f"🔍 DEBUG: Added generic condition: {condition}")
             
             if pep_conditions:
                 pep_query = " OR ".join(pep_conditions)
+                logger.info(f"🔍 DEBUG: Final PEP query: {pep_query}")
                 performance_filters.append(f"""
                     EXISTS (
                         SELECT 1 FROM prd_bronze_catalog.grid.{table_prefix}_attributes attr
@@ -304,6 +314,9 @@ class OptimizedDatabaseQueries:
                         LIMIT 1
                     )
                 """)
+                logger.info(f"🔍 DEBUG: Added PEP filter to performance_filters")
+            else:
+                logger.warning(f"⚠️ DEBUG: No PEP conditions generated for: {pep_level_list}")
         
         # === MEDIUM SELECTIVITY FILTERS ===
         
