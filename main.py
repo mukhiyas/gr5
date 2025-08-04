@@ -3448,27 +3448,24 @@ When analyzing entity data:
                 'geographic_clusters': [
                     {
                         'country': row[0] if row and len(row) > 0 else 'Unknown',
-                        'city': row[1] if row and len(row) > 1 else 'Unknown',
-                        'entity_count': row[2] if row and len(row) > 2 else 0,
-                        'sample_entities': self._safe_extract_array(row, 3, 5)
+                        'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
+                        'sample_entities': str(row[2]) if row and len(row) > 2 and row[2] is not None else ''
                     }
                     for row in geo_clusters if row
                 ],
                 'source_system_clusters': [
                     {
                         'source_system': row[0] if row and len(row) > 0 else 'Unknown',
-                        'entity_count': row[1] if row and len(row) > 1 else 0,
-                        'source_items': row[2] if row and len(row) > 2 else 0,
-                        'sample_entities': self._safe_extract_array(row, 3, 5)
+                        'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
+                        'sample_entities': str(row[2]) if row and len(row) > 2 and row[2] is not None else ''
                     }
                     for row in source_clusters if row
                 ],
                 'event_subcategory_clusters': [
                     {
                         'sub_category': row[0] if row and len(row) > 0 else 'Unknown',
-                        'entity_count': row[1] if row and len(row) > 1 else 0,
-                        'event_count': row[2] if row and len(row) > 2 else 0,
-                        'sample_entities': self._safe_extract_array(row, 3, 5),
+                        'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
+                        'sample_entities': str(row[2]) if row and len(row) > 2 and row[2] is not None else '',
                         'sub_category_description': self.get_subcategory_description(row[0]) if row and len(row) > 0 else 'Unknown'
                     }
                     for row in subcategory_clusters if row
@@ -3476,9 +3473,8 @@ When analyzing entity data:
                 'temporal_clusters': [
                     {
                         'event_year': row[0] if row and len(row) > 0 else 'Unknown',
-                        'entity_count': row[1] if row and len(row) > 1 else 0,
-                        'event_count': row[2] if row and len(row) > 2 else 0,
-                        'sample_entities': self._safe_extract_array(row, 3, 5),
+                        'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
+                        'sample_entities': str(row[2]) if row and len(row) > 2 and row[2] is not None else '',
                         'time_period': self.get_time_period_description(row[0]) if row and len(row) > 0 else 'Unknown'
                     }
                     for row in temporal_clusters if row
