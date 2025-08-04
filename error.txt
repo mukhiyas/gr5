@@ -284,3 +284,11 @@ INFO:__main__:Card view: Displaying 5 entities (showing up to 50)
 INFO:__main__:Successfully created 5 entity cards
 INFO:hybrid_entity_display:✅ Hybrid entity display created with 5 entities
 INFO:__main__:✅ Hybrid entity display created successfully
+
+
+
+Clustering analysis failed: 'attribute_count'
+Please check your database connection and try again.
+
+
+
