@@ -17,8 +17,9 @@ logger = logging.getLogger(__name__)
 class EntityExporter:
     """Complete entity data exporter with no data loss"""
     
-    def __init__(self):
+    def __init__(self, app_instance=None):
         """Initialize the exporter with field mappings"""
+        self.app_instance = app_instance
         self.core_fields = [
             'entity_id', 'risk_id', 'entity_name', 'entity_type', 'system_id', 
             'entity_date', 'created_date', 'source_item_id', 'bvd_id'
@@ -272,21 +273,29 @@ class EntityExporter:
         
         # Add database-driven event code descriptions
         event_codes = entity.get('event_codes', [])
-        if event_codes and isinstance(event_codes, list):
+        if event_codes and isinstance(event_codes, list) and self.app_instance:
             try:
-                from database_driven_codes import get_event_description, get_event_risk_score
                 event_descriptions = []
-                event_risk_scores = []
                 for code in event_codes[:5]:  # First 5 codes
-                    desc = get_event_description(code)
-                    risk_score = get_event_risk_score(code)
+                    desc = self.app_instance.get_event_description(code)
                     event_descriptions.append(f"{code}: {desc}")
-                    event_risk_scores.append(f"{code}: {risk_score}")
                 
                 flat['Event Code Descriptions'] = self._list_to_string(event_descriptions, separator='; ')
-                flat['Event Risk Scores'] = self._list_to_string(event_risk_scores, separator='; ')
-            except ImportError:
-                logger.warning("Database-driven codes not available for export")
+            except Exception as e:
+                logger.warning(f"Failed to get database-driven descriptions for export: {e}")
+        
+        # Add PEP descriptions
+        pep_codes = entity.get('pep_codes', [])
+        if pep_codes and isinstance(pep_codes, list) and self.app_instance:
+            try:
+                pep_descriptions = []
+                for code in pep_codes[:3]:  # First 3 PEP codes
+                    desc = self.app_instance.get_pep_description(code)
+                    pep_descriptions.append(f"{code}: {desc}")
+                
+                flat['PEP Code Descriptions'] = self._list_to_string(pep_descriptions, separator='; ')
+            except Exception as e:
+                logger.warning(f"Failed to get PEP descriptions for export: {e}")
         
         # Events detail (first 5 events)
         events = entity.get('events', [])

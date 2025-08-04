@@ -12,11 +12,32 @@ logger = logging.getLogger(__name__)
 class SimpleTableView:
     """Ultra-simple table component that just works"""
     
-    def __init__(self):
+    def __init__(self, app_instance=None):
         """Initialize the simple table view"""
         self.current_data = []
         self.page_size = 50
         self.current_page = 1
+        self.app_instance = app_instance
+    
+    def _get_code_description(self, code, code_type='event'):
+        """Get code description using database-driven system from main app"""
+        if not self.app_instance or not code:
+            return code or "Unknown"
+        
+        try:
+            if code_type == 'event':
+                return self.app_instance.get_event_description(code)
+            elif code_type == 'pep':
+                return self.app_instance.get_pep_description(code)
+            elif code_type == 'relationship':
+                return self.app_instance.get_relationship_description(code)
+            elif code_type == 'attribute':
+                return self.app_instance.get_entity_attribute_description(code)
+            else:
+                return code or "Unknown"
+        except Exception as e:
+            logger.warning(f"Failed to get {code_type} description for {code}: {e}")
+            return code or "Unknown"
         
     def create_table(self, container, data: List[Dict[str, Any]]):
         """

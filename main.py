@@ -313,8 +313,8 @@ class EntitySearchApp:
         self.user_id = None  # Will be set when assigned to user
         
         # Initialize new modular components
-        self.exporter = EntityExporter()
-        self.table_view = SimpleTableView()
+        self.exporter = EntityExporter(app_instance=self)
+        self.table_view = SimpleTableView(app_instance=self)
         self.dedicated_table = DedicatedTableTab()
         
         # Initialize optimized database queries
@@ -2623,11 +2623,11 @@ When analyzing entity data:
                     # Handle case where 'type' might be a string or dict
                     type_info = rel.get('type', {})
                     if isinstance(type_info, dict):
-                        rel_type = type_info.get('description', 'Unknown')
+                        rel_type = type_info.get('description', self.get_relationship_description(type_info.get('code', 'Unknown')))
                     elif isinstance(type_info, str):
-                        rel_type = type_info
+                        rel_type = self.get_relationship_description(type_info)
                     else:
-                        rel_type = str(type_info) if type_info else 'Unknown'
+                        rel_type = self.get_relationship_description(str(type_info)) if type_info else 'Unknown'
                     relationship_summary['relationship_types'][rel_type] += 1
                 
                 # Track most connected entities
@@ -3662,7 +3662,7 @@ When analyzing entity data:
                         'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
                         'event_count': int(row[2]) if row and len(row) > 2 and row[2] is not None else 0,
                         'sample_entities': self._safe_extract_array(row, 3, 5),
-                        'risk_description': self.get_event_description(row[0]) if row and len(row) > 0 else 'Unknown',
+                        'risk_description': self.get_event_description(row[0]) if row and len(row) > 0 and row[0] else 'Unknown',
                         'severity': self.get_risk_severity_from_code(row[0]) if row and len(row) > 0 else 'Unknown'
                     }
                     for row in risk_clusters if row
@@ -3672,7 +3672,7 @@ When analyzing entity data:
                         'pep_level': row[0] if row and len(row) > 0 else 'Unknown',
                         'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
                         'sample_entities': self._safe_extract_array(row, 2, 5),
-                        'pep_description': self.pep_levels.get(row[0], 'Unknown') if row and len(row) > 0 else 'Unknown'
+                        'pep_description': self.get_pep_description(row[0]) if row and len(row) > 0 and row[0] else 'Unknown'
                     }
                     for row in pep_clusters if row
                 ],
@@ -3697,7 +3697,7 @@ When analyzing entity data:
                         'sub_category': row[0] if row and len(row) > 0 else 'Unknown',
                         'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
                         'sample_entities': self._safe_extract_array(row, 2, 5),
-                        'sub_category_description': self.get_subcategory_description(row[0]) if row and len(row) > 0 else 'Unknown'
+                        'sub_category_description': self.get_event_description(row[0]) if row and len(row) > 0 and row[0] else 'Unknown'
                     }
                     for row in subcategory_clusters if row
                 ],
@@ -3715,7 +3715,7 @@ When analyzing entity data:
                         'attribute_type': row[0] if row and len(row) > 0 else 'Unknown',
                         'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
                         'sample_entities': self._safe_extract_array(row, 2, 5),
-                        'attribute_description': self.get_attribute_description(row[0]) if row and len(row) > 0 else 'Unknown'
+                        'attribute_description': self.get_entity_attribute_description(row[0]) if row and len(row) > 0 and row[0] else 'Unknown'
                     }
                     for row in attribute_clusters if row
                 ],
@@ -3741,7 +3741,13 @@ When analyzing entity data:
             return {'error': f'Clustering analysis failed: {str(e)}'}
     
     def get_subcategory_description(self, sub_category):
-        """Get description for event sub-categories"""
+        """Get description for event sub-categories using database-driven system"""
+        # Use the database-driven system first, fallback to hardcoded
+        db_description = self.get_event_description(sub_category)
+        if db_description and db_description != f"Event {sub_category}":
+            return db_description
+        
+        # Legacy hardcoded fallback
         subcategory_descriptions = {
             'CVT': 'Conviction - Legal conviction',
             'SAN': 'Sanctions - International sanctions',
@@ -3781,7 +3787,13 @@ When analyzing entity data:
             return f'Year: {year}'
     
     def get_attribute_description(self, attr_type):
-        """Get description for attribute types"""
+        """Get description for attribute types using database-driven system"""
+        # Use the database-driven system first
+        db_description = self.get_entity_attribute_description(attr_type)
+        if db_description and db_description != attr_type:
+            return db_description
+        
+        # Legacy hardcoded fallback
         attribute_descriptions = {
             'PTY': 'Position/Party - Political positions and party affiliations',
             'RMK': 'Remarks - Additional notes and status changes',
@@ -3848,7 +3860,7 @@ When analyzing entity data:
                 severity_distribution[severity]['event_count'] += event_count
                 severity_distribution[severity]['risk_codes'].append({
                     'code': risk_code,
-                    'description': self.risk_codes.get(risk_code, 'Unknown'),
+                    'description': self.get_event_description(risk_code),
                     'entity_count': entity_count,
                     'event_count': event_count
                 })
@@ -13205,7 +13217,7 @@ async def create_risk_settings():
             """Edit individual risk code score"""
             with ui.dialog() as dialog, ui.card().classes('w-96'):
                 ui.label(f'Edit Risk Code: {risk_code}').classes('text-h6 mb-4')
-                ui.label(f'{app_instance.risk_codes.get(risk_code, "Unknown")}').classes('text-subtitle2 mb-4')
+                ui.label(f'{app_instance.get_event_description(risk_code)}').classes('text-subtitle2 mb-4')
                 
                 new_score_input = ui.number(
                     'Risk Score',

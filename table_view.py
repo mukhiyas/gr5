@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 class EntityTableView:
     """Modern responsive table component for entity data"""
     
-    def __init__(self):
+    def __init__(self, app_instance=None):
         """Initialize the table view component"""
         self.current_data = []
         self.filtered_data = []
@@ -22,9 +22,30 @@ class EntityTableView:
         self.sort_direction = 'asc'
         self.table_container = None
         self.pagination_container = None
+        self.app_instance = app_instance
         
         # Define column configurations
         self.column_configs = self._get_column_configs()
+    
+    def _get_code_description(self, code, code_type='event'):
+        """Get code description using database-driven system from main app"""
+        if not self.app_instance or not code:
+            return code or "Unknown"
+        
+        try:
+            if code_type == 'event':
+                return self.app_instance.get_event_description(code)
+            elif code_type == 'pep':
+                return self.app_instance.get_pep_description(code)
+            elif code_type == 'relationship':
+                return self.app_instance.get_relationship_description(code)
+            elif code_type == 'attribute':
+                return self.app_instance.get_entity_attribute_description(code)
+            else:
+                return code or "Unknown"
+        except Exception as e:
+            logger.warning(f"Failed to get {code_type} description for {code}: {e}")
+            return code or "Unknown"
     
     def create_table(self, container, data: List[Dict[str, Any]]):
         """

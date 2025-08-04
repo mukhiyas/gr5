@@ -16,6 +16,26 @@ class EnhancedEntityCards:
     def __init__(self, app_instance=None):
         self.app_instance = app_instance
     
+    def _get_code_description(self, code, code_type='event'):
+        """Get code description using database-driven system from main app"""
+        if not self.app_instance:
+            return code or "Unknown"
+        
+        try:
+            if code_type == 'event':
+                return self.app_instance.get_event_description(code)
+            elif code_type == 'pep':
+                return self.app_instance.get_pep_description(code)
+            elif code_type == 'relationship':
+                return self.app_instance.get_relationship_description(code)
+            elif code_type == 'attribute':
+                return self.app_instance.get_entity_attribute_description(code)
+            else:
+                return code or "Unknown"
+        except Exception as e:
+            logger.warning(f"Failed to get {code_type} description for {code}: {e}")
+            return code or "Unknown"
+    
     def create_enhanced_card(self, entity: Dict[str, Any]):
         """Create an enhanced card with detailed modal functionality"""
         try:
@@ -262,14 +282,21 @@ class EnhancedEntityCards:
                             # Event code and description
                             event_code = event.get('event_category_code', 'N/A')
                             
-                            # Get database description
-                            try:
-                                from database_driven_codes import get_event_description, get_event_risk_score
-                                event_desc = get_event_description(event_code)
-                                event_risk = get_event_risk_score(event_code)
-                            except:
-                                event_desc = event_code
-                                event_risk = 0
+                            # Get database-driven description
+                            event_desc = self._get_code_description(event_code, 'event')
+                            event_subcode = event.get('event_sub_category_code')
+                            if event_subcode and self.app_instance:
+                                try:
+                                    subcode_desc = self.app_instance.get_event_description(event_subcode)
+                                    if subcode_desc and subcode_desc != event_subcode:
+                                        event_desc = f"{event_desc} - {subcode_desc}"
+                                except:
+                                    pass
+                            
+                            # Get risk score (legacy fallback)
+                            event_risk = 0
+                            if self.app_instance and hasattr(self.app_instance, 'risk_codes'):
+                                event_risk = self.app_instance.risk_codes.get(event_code, {}).get('risk_score', 0) if isinstance(self.app_instance.risk_codes.get(event_code), dict) else 0
                             
                             ui.label(f'{event_code}: {event_desc}').classes('font-bold')
                             
