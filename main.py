@@ -3430,7 +3430,7 @@ When analyzing entity data:
                         'risk_code': row[0] if row and len(row) > 0 else 'Unknown',
                         'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
                         'event_count': int(row[2]) if row and len(row) > 2 and row[2] is not None else 0,
-                        'sample_entities': str(row[3]) if row and len(row) > 3 and row[3] is not None else '',
+                        'sample_entities': self._safe_extract_array(row, 3, 5),
                         'risk_description': self.risk_codes.get(row[0], 'Unknown') if row and len(row) > 0 else 'Unknown',
                         'severity': self.get_risk_severity_from_code(row[0]) if row and len(row) > 0 else 'Unknown'
                     }
@@ -3440,7 +3440,7 @@ When analyzing entity data:
                     {
                         'pep_level': row[0] if row and len(row) > 0 else 'Unknown',
                         'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
-                        'sample_entities': str(row[2]) if row and len(row) > 2 and row[2] is not None else '',
+                        'sample_entities': self._safe_extract_array(row, 2, 5),
                         'pep_description': self.pep_levels.get(row[0], 'Unknown') if row and len(row) > 0 else 'Unknown'
                     }
                     for row in pep_clusters if row
@@ -3449,7 +3449,7 @@ When analyzing entity data:
                     {
                         'country': row[0] if row and len(row) > 0 else 'Unknown',
                         'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
-                        'sample_entities': str(row[2]) if row and len(row) > 2 and row[2] is not None else ''
+                        'sample_entities': self._safe_extract_array(row, 2, 5)
                     }
                     for row in geo_clusters if row
                 ],
@@ -3457,7 +3457,7 @@ When analyzing entity data:
                     {
                         'source_system': row[0] if row and len(row) > 0 else 'Unknown',
                         'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
-                        'sample_entities': str(row[2]) if row and len(row) > 2 and row[2] is not None else ''
+                        'sample_entities': self._safe_extract_array(row, 2, 5)
                     }
                     for row in source_clusters if row
                 ],
@@ -3465,7 +3465,7 @@ When analyzing entity data:
                     {
                         'sub_category': row[0] if row and len(row) > 0 else 'Unknown',
                         'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
-                        'sample_entities': str(row[2]) if row and len(row) > 2 and row[2] is not None else '',
+                        'sample_entities': self._safe_extract_array(row, 2, 5),
                         'sub_category_description': self.get_subcategory_description(row[0]) if row and len(row) > 0 else 'Unknown'
                     }
                     for row in subcategory_clusters if row
@@ -3474,7 +3474,7 @@ When analyzing entity data:
                     {
                         'event_year': row[0] if row and len(row) > 0 else 'Unknown',
                         'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
-                        'sample_entities': str(row[2]) if row and len(row) > 2 and row[2] is not None else '',
+                        'sample_entities': self._safe_extract_array(row, 2, 5),
                         'time_period': self.get_time_period_description(row[0]) if row and len(row) > 0 else 'Unknown'
                     }
                     for row in temporal_clusters if row
@@ -3482,8 +3482,8 @@ When analyzing entity data:
                 'attribute_type_clusters': [
                     {
                         'attribute_type': row[0] if row and len(row) > 0 else 'Unknown',
-                        'entity_count': row[1] if row and len(row) > 1 else 0,
-                        'sample_entities': str(row[2]) if row and len(row) > 2 and row[2] is not None else '',
+                        'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
+                        'sample_entities': self._safe_extract_array(row, 2, 5),
                         'attribute_description': self.get_attribute_description(row[0]) if row and len(row) > 0 else 'Unknown'
                     }
                     for row in attribute_clusters if row
@@ -3677,7 +3677,7 @@ When analyzing entity data:
         # Geographic Insights
         if clustering_results.get('geographic_clusters'):
             top_geo = clustering_results['geographic_clusters'][0]
-            insights.append(f"Highest entity concentration: {top_geo['city'] or 'Unknown City'}, {top_geo['country']} with {top_geo['entity_count']} entities")
+            insights.append(f"Highest entity concentration: {top_geo['country']} with {top_geo['entity_count']} entities")
             
             # Country diversity
             countries = set(cluster['country'] for cluster in clustering_results['geographic_clusters'] if cluster['country'])
