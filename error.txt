@@ -1,105 +1,30 @@
-NiceGUI ready to go on http://localhost:8080, http://10.27.173.20:8080, and http://192.168.1.127:8080
-INFO:__main__:✅ Optimized DatabaseQueries initialized
-INFO:dynamic_config_manager:✅ Loaded configuration from user_config.json
-INFO:__main__:Loaded 1 risk scores from dynamic configuration
-INFO:__main__:Loaded 1 PEP priorities from dynamic configuration
-INFO:__main__:Loaded 2 geographic multipliers from dynamic configuration
-INFO:__main__:Settings file not found, using defaults
-INFO:__main__:Applying environment variable overrides...
-INFO:__main__:Environment variable overrides applied
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.client:Successfully opened session 01f0717e-29d7-1020-b162-4dd21edb9489
-INFO:__main__:Database connection successful (timeout: 30s)
-INFO:__main__:✅ Optimized database queries ready for use
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Loaded 67 event codes from prd_bronze_catalog.grid.code_dictionary
-INFO:__main__:✅ Database integration initialized successfully
-INFO:__main__:Created new app instance for user c14c822db79f57b4
-INFO:__main__:Main page accessed by user c14c822db79f57b4
-INFO:__main__:Created Entity Browser for client 6d97b14f5f89
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Displaying 0 entities for client 6d97b14f5f89
-INFO:__main__:Browser 6d97b14f5f89 showing empty state (available data: 0)
-INFO:__main__:✅ Optimized DatabaseQueries initialized
-INFO:__main__:Loaded 1 risk scores from dynamic configuration
-INFO:__main__:Loaded 1 PEP priorities from dynamic configuration
-INFO:__main__:Loaded 2 geographic multipliers from dynamic configuration
-INFO:__main__:Settings file not found, using defaults
-INFO:__main__:Applying environment variable overrides...
-INFO:__main__:Environment variable overrides applied
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:databricks.sql.client:Successfully opened session 01f0717e-2b0b-1a66-886e-21dff5a89561
-INFO:__main__:Database connection successful (timeout: 30s)
-INFO:__main__:✅ Optimized database queries ready for use
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Loaded 67 event codes from prd_bronze_catalog.grid.code_dictionary
-INFO:__main__:✅ Database integration initialized successfully
-INFO:__main__:Created new app instance for user ae83e49186324290
-INFO:__main__:Main page accessed by user ae83e49186324290
-INFO:__main__:Created Entity Browser for client 9c1be3117e7b
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Displaying 0 entities for client 9c1be3117e7b
-INFO:__main__:Browser 9c1be3117e7b showing empty state (available data: 0)
-INFO:__main__:Main page accessed by user ae83e49186324290
-INFO:__main__:Created Entity Browser for client 30e9336e5a00
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Registered search update callback: on_search_update
-INFO:__main__:Displaying 0 entities for client 30e9336e5a00
-INFO:__main__:Browser 30e9336e5a00 showing empty state (available data: 0)
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Starting clustering analysis for individual
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Risk clustering query returned 25 clusters
-INFO:__main__:=== RISK CODES DEBUG ===
-INFO:__main__:Risk Code 1: 'PEP' -> Dict: 'Politically Exposed Person' | DB: 'Person Political' (4357803 entities)
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:VERIFICATION: Code 'PEP' - Reported: 4357803, Actual: 4357803 - ✅ MATCH
-INFO:__main__:Risk Code 2: 'AST' -> Dict: 'NOT_FOUND_IN_DICT' | DB: 'Assault, Battery' (1318120 entities)
-INFO:__main__:Risk Code 3: 'TAX' -> Dict: 'Tax Evasion' | DB: 'Tax Related Offenses' (890932 entities)
-INFO:__main__:Risk Code 4: 'MUR' -> Dict: 'NOT_FOUND_IN_DICT' | DB: 'Murder, Manslaughter (Committed, Planned or Attempted)' (879245 entities)
-INFO:__main__:Risk Code 5: 'TFT' -> Dict: 'NOT_FOUND_IN_DICT' | DB: 'Theft (Larceny, Misappropriation, Embezzlement, Extortion)' (869694 entities)
-INFO:__main__:=== END RISK CODES DEBUG ===
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:PEP clustering query returned 8 clusters
-INFO:__main__:=== PEP CODES DEBUG ===
-INFO:__main__:PEP Code 1: 'OTHER' -> 'NOT_FOUND_IN_DICT' (4227835 entities)
-INFO:__main__:PEP Code 2: 'FAM' -> 'Family Member' (2208614 entities)
-INFO:__main__:PEP Code 3: 'MUN' -> 'Municipal Official' (1177210 entities)
-INFO:__main__:PEP Code 4: 'LEG' -> 'Legal Representative' (560390 entities)
-INFO:__main__:PEP Code 5: 'REG' -> 'NOT_FOUND_IN_DICT' (465768 entities)
-INFO:__main__:=== END PEP CODES DEBUG ===
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Geographic clustering query returned 50 clusters
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Source clustering query returned 0 clusters
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Subcategory clustering query returned 20 clusters
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Temporal clustering query returned 11 clusters
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Attribute clustering query returned 5 clusters
-INFO:databricks.sql.auth.retry:Received status code 200 for POST request
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Risk severity distribution calculated with 4 categories
-INFO:__main__:Clustering analysis completed for individual
+-- Check the structure and content of the code_dictionary table
+  SELECT
+      code_type,
+      COUNT(*) as code_count,
+      COLLECT_SET(code) as sample_codes
+  FROM prd_bronze_catalog.grid.code_dictionary
+  GROUP BY code_type
+  ORDER BY code_count DESC;
+
+  And this one to see specific event category codes:
+
+  -- Get all event category codes and descriptions
+  SELECT
+      code,
+      code_description,
+      code_type
+  FROM prd_bronze_catalog.grid.code_dictionary
+  WHERE code_type = 'event_category'
+  ORDER BY code;
+
+  And for PEP/attribute codes:
+
+  -- Get all PEP/attribute codes
+  SELECT
+      code,
+      code_description,
+      code_type
+  FROM prd_bronze_catalog.grid.code_dictionary
+  WHERE code_type IN ('entity_attribute', 'pep_level', 'pep_type')
+  ORDER BY code_type, code;
