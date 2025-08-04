@@ -1329,9 +1329,37 @@ class EntitySearchApp:
                 # These will be handled in post-processing
                 continue
             elif field == 'pep_ratings':
-                params['pep_ratings'] = value if isinstance(value, list) else [value]
+                # Fix: Extract just the code part from "A - High Priority" format
+                if isinstance(value, list):
+                    clean_ratings = []
+                    for rating in value:
+                        if isinstance(rating, str) and ' - ' in rating:
+                            # Extract just the code part (e.g., "A" from "A - High Priority")
+                            clean_ratings.append(rating.split(' - ')[0])
+                        else:
+                            clean_ratings.append(rating)
+                    params['pep_ratings'] = clean_ratings
+                else:
+                    if isinstance(value, str) and ' - ' in value:
+                        params['pep_ratings'] = [value.split(' - ')[0]]
+                    else:
+                        params['pep_ratings'] = [value]
             elif field == 'pep_levels':
-                params['pep_levels'] = value if isinstance(value, list) else [value]
+                # Fix: Extract just the code part from "HOS - Head of State" format
+                if isinstance(value, list):
+                    clean_levels = []
+                    for level in value:
+                        if isinstance(level, str) and ' - ' in level:
+                            # Extract just the code part (e.g., "HOS" from "HOS - Head of State")
+                            clean_levels.append(level.split(' - ')[0])
+                        else:
+                            clean_levels.append(level)
+                    params['pep_levels'] = clean_levels
+                else:
+                    if isinstance(value, str) and ' - ' in value:
+                        params['pep_levels'] = [value.split(' - ')[0]]
+                    else:
+                        params['pep_levels'] = [value]
             elif field == 'single_event_only':
                 params['single_event_only'] = bool(value)
             elif field == 'single_event_code':
@@ -3573,6 +3601,10 @@ When analyzing entity data:
             
             for risk_code, entity_count, event_count in risk_data:
                 severity = self.get_risk_severity_from_code(risk_code)
+                # Fix: Ensure counts are integers (database might return strings)
+                entity_count = int(entity_count) if entity_count is not None else 0
+                event_count = int(event_count) if event_count is not None else 0
+                
                 severity_distribution[severity]['entity_count'] += entity_count
                 severity_distribution[severity]['event_count'] += event_count
                 severity_distribution[severity]['risk_codes'].append({
