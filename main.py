@@ -3652,7 +3652,7 @@ When analyzing entity data:
             # Critical risk analysis
             critical_risks = [cluster for cluster in clustering_results['risk_code_clusters'] if cluster['severity'] == 'Critical']
             if critical_risks:
-                total_critical_entities = sum(cluster['entity_count'] for cluster in critical_risks)
+                total_critical_entities = sum(int(cluster['entity_count']) for cluster in critical_risks)
                 insights.append(f"Critical risk exposure: {total_critical_entities} entities across {len(critical_risks)} critical risk categories")
         
         # PEP Level Insights
@@ -3662,7 +3662,7 @@ When analyzing entity data:
             
             # High-risk PEP analysis
             high_risk_pep = ['HOS', 'CAB', 'INF']
-            high_risk_entities = sum(cluster['entity_count'] for cluster in clustering_results['pep_level_clusters'] if cluster['pep_level'] in high_risk_pep)
+            high_risk_entities = sum(int(cluster['entity_count']) for cluster in clustering_results['pep_level_clusters'] if cluster['pep_level'] in high_risk_pep)
             if high_risk_entities > 0:
                 insights.append(f"High-risk PEP exposure: {high_risk_entities} entities in government/infrastructure positions")
         
@@ -9827,12 +9827,12 @@ async def create_clustering_interface():
             ui.label('Top Risk Codes by Entity Count').classes('text-subtitle1 font-medium mb-3')
             
             # Get max value for scaling bars
-            max_entities = max([cluster['entity_count'] for cluster in risk_clusters[:10]]) if risk_clusters else 1
+            max_entities = max([int(cluster['entity_count']) for cluster in risk_clusters[:10]]) if risk_clusters else 1
             
             # Visual bar chart
             with ui.column().classes('w-full gap-2 mb-4'):
                 for cluster in risk_clusters[:8]:  # Show top 8 visually
-                    width_pct = (cluster['entity_count'] / max_entities) * 100
+                    width_pct = (int(cluster['entity_count']) / max_entities) * 100
                     severity_color = {
                         'Critical': '#ef4444', 'Valuable': '#f97316',
                         'Investigative': '#eab308', 'Probative': '#22c55e'
@@ -9905,14 +9905,14 @@ async def create_clustering_interface():
             ui.label('PEP Level Distribution').classes('text-subtitle1 font-medium mb-3')
             
             # Calculate total for percentages
-            total_entities = sum([cluster['entity_count'] for cluster in pep_clusters])
-            max_entities = max([cluster['entity_count'] for cluster in pep_clusters]) if pep_clusters else 1
+            total_entities = sum([int(cluster['entity_count']) for cluster in pep_clusters])
+            max_entities = max([int(cluster['entity_count']) for cluster in pep_clusters]) if pep_clusters else 1
             
             # Visual representation
             with ui.column().classes('w-full gap-3 mb-4'):
                 for cluster in pep_clusters[:6]:  # Show top 6 visually
-                    percentage = (cluster['entity_count'] / total_entities) * 100 if total_entities > 0 else 0
-                    width_pct = (cluster['entity_count'] / max_entities) * 100
+                    percentage = (int(cluster['entity_count']) / total_entities) * 100 if total_entities > 0 else 0
+                    width_pct = (int(cluster['entity_count']) / max_entities) * 100
                     
                     with ui.row().classes('items-center gap-3 w-full'):
                         # PEP level badge
@@ -9963,7 +9963,9 @@ async def create_clustering_interface():
                 country = cluster.get('country', 'Unknown')
                 if country not in country_totals:
                     country_totals[country] = 0
-                country_totals[country] += cluster['entity_count']
+                # Fix: Ensure entity_count is an integer (database might return strings)
+                entity_count = int(cluster['entity_count']) if cluster.get('entity_count') is not None else 0
+                country_totals[country] += entity_count
             
             # Sort countries by entity count
             sorted_countries = sorted(country_totals.items(), key=lambda x: x[1], reverse=True)[:8]
