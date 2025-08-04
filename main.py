@@ -366,6 +366,8 @@ class EntitySearchApp:
             'POL': 'Political Associate',
             'LEG': 'Legal Representative',
             'FIN': 'Financial Representative',
+            'REG': 'Regional Official',
+            'OTHER': 'Other PEP Category',
             'OTH': 'Other'
         }
         
@@ -379,9 +381,15 @@ class EntitySearchApp:
             
             # Valuable Severity Risk Codes (60-79 points)
             'FRD': 'Fraud', 'COR': 'Corruption', 'BRB': 'Bribery', 'EMB': 'Embezzlement',
-            'TAX': 'Tax Evasion', 'SEC': 'Securities Fraud', 'FOR': 'Forgery',
+            'TAX': 'Tax Related Offenses', 'SEC': 'Securities Fraud', 'FOR': 'Forgery',
             'CYB': 'Cybercrime', 'HAC': 'Hacking', 'IDE': 'Identity Theft',
             'GAM': 'Illegal Gambling', 'PIR': 'Piracy', 'SMU': 'Smuggling',
+            
+            # Common Criminal Codes (from actual database)
+            'AST': 'Assault, Battery', 'MUR': 'Murder, Manslaughter', 'TFT': 'Theft, Larceny, Embezzlement',
+            'ROB': 'Robbery', 'BUR': 'Burglary', 'ARS': 'Arson', 'RAP': 'Rape, Sexual Assault',
+            'KID': 'Kidnapping', 'DOM': 'Domestic Violence', 'VAN': 'Vandalism',
+            'DUI': 'DUI/DWI', 'DIS': 'Disorderly Conduct', 'TRE': 'Trespassing',
             
             # Investigative Severity Risk Codes (40-59 points)
             'ENV': 'Environmental Crime', 'WCC': 'White Collar Crime', 'REG': 'Regulatory Violations',
@@ -1072,13 +1080,23 @@ class EntitySearchApp:
             logger.error(f"Failed to load code dictionary: {e}")
     
     def get_event_description(self, event_code, event_subcode=None):
-        """Get comprehensive event description using new comprehensive system"""
-        # Use the new comprehensive event codes system
+        """Get comprehensive event description with multiple fallback layers"""
+        # Try external database-driven system first
         if get_event_description is not None:
-            return get_event_description(event_code, event_subcode)
-        else:
-            # Fallback when database modules aren't loaded
-            return f"Event {event_code}" + (f" - {event_subcode}" if event_subcode else "")
+            db_description = get_event_description(event_code, event_subcode)
+            if db_description != f"Event {event_code}":  # Not the fallback
+                return db_description
+        
+        # Try database-loaded code dictionary
+        if hasattr(self, 'code_dict') and event_code in self.code_dict:
+            return self.code_dict[event_code]
+        
+        # Try hardcoded dictionary
+        if event_code in self.risk_codes:
+            return self.risk_codes[event_code]
+        
+        # Final fallback
+        return f"Event {event_code}" + (f" - {event_subcode}" if event_subcode else "")
     
     def get_pep_description(self, pep_code):
         """Get PEP level description"""
@@ -3304,6 +3322,40 @@ When analyzing entity data:
                         logger.info(f"VERIFICATION: Code '{code}' - Reported: {entity_count}, Actual: {actual_count} - {'✅ MATCH' if entity_count == actual_count else '❌ MISMATCH'}")
                 
                 logger.info("=== END RISK CODES DEBUG ===")
+                
+                # Query to find all missing codes and suggest dictionary updates
+                missing_codes_query = f"""
+                SELECT DISTINCT 
+                    ev.event_category_code as code,
+                    COUNT(DISTINCT e.entity_id) as entity_count,
+                    MIN(ev.event_description_short) as sample_description
+                FROM {table_mapping} e
+                INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
+                WHERE ev.event_category_code IS NOT NULL 
+                AND ev.event_date >= DATEADD(year, -3, CURRENT_DATE())
+                GROUP BY ev.event_category_code
+                HAVING COUNT(DISTINCT e.entity_id) >= 100
+                ORDER BY entity_count DESC
+                LIMIT 50
+                """
+                cursor.execute(missing_codes_query)
+                all_codes = cursor.fetchall()
+                
+                logger.info("=== MISSING CODES SUGGESTIONS ===")
+                missing_count = 0
+                for row in all_codes:
+                    code = row[0]
+                    count = row[1] 
+                    description = row[2] if len(row) > 2 else ''
+                    
+                    if self.risk_codes.get(code) == None:  # Not in hardcoded dict
+                        db_desc = self.get_event_description(code)
+                        if db_desc == f"Event {code}":  # Fallback description means not in DB either
+                            logger.info(f"MISSING: '{code}' -> Sample: '{description}' ({count:,} entities)")
+                            missing_count += 1
+                
+                logger.info(f"=== FOUND {missing_count} MISSING CODES ===")
+                logger.info("=== END MISSING CODES SUGGESTIONS ===")
             
             # PEP Level Clustering (optimized for PTY attribute type)
             pep_clustering_query = f"""
