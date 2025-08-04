@@ -1,137 +1,20 @@
--- Check the structure and content of the code_dictionary table
-  SELECT
-      code_type,
-      COUNT(*) as code_count,
-      COLLECT_SET(code) as sample_codes
-  FROM prd_bronze_catalog.grid.code_dictionary
-  GROUP BY code_type
-  ORDER BY code_count DESC;
-
-  code_type code_count  sample_codes
-event_category  67  ["FOF","BLK","ENV","IPR","IMP","CFT","CPR","SMG","HTE","SEX","OBS","DEF","BKY","LNS","MLA","ARS","IRC","MSB","ROB","TAX","GAM","PEP","VCY","SNX","TRF","LMD","REO","MIS","PRJ","DPP","MUR","WLT","KID","HUM","BRB","CYB","DUI","PER","TER","BUS","PSP","SPY","BUR","NSC","PLT","HCD","BIL","ABU","CND","IGN","AST","DTF","DEN","RES","DPS","ORG","REG","SEC","IFO","FRD","TFT","FOS","FOR","FUG","MOR","FAR","CON"]
-relationship_type 48  ["MOTHER","WIFE","NIECE","SENIOR_OFFICIAL","GRANDMOTHER","MOTHER_IN_LAW","STEP_FATHER","STEP_DAUGHTER","GRANDDAUGHTER","SUBSIDIARY","ASC_SIP","FRIEND","AGENT_REPRESENTATIVE","POLITICAL_ADVISER","EMPLOYEE","FATHER","CHILD","SISTER_IN_LAW","NEGATIVE_NEWS","COUSIN","NEPHEW","UNCLE","PARENT_COMPANY","GRANDFATHER","BROTHER_IN_LAW","SON","SHAREHOLDER_OWNER","DAUGHTER_IN_LAW","STEP_MOTHER","ASSET","FAMILY_MEMBER","DAUGHTER","SAME_SEX_PARTNER","RELATIVE","SON_IN_LAW","BROTHER","FATHER_IN_LAW","FINANCIAL_ADVISER","HUSBAND","COLLEAGUE","LEGAL_ADVISER","AUNT","STEP_SON","ASSOCIATE","UNMARRIED_PARTNER","SISTER","GRANDSON","EMPLOYER"]
-event_sub_category  36  ["CEN","SPD","ADT","ASC","CMP","FIM","ARN","ALL","TRL","WTD","PRB","IND","ACC","DMS","FIL","CVT","CHG","CNF","ACQ","RVK","DEP","LIC","GOV","APL","PLE","CSP","SPT","ARB","EXP","SEZ","ART","LIN","SAN","SJT","SET","ACT"]
-entity_attribute  29  ["RID","RAC","NAT","PRT","RGP","REG","URL","OCU","WGT","DDT","PHD","LGB","DED","PLV","RSC","LNG","IMG","BIO","NIN","RMK","BLD","SMK","ECL","PTY","CPX","HGT","HCL","LON","SEX"]
-relationship_direction  2 ["FROM","TO"]
-
-  And this one to see specific event category codes:
-
-  -- Get all event category codes and descriptions
-  SELECT
-      code,
-      code_description,
-      code_type
-  FROM prd_bronze_catalog.grid.code_dictionary
-  WHERE code_type = 'event_category'
-  ORDER BY code;
-
-  code  code_description  code_type
-ABU Abuse (Domestic, Elder, Child)  event_category
-ARS Arson event_category
-AST Assault, Battery  event_category
-BIL Questionable Billing Practices  event_category
-BKY Bankruptcy  event_category
-BLK Firm Specific Black List  event_category
-BRB Bribery, Graft, Kickbacks, Political Corruption event_category
-BUR Burglary  event_category
-BUS Business Crimes (Antitrust, Bankruptcy, Price Fixing) event_category
-CFT Counterfeiting, Forgery event_category
-CND Financial Condition Risk  event_category
-CON Conspiracy (No specific crime named)  event_category
-CPR Copyright Infringement (Intellectual Property, Electronic Piracy) event_category
-CYB Computer Related, Cyber Crime event_category
-DEF Default Risk  event_category
-DEN Denied Entity event_category
-DPP Data Privacy and Protection event_category
-DPS Possession of Drugs or Drug Paraphernalia event_category
-DTF Trafficking or Distribution of Drugs  event_category
-DUI DUI, DWI  event_category
-ENV Environmental Crimes (Poaching, Illegal Logging, Animal Cruelty event_category
-FAR Foreign Agent Registration Act  event_category
-FOF Former OFAC event_category
-FOR Forfeiture  event_category
-FOS Former Sanctions List event_category
-FRD Fraud, Scams, Swindles  event_category
-FUG Escape, Fugitive  event_category
-GAM Illegal Gambling  event_category
-HCD Health Care Disciplines event_category
-HTE Hate Groups, Hate Crimes  event_category
-HUM Human rights, Genocide, War crimes  event_category
-IFO Information Only  event_category
-IGN Possession or Sale of Guns, Weapons and Explosives  event_category
-IMP Identity Theft, Impersonation event_category
-IPR Illegal Prostitution, Promoting Illegal Prostitution  event_category
-IRC Iran Connect  event_category
-KID Kidnapping, Abduction, Held Against Will  event_category
-LMD Legal Marijuana Dispensary  event_category
-LNS Loan Sharking, Usury, Predatory Lending event_category
-MIS Misconduct  event_category
-MLA Money Laundering  event_category
-MOR Mortgage Related  event_category
-MSB Money Services Business event_category
-MUR Murder, Manslaughter (Committed, Planned or Attempted)  event_category
-NSC Non Specific Crime  event_category
-OBS Obscenity Related, Child Pornography  event_category
-ORG Organized Crime, Criminal Association, Racketeering event_category
-PEP Person Political  event_category
-PER Performance Risk  event_category
-PLT Public Intoxication, Lewdness, Trespassing  event_category
-PRJ False Filings, False Statements, Perjury, Obstruction of Justice  event_category
-PSP Possession of Stolen Property event_category
-REG Regulatory Action event_category
-REO Restructuring, Reorganization, Divestiture Risk event_category
-RES Real Estate Actions event_category
-ROB Robbery (Stealing by Threat, Use of Force)  event_category
-SEC SEC Violations (Insider Trading, Securities Fraud)  event_category
-SEX Sex Offenses (Rape, Sodomy, Sexual Abuse, Pedophilia) event_category
-SMG Smuggling (Does not include Drugs, Money, People or Guns) event_category
-SNX Sanctions Connect event_category
-SPY Espionage, Spying, Treason  event_category
-TAX Tax Related Offenses  event_category
-TER Terrorist Related event_category
-TFT Theft (Larceny, Misappropriation, Embezzlement, Extortion)  event_category
-TRF People Trafficking, Organ Trafficking event_category
-VCY Virtual Currency  event_category
-WLT Watch List  event_category
-
-  And for PEP/attribute codes:
-
-  -- Get all PEP/attribute codes
-  SELECT
-      code,
-      code_description,
-      code_type
-  FROM prd_bronze_catalog.grid.code_dictionary
-  WHERE code_type IN ('entity_attribute', 'pep_level', 'pep_type')
-  ORDER BY code_type, code;
-
-  code  code_description  code_type
-BIO BIO entity_attribute
-BLD BUILD entity_attribute
-CPX COMPLEXION  entity_attribute
-DDT DECEASED_DATE entity_attribute
-DED DECEASED  entity_attribute
-ECL EYE_COLOR entity_attribute
-HCL HAIR_COLOR  entity_attribute
-HGT HEIGHT  entity_attribute
-IMG IMAGE_URL entity_attribute
-LGB LEGAL_BASIS entity_attribute
-LNG LANGUAGE  entity_attribute
-LON LISTED_ON entity_attribute
-NAT NATIONALITY entity_attribute
-NIN NI_NUMBER entity_attribute
-OCU OCCUPATION  entity_attribute
-PHD PHYSICAL_DESCRIPTION  entity_attribute
-PLV PEP_LEVEL entity_attribute
-PRT PEP_RATING  entity_attribute
-PTY PEP_TYPE  entity_attribute
-RAC RACE  entity_attribute
-REG REG_DATE  entity_attribute
-RGP RISKOGRAPHY entity_attribute
-RID RISKID  entity_attribute
-RMK REMARK  entity_attribute
-RSC RISK_SCORE  entity_attribute
-SEX SEX entity_attribute
-SMK SCARS_MARKS entity_attribute
-URL ENTITY_URL  entity_attribute
-WGT WEIGHT  entity_attribute
+NFO:__main__:Browser dfe27baeceb5 showing empty state (available data: 0)
+INFO:databricks.sql.auth.retry:Received status code 200 for POST request
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:__main__:Starting clustering analysis for individual
+INFO:databricks.sql.auth.retry:Received status code 200 for POST request
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:__main__:Risk clustering query returned 25 clusters
+INFO:__main__:=== RISK CODES DEBUG ===
+INFO:__main__:Risk Code 1: 'PEP' -> Dict: 'Politically Exposed Person' | DB: 'Person Political' (4357803 entities)
+INFO:databricks.sql.auth.retry:Received status code 200 for POST request
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:__main__:VERIFICATION: Code 'PEP' - Reported: 4357803, Actual: 4357803 - ✅ MATCH
+INFO:__main__:Risk Code 2: 'AST' -> Dict: 'Assault, Battery' | DB: 'Assault, Battery' (1318120 entities)
+INFO:__main__:Risk Code 3: 'TAX' -> Dict: 'Tax Related Offenses' | DB: 'Tax Related Offenses' (890932 entities)
+INFO:__main__:Risk Code 4: 'MUR' -> Dict: 'Murder, Manslaughter' | DB: 'Murder, Manslaughter (Committed, Planned or Attempted)' (879245 entities)
+INFO:__main__:Risk Code 5: 'TFT' -> Dict: 'Theft, Larceny, Embezzlement' | DB: 'Theft (Larceny, Misappropriation, Embezzlement, Extortion)' (869694 entities)
+INFO:__main__:=== END RISK CODES DEBUG ===
+INFO:databricks.sql.auth.retry:Received status code 200 for POST request
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+ERROR:__main__:Clustering analysis error: [UNRESOLVED_COLUMN.WITH_SUGGESTION] A column, variable, or function parameter with name `ev`.`event_description_short` cannot be resolved. Did you mean one of the following? [`ev`.`event_description`, `e`.`identifications`, `ev`.`event_category_code`, `ev`.`event_date`, `ev`.`event_end_date`]. SQLSTATE: 42703; line 5 pos 24
