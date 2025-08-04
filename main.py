@@ -9998,7 +9998,6 @@ async def create_clustering_interface():
         ui.label('Detailed Geographic Clusters').classes('text-subtitle1 font-medium mt-4 mb-2')
         columns = [
             {'name': 'country', 'label': 'Country', 'field': 'country', 'align': 'left'},
-            {'name': 'city', 'label': 'City', 'field': 'city', 'align': 'left'},
             {'name': 'entities', 'label': 'Entities', 'field': 'entity_count', 'align': 'right'},
             {'name': 'samples', 'label': 'Sample Entities', 'field': 'sample_entities', 'align': 'left'}
         ]
@@ -10011,7 +10010,6 @@ async def create_clustering_interface():
             
             rows.append({
                 'country': cluster['country'] or 'Unknown',
-                'city': cluster['city'] or 'Unknown',
                 'entity_count': cluster['entity_count'],
                 'sample_entities': sample_names
             })
@@ -10023,7 +10021,6 @@ async def create_clustering_interface():
         columns = [
             {'name': 'source_system', 'label': 'Source System', 'field': 'source_system', 'align': 'left'},
             {'name': 'entities', 'label': 'Entities', 'field': 'entity_count', 'align': 'right'},
-            {'name': 'source_items', 'label': 'Source Items', 'field': 'source_items', 'align': 'right'},
             {'name': 'samples', 'label': 'Sample Entities', 'field': 'sample_entities', 'align': 'left'}
         ]
         
@@ -10036,7 +10033,6 @@ async def create_clustering_interface():
             rows.append({
                 'source_system': cluster['source_system'] or 'Unknown',
                 'entity_count': cluster['entity_count'],
-                'source_items': cluster['source_items'],
                 'sample_entities': sample_names
             })
         
