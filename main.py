@@ -3279,6 +3279,32 @@ When analyzing entity data:
             risk_clusters = cursor.fetchall()
             logger.info(f"Risk clustering query returned {len(risk_clusters)} clusters")
             
+            # Debug: Log actual risk codes and their matches in our dictionary
+            if risk_clusters:
+                logger.info("=== RISK CODES DEBUG ===")
+                for i, row in enumerate(risk_clusters[:5]):  # First 5 for debugging
+                    code = row[0] if row and len(row) > 0 else 'None'
+                    entity_count = row[1] if row and len(row) > 1 else 0
+                    dict_description = self.risk_codes.get(code, 'NOT_FOUND_IN_DICT')
+                    db_description = self.get_event_description(code)
+                    logger.info(f"Risk Code {i+1}: '{code}' -> Dict: '{dict_description}' | DB: '{db_description}' ({entity_count} entities)")
+                    
+                    # Verification query to confirm entity count is accurate
+                    if i == 0:  # Verify first code only for performance
+                        verify_query = f"""
+                        SELECT COUNT(DISTINCT e.entity_id) as actual_count
+                        FROM {table_mapping} e
+                        INNER JOIN {table_events} ev ON e.entity_id = ev.entity_id
+                        WHERE ev.event_category_code = '{code}' 
+                        AND ev.event_date >= DATEADD(year, -3, CURRENT_DATE())
+                        """
+                        cursor.execute(verify_query)
+                        verify_result = cursor.fetchone()
+                        actual_count = verify_result[0] if verify_result else 0
+                        logger.info(f"VERIFICATION: Code '{code}' - Reported: {entity_count}, Actual: {actual_count} - {'✅ MATCH' if entity_count == actual_count else '❌ MISMATCH'}")
+                
+                logger.info("=== END RISK CODES DEBUG ===")
+            
             # PEP Level Clustering (optimized for PTY attribute type)
             pep_clustering_query = f"""
             SELECT 
@@ -3316,6 +3342,16 @@ When analyzing entity data:
             cursor.execute(pep_clustering_query)
             pep_clusters = cursor.fetchall()
             logger.info(f"PEP clustering query returned {len(pep_clusters)} clusters")
+            
+            # Debug: Log actual PEP codes and their matches in our dictionary
+            if pep_clusters:
+                logger.info("=== PEP CODES DEBUG ===")
+                for i, row in enumerate(pep_clusters[:5]):  # First 5 for debugging
+                    code = row[0] if row and len(row) > 0 else 'None'
+                    entity_count = row[1] if row and len(row) > 1 else 0
+                    description = self.pep_levels.get(code, 'NOT_FOUND_IN_DICT')
+                    logger.info(f"PEP Code {i+1}: '{code}' -> '{description}' ({entity_count} entities)")
+                logger.info("=== END PEP CODES DEBUG ===")
             
             # Geographic Clustering (simplified for performance)
             geo_clustering_query = f"""
@@ -3431,7 +3467,7 @@ When analyzing entity data:
                         'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
                         'event_count': int(row[2]) if row and len(row) > 2 and row[2] is not None else 0,
                         'sample_entities': self._safe_extract_array(row, 3, 5),
-                        'risk_description': self.risk_codes.get(row[0], 'Unknown') if row and len(row) > 0 else 'Unknown',
+                        'risk_description': self.get_event_description(row[0]) if row and len(row) > 0 else 'Unknown',
                         'severity': self.get_risk_severity_from_code(row[0]) if row and len(row) > 0 else 'Unknown'
                     }
                     for row in risk_clusters if row
