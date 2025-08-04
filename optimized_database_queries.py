@@ -407,7 +407,7 @@ class OptimizedDatabaseQueries:
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.sources src
                     WHERE src.entity_id = m.entity_id 
-                    AND UPPER(src.name) LIKE %(source_name_pattern)s
+                    AND UPPER(src.url) LIKE %(source_name_pattern)s
                     LIMIT 1
                 )
             """)
@@ -419,7 +419,7 @@ class OptimizedDatabaseQueries:
                 EXISTS (
                     SELECT 1 FROM prd_bronze_catalog.grid.sources src
                     WHERE src.entity_id = m.entity_id 
-                    AND UPPER(src.url) LIKE %(source_key_pattern)s
+                    AND UPPER(src.source_key) LIKE %(source_key_pattern)s
                     LIMIT 1
                 )
             """)
@@ -475,18 +475,19 @@ class OptimizedDatabaseQueries:
             """)
             params['event_sub_category_pattern'] = f"%{search_params['event_sub_category'].upper()}%"
         
-        # PEP Rating filter (A, B, C, D)
+        # PEP Rating filter (A, B, C, D) - Based on actual data: A:MM/DD/YYYY format
         if search_params.get('pep_ratings'):
             rating_list = search_params['pep_ratings']
             if isinstance(rating_list, str):
                 rating_list = [rating_list]
             
-            # Convert to SQL IN clause format
+            # Use the actual data pattern: ratings are stored as "A:MM/DD/YYYY", "B:MM/DD/YYYY", etc.
             rating_conditions = []
             for i, rating in enumerate(rating_list):
                 param_key = f'pep_rating_{i}'
-                rating_conditions.append(f"SUBSTRING(attr.alias_value, 1, 1) = %({param_key})s")
-                params[param_key] = rating
+                # Match the actual data pattern: rating letter followed by colon
+                rating_conditions.append(f"attr.alias_value LIKE %({param_key})s")
+                params[param_key] = f"{rating}:%"  # A:%, B:%, C:%, D:%
             
             if rating_conditions:
                 performance_filters.append(f"""

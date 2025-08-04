@@ -1474,6 +1474,20 @@ class EntitySearchApp:
                             pep_condition = f"(attr.alias_code_type = 'PTY' AND UPPER(attr.alias_value) LIKE UPPER('%{value}%'))"
                         
                         conditions.append(f"EXISTS (SELECT 1 FROM prd_bronze_catalog.grid.{entity_type}_attributes attr WHERE attr.entity_id = e.entity_id AND {pep_condition})")
+                # PEP rating filter (A, B, C, D) - Based on actual data structure: A:MM/DD/YYYY, B:MM/DD/YYYY, etc.
+                elif field == 'pep_ratings':
+                    pep_rating_conditions = []
+                    if isinstance(value, list):
+                        for rating in value:
+                            # Match the actual data pattern: rating starts with letter followed by colon and date
+                            pep_rating_conditions.append(f"attr.alias_value LIKE '{rating}:%'")
+                    else:
+                        # Single rating
+                        pep_rating_conditions.append(f"attr.alias_value LIKE '{value}:%'")
+                    
+                    if pep_rating_conditions:
+                        pep_rating_query = " OR ".join(pep_rating_conditions)
+                        conditions.append(f"EXISTS (SELECT 1 FROM prd_bronze_catalog.grid.{entity_type}_attributes attr WHERE attr.entity_id = e.entity_id AND attr.alias_code_type = 'PRT' AND ({pep_rating_query}))")
                 # Risk code filter
                 elif field == 'risk_codes':
                     if isinstance(value, list):
@@ -3414,9 +3428,9 @@ When analyzing entity data:
                 'risk_code_clusters': [
                     {
                         'risk_code': row[0] if row and len(row) > 0 else 'Unknown',
-                        'entity_count': row[1] if row and len(row) > 1 else 0,
-                        'event_count': row[2] if row and len(row) > 2 else 0,
-                        'sample_entities': self._safe_extract_array(row, 6, 5),
+                        'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
+                        'event_count': int(row[2]) if row and len(row) > 2 and row[2] is not None else 0,
+                        'sample_entities': str(row[3]) if row and len(row) > 3 and row[3] is not None else '',
                         'risk_description': self.risk_codes.get(row[0], 'Unknown') if row and len(row) > 0 else 'Unknown',
                         'severity': self.get_risk_severity_from_code(row[0]) if row and len(row) > 0 else 'Unknown'
                     }
@@ -3425,9 +3439,8 @@ When analyzing entity data:
                 'pep_level_clusters': [
                     {
                         'pep_level': row[0] if row and len(row) > 0 else 'Unknown',
-                        'entity_count': row[1] if row and len(row) > 1 else 0,
-                        'attribute_count': row[2] if row and len(row) > 2 else 0,
-                        'sample_entities': self._safe_extract_array(row, 3, 5),
+                        'entity_count': int(row[1]) if row and len(row) > 1 and row[1] is not None else 0,
+                        'sample_entities': str(row[2]) if row and len(row) > 2 and row[2] is not None else '',
                         'pep_description': self.pep_levels.get(row[0], 'Unknown') if row and len(row) > 0 else 'Unknown'
                     }
                     for row in pep_clusters if row
