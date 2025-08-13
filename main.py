@@ -14798,17 +14798,7 @@ if __name__ == '__main__':
                 reload=config.get('server.reload', False),
                 storage_secret='entity_search_secret_key_2024',  # Enable proper session storage
                 show=False,  # Don't auto-open browser in production
-                reconnect_timeout=300.0,  # 5 minutes instead of 60 seconds
-                # Additional NiceGUI configurations to prevent timer errors
-                uvicorn_config={
-                    'log_level': 'error',  # Suppress uvicorn info/debug messages
-                    'access_log': False,   # Disable access logging
-                    'timeout_keep_alive': 300,  # Keep-alive timeout for uvicorn
-                    'timeout_graceful_shutdown': 60,  # Graceful shutdown timeout
-                    'ws_ping_interval': 30,  # WebSocket ping interval
-                    'ws_ping_timeout': 10,   # WebSocket ping timeout
-                    'ws_per_message_deflate': False  # Disable compression for better performance
-                }
+                reconnect_timeout=300.0  # 5 minutes instead of 60 seconds - this is the key timeout setting
             )
         except KeyboardInterrupt:
             logger.info("Application shutdown requested by user")
