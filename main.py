@@ -14644,11 +14644,7 @@ if __name__ == '__main__':
                 reload=config.get('server.reload', False),
                 storage_secret='entity_search_secret_key_2024',  # Enable proper session storage
                 show=False,  # Don't auto-open browser in production
-                reconnect_timeout=300.0,  # 5 minutes instead of 60 seconds
-                uvicorn_config={
-                    'timeout_keep_alive': 300,  # Keep connections alive longer
-                    'timeout_graceful_shutdown': 30,
-                }
+                reconnect_timeout=300.0  # 5 minutes instead of 60 seconds
             )
         except KeyboardInterrupt:
             logger.info("Application shutdown requested by user")
