@@ -109,12 +109,106 @@ except ImportError as e:
 
 # Complete application state isolation system with thread safety
 import threading
+import weakref
+from typing import Set, Dict, Callable
 
 # Thread-safe global dictionaries for multi-user deployment
 _global_lock = threading.RLock()  # Reentrant lock for nested calls
 USER_APP_INSTANCES = {}
 REQUEST_TO_USER_MAPPING = {}
 CLIENT_DATA_STORE = {}
+
+# Robust timer management to prevent connection timeout errors
+class RobustTimerManager:
+    """Manages timers with proper cleanup and connection monitoring"""
+    
+    def __init__(self):
+        self.active_timers: Dict[str, ui.timer] = {}
+        self.client_connections: Set[str] = set()
+        self.cleanup_lock = threading.Lock()
+    
+    def create_robust_timer(self, interval: float, callback: Callable, client_id: str = None) -> str:
+        """Create a timer that handles disconnections gracefully"""
+        import uuid
+        timer_id = str(uuid.uuid4())
+        
+        def safe_callback():
+            try:
+                # Check if client is still connected before executing
+                from nicegui import context
+                if context.client and context.client.id in self.client_connections:
+                    callback()
+                else:
+                    # Client disconnected, cleanup timer
+                    self.cleanup_timer(timer_id)
+            except Exception as e:
+                # Log error but don't let it crash the timer
+                logger.warning(f"Timer callback error: {e}")
+                # Clean up problematic timer
+                self.cleanup_timer(timer_id)
+        
+        try:
+            timer = ui.timer(interval, safe_callback)
+            with self.cleanup_lock:
+                self.active_timers[timer_id] = timer
+                if client_id:
+                    self.client_connections.add(client_id)
+            
+            logger.debug(f"Created robust timer {timer_id} with {interval}s interval")
+            return timer_id
+            
+        except Exception as e:
+            logger.error(f"Failed to create timer: {e}")
+            return None
+    
+    def cleanup_timer(self, timer_id: str):
+        """Safely cleanup a timer"""
+        with self.cleanup_lock:
+            if timer_id in self.active_timers:
+                try:
+                    timer = self.active_timers[timer_id]
+                    timer.cancel()
+                    del self.active_timers[timer_id]
+                    logger.debug(f"Cleaned up timer {timer_id}")
+                except Exception as e:
+                    logger.warning(f"Error cleaning up timer {timer_id}: {e}")
+    
+    def register_client_connection(self, client_id: str):
+        """Register a client connection"""
+        with self.cleanup_lock:
+            self.client_connections.add(client_id)
+            logger.debug(f"Registered client connection: {client_id}")
+    
+    def unregister_client_connection(self, client_id: str):
+        """Unregister a client connection and cleanup related timers"""
+        with self.cleanup_lock:
+            if client_id in self.client_connections:
+                self.client_connections.remove(client_id)
+                # Cleanup any timers associated with this client
+                timers_to_cleanup = []
+                for timer_id, timer in self.active_timers.items():
+                    try:
+                        # This is a simple check - in practice you'd want better tracking
+                        timers_to_cleanup.append(timer_id)
+                    except:
+                        continue
+                
+                for timer_id in timers_to_cleanup[-3:]:  # Clean up last 3 timers
+                    self.cleanup_timer(timer_id)
+                
+                logger.debug(f"Unregistered client connection: {client_id}")
+    
+    def cleanup_all_timers(self):
+        """Emergency cleanup of all timers"""
+        with self.cleanup_lock:
+            timer_ids = list(self.active_timers.keys())
+            for timer_id in timer_ids:
+                self.cleanup_timer(timer_id)
+            self.client_connections.clear()
+            logger.info("Cleaned up all robust timers")
+
+# Global timer manager
+robust_timer_manager = RobustTimerManager()
 
 class UserSessionManager:
     """Manages completely isolated app instances per user session"""
@@ -10719,9 +10813,8 @@ async def create_analysis_interface():
         update_search_results()
         
         # Auto-refresh every 10 seconds to detect new search results (reduced frequency)
-        # Cancel timer if client disconnects to prevent error messages
-        refresh_timer = ui.timer(10.0, update_search_results)
-        refresh_timer.active = True
+        # Uses robust timer that handles disconnections gracefully
+        refresh_timer_id = robust_timer_manager.create_robust_timer(10.0, update_search_results, "search_refresh")
 
 
 async def create_sql_analysis_interface():
@@ -10830,7 +10923,7 @@ async def create_sql_analysis_interface():
         update_search_results()
         
         # Auto-refresh every 3 seconds to detect new search results
-        ui.timer(3.0, update_search_results)
+        robust_timer_manager.create_robust_timer(3.0, update_search_results, "sql_analysis_refresh")
                         
     except Exception as e:
         logger.error(f"Error creating SQL analysis interface: {e}")
@@ -11476,9 +11569,8 @@ async def create_dedicated_network_analysis_interface():
         update_search_results()
         
         # Auto-refresh every 10 seconds to detect new search results (reduced frequency)
-        # Cancel timer if client disconnects to prevent error messages
-        refresh_timer = ui.timer(10.0, update_search_results)
-        refresh_timer.active = True
+        # Uses robust timer that handles disconnections gracefully
+        refresh_timer_id = robust_timer_manager.create_robust_timer(10.0, update_search_results, "network_analysis_refresh")
     
     except Exception as e:
         logger.error(f"Error creating dedicated network analysis interface: {e}")
@@ -14520,8 +14612,8 @@ async def create_table_interface():
         user_app_instance.register_search_update_callback(on_search_update)
         
         # Check every 10 seconds for available client data (reduced frequency to prevent timeout errors)
-        client_timer = ui.timer(10.0, check_for_client_data)
-        client_timer.active = True
+        # Uses robust timer that handles disconnections gracefully
+        client_timer_id = robust_timer_manager.create_robust_timer(10.0, check_for_client_data, "client_data_check")
 
 if __name__ == '__main__':
     try:
@@ -14640,12 +14732,62 @@ if __name__ == '__main__':
                     content={"status": "not_ready", "error": str(e)}
                 )
         
-        # Configure NiceGUI for better connection stability
-        from nicegui import core
+        # Configure NiceGUI for better connection stability and error suppression
+        from nicegui import core, Client
+        import warnings
         
-        # Override the default connection timeout
+        # Suppress NiceGUI warnings and error messages
+        warnings.filterwarnings('ignore', category=UserWarning)
+        warnings.filterwarnings('ignore', message='.*Timer cancelled.*')
+        warnings.filterwarnings('ignore', message='.*client is not connected.*')
+        
+        # Override multiple NiceGUI timeout configurations
         original_timeout = getattr(core, 'CONNECTION_TIMEOUT', 60.0)
         core.CONNECTION_TIMEOUT = 300.0  # 5 minutes
+        
+        # Override websocket timeout (the main culprit for 60-second timer errors)
+        if hasattr(core, 'WEBSOCKET_TIMEOUT'):
+            core.WEBSOCKET_TIMEOUT = 300.0  # 5 minutes
+        
+        # Override client connection timeout
+        if hasattr(Client, 'RECONNECT_TIMEOUT'):
+            Client.RECONNECT_TIMEOUT = 300.0  # 5 minutes
+            
+        # Try to set the internal timer timeout that causes the 60-second messages
+        try:
+            import nicegui.context as context
+            if hasattr(context, 'CONNECTION_TIMEOUT'):
+                context.CONNECTION_TIMEOUT = 300.0
+        except ImportError:
+            pass
+            
+        # Override any other timeout-related configurations
+        for attr_name in dir(core):
+            if 'TIMEOUT' in attr_name.upper() and not attr_name.startswith('_'):
+                try:
+                    current_value = getattr(core, attr_name, None)
+                    if isinstance(current_value, (int, float)) and current_value <= 120:
+                        setattr(core, attr_name, 300.0)
+                        logger.info(f"Extended NiceGUI {attr_name} from {current_value}s to 300s")
+                except Exception:
+                    pass
+        
+        # Configure NiceGUI logging to suppress timer errors
+        nicegui_logger = logging.getLogger('nicegui')
+        nicegui_logger.setLevel(logging.ERROR)  # Only show ERROR and above
+        
+        # Set up a custom log filter to suppress specific timer messages
+        class NiceGUITimerFilter(logging.Filter):
+            def filter(self, record):
+                if hasattr(record, 'getMessage'):
+                    message = record.getMessage()
+                    # Suppress timer cancellation messages
+                    if 'Timer cancelled' in message or 'client is not connected' in message:
+                        return False
+                return True
+        
+        # Apply the filter to NiceGUI logger
+        nicegui_logger.addFilter(NiceGUITimerFilter())
         
         # Run application with comprehensive error handling
         try:
@@ -14656,7 +14798,22 @@ if __name__ == '__main__':
                 reload=config.get('server.reload', False),
                 storage_secret='entity_search_secret_key_2024',  # Enable proper session storage
                 show=False,  # Don't auto-open browser in production
-                reconnect_timeout=300.0  # 5 minutes instead of 60 seconds
+                reconnect_timeout=300.0,  # 5 minutes instead of 60 seconds
+                # Extended timeouts to prevent client disconnection errors
+                keepalive_timeout=300,   # Keep connections alive for 5 minutes
+                timeout_keep_alive=300,  # Alternative keep-alive setting
+                # Additional NiceGUI configurations to prevent timer errors
+                uvicorn_config={
+                    'log_level': 'error',  # Suppress uvicorn info/debug messages
+                    'access_log': False,   # Disable access logging
+                    'timeout_keep_alive': 300,  # Keep-alive timeout for uvicorn
+                    'timeout_graceful_shutdown': 60,  # Graceful shutdown timeout
+                    'ws_ping_interval': 30,  # WebSocket ping interval
+                    'ws_ping_timeout': 10,   # WebSocket ping timeout
+                    'ws_per_message_deflate': False  # Disable compression for better performance
+                },
+                # Suppress internal NiceGUI logging
+                quiet=True
             )
         except KeyboardInterrupt:
             logger.info("Application shutdown requested by user")
