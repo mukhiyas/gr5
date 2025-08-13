@@ -539,7 +539,6 @@ class OptimizedDatabaseQueries:
                     e.event_category_code,
                     e.event_sub_category_code,
                     e.event_date,
-                    e.event_description,
                     SUBSTR(e.event_description, 1, 200) as event_description_short,
                     -- Enhanced timestamp information
                     s.createdDate as created_date,

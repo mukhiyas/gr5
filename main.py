@@ -10106,8 +10106,20 @@ async def create_clustering_interface():
         except asyncio.TimeoutError:
             results_container.clear()
             with results_container:
-                ui.label('Clustering analysis timed out after 60 seconds. Please try with fewer results or a different entity type.').classes('text-red-500')
-                ui.label('Try reducing the Max Results parameter or check your database connection.').classes('text-gray-600 text-sm mt-2')
+                ui.label('⏱️ Clustering analysis timed out').classes('text-red-500 text-lg mb-2')
+                ui.label('The clustering analysis took longer than expected.').classes('text-gray-700 mb-2')
+                
+                with ui.card().classes('w-full bg-yellow-50 p-4 mt-2'):
+                    ui.label('💡 Recommendations:').classes('text-yellow-800 font-semibold mb-2')
+                    ui.label('• Reduce Max Results (try 100-200 instead of 500)').classes('text-yellow-700 text-sm')
+                    ui.label('• Try a different entity type (individual vs organization)').classes('text-yellow-700 text-sm')
+                    ui.label('• Check if your database connection is stable').classes('text-yellow-700 text-sm')
+                    ui.label('• Analysis will continue in background - try refreshing in a moment').classes('text-yellow-700 text-sm')
+                
+                ui.button('Try Again with 200 Results', 
+                         icon='refresh',
+                         on_click=lambda: perform_clustering_analysis(entity_type, 200)
+                         ).classes('mt-4 bg-blue-600 text-white')
         except Exception as e:
             results_container.clear()
             with results_container:
@@ -14631,7 +14643,12 @@ if __name__ == '__main__':
                 port=config.get('server.port', 8080),
                 reload=config.get('server.reload', False),
                 storage_secret='entity_search_secret_key_2024',  # Enable proper session storage
-                show=False  # Don't auto-open browser in production
+                show=False,  # Don't auto-open browser in production
+                reconnect_timeout=300.0,  # 5 minutes instead of 60 seconds
+                uvicorn_config={
+                    'timeout_keep_alive': 300,  # Keep connections alive longer
+                    'timeout_graceful_shutdown': 30,
+                }
             )
         except KeyboardInterrupt:
             logger.info("Application shutdown requested by user")
