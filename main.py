@@ -8631,16 +8631,23 @@ async def create_search_interface():
                 
                 def update_search_button_state():
                     """Update search button state based on validation"""
-                    if validate_search_fields():
-                        search_button.enable()
-                        search_button.classes(replace='bg-gray-400 cursor-not-allowed', with_='bg-primary')
-                        search_button.props(remove='disable')
-                        search_button.tooltip = None
-                    else:
-                        search_button.disable()
-                        search_button.classes(replace='bg-primary', with_='bg-gray-400 cursor-not-allowed')
-                        search_button.props('disable')
-                        search_button.tooltip = 'Please enter at least one search criterion (Entity ID, Name, Risk ID, Country, etc.)'
+                    try:
+                        if validate_search_fields():
+                            search_button.enable()
+                            search_button.classes(remove='bg-gray-400 cursor-not-allowed', add='bg-primary')
+                            search_button.props(remove='disable')
+                            search_button.tooltip = None
+                        else:
+                            search_button.disable()
+                            search_button.classes(remove='bg-primary', add='bg-gray-400 cursor-not-allowed')
+                            search_button.props('disable')
+                            search_button.tooltip = 'Please enter at least one search criterion (Entity ID, Name, Risk ID, Country, etc.)'
+                    except Exception as e:
+                        # Fallback: just enable/disable without styling changes
+                        if validate_search_fields():
+                            search_button.enable()
+                        else:
+                            search_button.disable()
 
                 # Search controls
                 with ui.row().classes('w-full gap-2 justify-center mt-4'):
@@ -10133,11 +10140,15 @@ def clear_search():
             
         # Update search button state after clearing (should be disabled)
         if 'search_button' in search_form_fields:
-            search_button_ref = search_form_fields['search_button']
-            search_button_ref.disable()
-            search_button_ref.classes(replace='bg-primary', with_='bg-gray-400 cursor-not-allowed')
-            search_button_ref.props('disable')
-            search_button_ref.tooltip = 'Please enter at least one search criterion (Entity ID, Name, Risk ID, Country, etc.)'
+            try:
+                search_button_ref = search_form_fields['search_button']
+                search_button_ref.disable()
+                search_button_ref.classes(remove='bg-primary', add='bg-gray-400 cursor-not-allowed')
+                search_button_ref.props('disable')
+                search_button_ref.tooltip = 'Please enter at least one search criterion (Entity ID, Name, Risk ID, Country, etc.)'
+            except Exception:
+                # Fallback: just disable the button
+                search_form_fields['search_button'].disable()
         
         ui.notify(f'Cleared {cleared_count} search fields and results successfully', type='positive')
             
