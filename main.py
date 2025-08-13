@@ -10718,8 +10718,10 @@ async def create_analysis_interface():
         # Initial load
         update_search_results()
         
-        # Auto-refresh every 3 seconds to detect new search results (as backup)
-        ui.timer(3.0, update_search_results)
+        # Auto-refresh every 10 seconds to detect new search results (reduced frequency)
+        # Cancel timer if client disconnects to prevent error messages
+        refresh_timer = ui.timer(10.0, update_search_results)
+        refresh_timer.active = True
 
 
 async def create_sql_analysis_interface():
@@ -11473,8 +11475,10 @@ async def create_dedicated_network_analysis_interface():
         # Initial load
         update_search_results()
         
-        # Auto-refresh every 3 seconds to detect new search results (as backup)
-        ui.timer(3.0, update_search_results)
+        # Auto-refresh every 10 seconds to detect new search results (reduced frequency)
+        # Cancel timer if client disconnects to prevent error messages
+        refresh_timer = ui.timer(10.0, update_search_results)
+        refresh_timer.active = True
     
     except Exception as e:
         logger.error(f"Error creating dedicated network analysis interface: {e}")
@@ -14515,8 +14519,9 @@ async def create_table_interface():
         # Register the callback with the app instance
         user_app_instance.register_search_update_callback(on_search_update)
         
-        # Check every 3 seconds for available client data (as backup)
-        ui.timer(3.0, check_for_client_data)
+        # Check every 10 seconds for available client data (reduced frequency to prevent timeout errors)
+        client_timer = ui.timer(10.0, check_for_client_data)
+        client_timer.active = True
 
 if __name__ == '__main__':
     try:
@@ -14634,6 +14639,13 @@ if __name__ == '__main__':
                     status_code=503,
                     content={"status": "not_ready", "error": str(e)}
                 )
+        
+        # Configure NiceGUI for better connection stability
+        from nicegui import core
+        
+        # Override the default connection timeout
+        original_timeout = getattr(core, 'CONNECTION_TIMEOUT', 60.0)
+        core.CONNECTION_TIMEOUT = 300.0  # 5 minutes
         
         # Run application with comprehensive error handling
         try:
