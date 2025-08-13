@@ -8594,6 +8594,54 @@ async def create_search_interface():
                                         on_click=lambda: app_instance._entity_bookmarks_manager()
                                     ).props('outline').classes('text-xs px-1 py-0.5')
                 
+                # Search validation function
+                def validate_search_fields():
+                    """Check if at least one meaningful search criterion is provided"""
+                    # Core search fields that can drive a meaningful search
+                    core_criteria = [
+                        entity_id_input.value and entity_id_input.value.strip(),
+                        entity_name_input.value and entity_name_input.value.strip(),
+                        risk_id_input.value and risk_id_input.value.strip(),
+                        source_item_id_input.value and source_item_id_input.value.strip(),
+                        system_id_input.value and system_id_input.value.strip(),
+                        bvd_id_input.value and bvd_id_input.value.strip(),
+                        query_builder_input.value and query_builder_input.value.strip()
+                    ]
+                    
+                    # Geographic criteria
+                    geo_criteria = [
+                        country_input.value and country_input.value.strip(),
+                        city_input.value and city_input.value.strip(),
+                        address_input.value and address_input.value.strip()
+                    ]
+                    
+                    # Event/Risk criteria
+                    event_criteria = [
+                        event_category_input.value and event_category_input.value.strip(),
+                        event_sub_category_input.value and event_sub_category_input.value.strip(),
+                        pep_select.value and len(pep_select.value) > 0,
+                        critical_risk_select.value and len(critical_risk_select.value) > 0,
+                        valuable_risk_select.value and len(valuable_risk_select.value) > 0,
+                        investigative_risk_select.value and len(investigative_risk_select.value) > 0,
+                        probative_risk_select.value and len(probative_risk_select.value) > 0
+                    ]
+                    
+                    # Return True if at least one meaningful criterion is provided
+                    return any(core_criteria + geo_criteria + event_criteria)
+                
+                def update_search_button_state():
+                    """Update search button state based on validation"""
+                    if validate_search_fields():
+                        search_button.enable()
+                        search_button.classes(replace='bg-gray-400 cursor-not-allowed', with_='bg-primary')
+                        search_button.props(remove='disable')
+                        search_button.tooltip = None
+                    else:
+                        search_button.disable()
+                        search_button.classes(replace='bg-primary', with_='bg-gray-400 cursor-not-allowed')
+                        search_button.props('disable')
+                        search_button.tooltip = 'Please enter at least one search criterion (Entity ID, Name, Risk ID, Country, etc.)'
+
                 # Search controls
                 with ui.row().classes('w-full gap-2 justify-center mt-4'):
                     ui.button('Clear All Fields', on_click=clear_search, icon='clear').props('outline').classes('text-lg px-4 py-2')
@@ -8652,7 +8700,43 @@ async def create_search_interface():
                             pep_rating_select.value
                         ),
                         icon='search'
-                    ).classes('bg-primary text-white text-lg px-4 py-2')
+                    ).classes('bg-gray-400 cursor-not-allowed text-white text-lg px-4 py-2').props('disable')
+                    
+                    # Set initial disabled state and tooltip
+                    search_button.tooltip = 'Please enter at least one search criterion (Entity ID, Name, Risk ID, Country, etc.)'
+                
+                # Add event listeners to all input fields to update button state
+                def setup_validation_listeners():
+                    """Setup event listeners for search validation"""
+                    # Core entity fields
+                    entity_id_input.on_value_change(lambda: update_search_button_state())
+                    entity_name_input.on_value_change(lambda: update_search_button_state())
+                    risk_id_input.on_value_change(lambda: update_search_button_state())
+                    source_item_id_input.on_value_change(lambda: update_search_button_state())
+                    system_id_input.on_value_change(lambda: update_search_button_state())
+                    bvd_id_input.on_value_change(lambda: update_search_button_state())
+                    
+                    # Geographic fields
+                    country_input.on_value_change(lambda: update_search_button_state())
+                    city_input.on_value_change(lambda: update_search_button_state())
+                    address_input.on_value_change(lambda: update_search_button_state())
+                    
+                    # Event/Risk fields
+                    event_category_input.on_value_change(lambda: update_search_button_state())
+                    event_sub_category_input.on_value_change(lambda: update_search_button_state())
+                    
+                    # Selection fields
+                    pep_select.on_value_change(lambda: update_search_button_state())
+                    critical_risk_select.on_value_change(lambda: update_search_button_state())
+                    valuable_risk_select.on_value_change(lambda: update_search_button_state())
+                    investigative_risk_select.on_value_change(lambda: update_search_button_state())
+                    probative_risk_select.on_value_change(lambda: update_search_button_state())
+                    
+                    # Query builder
+                    query_builder_input.on_value_change(lambda: update_search_button_state())
+                
+                # Setup validation listeners
+                setup_validation_listeners()
         
         # Results container
         results_container = ui.column().classes('w-full gap-4')
@@ -9951,7 +10035,8 @@ async def create_search_interface():
             'use_regex_switch': use_regex_switch,
             'max_results_input': max_results_input,
             'use_date_range_switch': use_date_range,
-            'results_container': results_container
+            'results_container': results_container,
+            'search_button': search_button
         })
 
 # Global storage for form field references
@@ -10046,6 +10131,14 @@ def clear_search():
             search_form_fields['visualization_container'].clear()
             search_form_fields['visualization_container'].style('display: none')
             
+        # Update search button state after clearing (should be disabled)
+        if 'search_button' in search_form_fields:
+            search_button_ref = search_form_fields['search_button']
+            search_button_ref.disable()
+            search_button_ref.classes(replace='bg-primary', with_='bg-gray-400 cursor-not-allowed')
+            search_button_ref.props('disable')
+            search_button_ref.tooltip = 'Please enter at least one search criterion (Entity ID, Name, Risk ID, Country, etc.)'
+        
         ui.notify(f'Cleared {cleared_count} search fields and results successfully', type='positive')
             
     except Exception as e:
