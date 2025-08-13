@@ -14799,9 +14799,6 @@ if __name__ == '__main__':
                 storage_secret='entity_search_secret_key_2024',  # Enable proper session storage
                 show=False,  # Don't auto-open browser in production
                 reconnect_timeout=300.0,  # 5 minutes instead of 60 seconds
-                # Extended timeouts to prevent client disconnection errors
-                keepalive_timeout=300,   # Keep connections alive for 5 minutes
-                timeout_keep_alive=300,  # Alternative keep-alive setting
                 # Additional NiceGUI configurations to prevent timer errors
                 uvicorn_config={
                     'log_level': 'error',  # Suppress uvicorn info/debug messages
@@ -14811,9 +14808,7 @@ if __name__ == '__main__':
                     'ws_ping_interval': 30,  # WebSocket ping interval
                     'ws_ping_timeout': 10,   # WebSocket ping timeout
                     'ws_per_message_deflate': False  # Disable compression for better performance
-                },
-                # Suppress internal NiceGUI logging
-                quiet=True
+                }
             )
         except KeyboardInterrupt:
             logger.info("Application shutdown requested by user")
