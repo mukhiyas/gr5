@@ -127,6 +127,132 @@ USER_APP_INSTANCES = {}
 REQUEST_TO_USER_MAPPING = {}
 CLIENT_DATA_STORE = {}
 
+# Enterprise-grade database connection pool for 100+ concurrent users
+import queue
+class DatabaseConnectionPool:
+    """Thread-safe database connection pool for high concurrency"""
+    
+    def __init__(self, pool_size=20, max_size=50):
+        self.pool_size = pool_size
+        self.max_size = max_size
+        self.connections = queue.Queue(maxsize=max_size)
+        self.active_connections = {}
+        self.pool_lock = threading.Lock()
+        self.total_created = 0
+        
+    def _create_connection(self):
+        """Create a new database connection"""
+        db_host = os.getenv("DB_HOST", "")
+        if db_host.startswith("your-") or not db_host:
+            raise Exception("Database credentials not configured")
+        
+        connection_params = {
+            'server_hostname': db_host,
+            'http_path': os.getenv("DB_HTTP_PATH"),
+            'access_token': os.getenv("DB_ACCESS_TOKEN"),
+            'connect_timeout': 15  # Faster timeout for pooled connections
+        }
+        
+        from databricks import sql
+        return sql.connect(**connection_params)
+    
+    def get_connection(self, timeout=10):
+        """Get connection from pool with timeout"""
+        try:
+            # Try to get existing connection from pool
+            return self.connections.get(timeout=timeout)
+        except queue.Empty:
+            # Create new connection if pool is empty and under max limit
+            with self.pool_lock:
+                if self.total_created < self.max_size:
+                    self.total_created += 1
+                    conn = self._create_connection()
+                    logger.debug(f"Created new pooled connection ({self.total_created}/{self.max_size})")
+                    return conn
+                else:
+                    raise Exception("Database connection pool exhausted - too many concurrent users")
+    
+    def return_connection(self, connection):
+        """Return connection to pool"""
+        try:
+            if connection and not connection.closed:
+                self.connections.put(connection, timeout=1)
+            else:
+                # Connection is closed, decrease counter
+                with self.pool_lock:
+                    self.total_created = max(0, self.total_created - 1)
+        except queue.Full:
+            # Pool is full, close the connection
+            try:
+                connection.close()
+                with self.pool_lock:
+                    self.total_created = max(0, self.total_created - 1)
+            except:
+                pass
+
+# Global connection pool for enterprise deployment
+db_connection_pool = DatabaseConnectionPool()
+
+# Rate limiting for concurrent search operations
+class SearchRateLimiter:
+    """Rate limiter to prevent search spam and ensure fair resource usage"""
+    
+    def __init__(self, max_searches_per_minute=10, max_concurrent_searches=3):
+        self.max_searches_per_minute = max_searches_per_minute
+        self.max_concurrent_searches = max_concurrent_searches
+        self.user_search_history = {}  # {user_id: [timestamps]}
+        self.active_searches = {}  # {user_id: count}
+        self.lock = threading.Lock()
+    
+    def can_search(self, user_id: str) -> bool:
+        """Check if user can perform a search based on rate limits"""
+        current_time = time.time()
+        
+        with self.lock:
+            # Check concurrent searches
+            active_count = self.active_searches.get(user_id, 0)
+            if active_count >= self.max_concurrent_searches:
+                return False
+            
+            # Check rate limit (searches per minute)
+            if user_id not in self.user_search_history:
+                self.user_search_history[user_id] = []
+            
+            # Clean old timestamps (older than 1 minute)
+            cutoff_time = current_time - 60
+            self.user_search_history[user_id] = [
+                ts for ts in self.user_search_history[user_id] if ts > cutoff_time
+            ]
+            
+            # Check if under rate limit
+            if len(self.user_search_history[user_id]) >= self.max_searches_per_minute:
+                return False
+            
+            return True
+    
+    def start_search(self, user_id: str):
+        """Register start of search operation"""
+        current_time = time.time()
+        with self.lock:
+            # Add to search history
+            if user_id not in self.user_search_history:
+                self.user_search_history[user_id] = []
+            self.user_search_history[user_id].append(current_time)
+            
+            # Increment active searches
+            self.active_searches[user_id] = self.active_searches.get(user_id, 0) + 1
+    
+    def end_search(self, user_id: str):
+        """Register end of search operation"""
+        with self.lock:
+            if user_id in self.active_searches:
+                self.active_searches[user_id] = max(0, self.active_searches[user_id] - 1)
+                if self.active_searches[user_id] == 0:
+                    del self.active_searches[user_id]
+
+# Global rate limiter for enterprise deployment  
+search_rate_limiter = SearchRateLimiter()
+
 # Robust timer management to prevent connection timeout errors
 class RobustTimerManager:
     """Manages timers with proper cleanup and connection monitoring"""
@@ -266,7 +392,7 @@ class UserSessionManager:
         with _global_lock:
             if user_id not in USER_APP_INSTANCES:
                 # Check if we have too many user instances to prevent memory exhaustion
-                max_users = 50  # Maximum concurrent user sessions
+                max_users = 200  # Maximum concurrent user sessions for enterprise deployment
                 if len(USER_APP_INSTANCES) >= max_users:
                     # Remove oldest inactive user to make room
                     oldest_user = min(
@@ -1091,60 +1217,53 @@ class EntitySearchApp:
         return priorities
     
     async def init_database_connection_async(self):
-        """Initialize Databricks connection asynchronously to prevent UI blocking"""
+        """Initialize Databricks connection asynchronously using connection pool"""
         if self._database_initialized or self._initializing_database:
             return
             
         self._initializing_database = True
         
         try:
-            # Check for placeholder values in environment
-            db_host = os.getenv("DB_HOST", "")
-            if db_host.startswith("your-") or not db_host:
-                logger.info("Database credentials not configured - skipping connection")
-                return
+            logger.info("Getting database connection from pool asynchronously...")
             
-            logger.info("Connecting to Databricks asynchronously...")
-            
-            # Run connection in thread pool to prevent blocking
-            import concurrent.futures
-            
-            def connect_to_db():
-                connection_params = {
-                    'server_hostname': db_host,
-                    'http_path': os.getenv("DB_HTTP_PATH"),
-                    'access_token': os.getenv("DB_ACCESS_TOKEN"),
-                    'connect_timeout': self.database_config['connection_timeout']
-                }
-                
-                # Add optional parameters if configured
-                if self.database_config['enable_ssl']:
-                    connection_params['ssl'] = True
-                    
-                if self.database_config['enable_compression']:
-                    connection_params['compression'] = True
-                
-                return sql.connect(**connection_params)
-            
-            # Execute connection in background thread with timeout
+            # Use connection pool for enterprise scalability
             loop = asyncio.get_event_loop()
             try:
-                self.connection = await asyncio.wait_for(
-                    loop.run_in_executor(None, connect_to_db), 
-                    timeout=5.0  # Max 5 seconds for connection
+                self.connection = await loop.run_in_executor(
+                    None, 
+                    db_connection_pool.get_connection,
+                    5  # 5 second timeout
                 )
-                logger.info(f"Database connection successful (timeout: {self.database_config['connection_timeout']}s)")
+                logger.info("Database connection acquired from pool successfully")
                 self._database_initialized = True
                 
-                # MODULAR INTEGRATION: Update integration modules with new connection
+                # MODULAR INTEGRATION: Update integration modules with pooled connection
                 self._update_integration_connection()
                 
                 # Initialize code dictionaries now that DB is ready
                 await self._load_code_dictionaries_async()
                 
-            except asyncio.TimeoutError:
-                logger.warning("Database connection timeout - will retry on first search")
-                self.connection = None
+            except Exception as pool_error:
+                logger.warning(f"Pool connection failed: {pool_error}, trying direct connection...")
+                # Fallback to direct connection if pool fails
+                try:
+                    db_host = os.getenv("DB_HOST", "")
+                    if not db_host.startswith("your-") and db_host:
+                        connection_params = {
+                            'server_hostname': db_host,
+                            'http_path': os.getenv("DB_HTTP_PATH"),
+                            'access_token': os.getenv("DB_ACCESS_TOKEN"),
+                            'connect_timeout': 10  # Faster timeout for fallback
+                        }
+                        self.connection = await loop.run_in_executor(
+                            None, sql.connect, **connection_params
+                        )
+                        self._database_initialized = True
+                        logger.info("Direct database connection established as fallback")
+                    else:
+                        self.connection = None
+                except:
+                    self.connection = None
                 
         except Exception as e:
             logger.error(f"Database connection failed: {e}")
@@ -1551,101 +1670,120 @@ class EntitySearchApp:
     
     def search_data(self, search_criteria, entity_type, max_results=100, use_regex=False, 
                    logical_operator='AND', include_relationships=True):
-        """OPTIMIZED search function with ultra-fast 79M+ record handling"""
-        if not self.connection:
-            logger.error("No database connection available for search")
-            return []
+        """ENTERPRISE SCALABLE search function with connection pooling for 100+ users"""
         
-        # Validate connection health before executing query
+        # ENTERPRISE SCALABILITY: Use connection pool for concurrent access
+        pooled_connection = None
+        original_connection = self.connection
+        
         try:
-            # Simple connection test
-            with self.connection.cursor() as test_cursor:
-                test_cursor.execute("SELECT 1")
-                test_cursor.fetchone()
-        except Exception as e:
-            logger.error(f"Database connection validation failed: {e}")
-            return []
-        
-        # Clear stale cache entries if cache is getting too large
-        if len(self.query_cache) > 100:
-            logger.info("Clearing query cache due to size limit")
-            self.query_cache.clear()
-        
-        # OPTIMIZED INTEGRATION: Use ultra-fast optimized queries
-        if self.db_queries and DATABASE_QUERIES_AVAILABLE:
+            # Get connection from pool (with 5-second timeout)
+            pooled_connection = db_connection_pool.get_connection(timeout=5)
+            if not pooled_connection:
+                logger.error("No database connection available from pool")
+                return []
+            
+            # Validate connection health before executing query
             try:
-                # Convert search criteria to optimized format
-                search_params = self._convert_to_optimized_params(
-                    search_criteria, entity_type, max_results, use_regex, 
-                    logical_operator, include_relationships
-                )
-                
-                logger.info(f"🚀 Using optimized search for {len(search_params)} parameters")
-                logger.debug(f"Search params: {json.dumps(search_params, indent=2)}")
-                
-                # Get optimized query and execute
-                query, params = optimized_db_queries.build_lightning_fast_search(search_params)
-                
-                logger.debug(f"Generated query: {query[:500]}...")
-                logger.debug(f"Query params: {params}")
-                
-                with self.connection.cursor() as cursor:
-                    logger.info(f"🔌 Executing query with connection: {self.connection is not None}")
-                    start_time = datetime.now()
-                    
-                    # Databricks uses pyformat style parameters, so we can pass the dict directly
-                    cursor.execute(query, params)
-                    
-                    raw_results = cursor.fetchall()
-                    columns = [desc[0] for desc in cursor.description]
-                    execution_time = (datetime.now() - start_time).total_seconds()
-                    logger.info(f"Query executed in {execution_time:.2f}s, returned {len(raw_results)} raw results")
-                    if len(raw_results) == 0:
-                        logger.warning(f"⚠️ Query returned no results for params: {params}")
-                
-                # Convert to dict format
-                dict_results = []
-                logger.info(f"🔍 Query returned columns: {columns}")
-                for i, row in enumerate(raw_results):
-                    row_dict = dict(zip(columns, row))
-                    if i == 0:  # Log first row data
-                        logger.info(f"🔍 First row data sample - entity_id: {row_dict.get('entity_id')}, has events: {'critical_events' in row_dict}")
-                    dict_results.append(row_dict)
-                
-                # Process results with optimized handling
-                processed_results = optimized_db_queries.process_search_results(dict_results)
-                
-                logger.info(f"✅ Optimized search returned {len(processed_results)} results")
-                return processed_results
-                
+                with pooled_connection.cursor() as test_cursor:
+                    test_cursor.execute("SELECT 1")
+                    test_cursor.fetchone()
             except Exception as e:
-                logger.error(f"❌ Optimized search failed, falling back to legacy: {e}")
-                # Fall through to legacy method
+                logger.error(f"Pooled connection validation failed: {e}")
+                return []
+            
+            # Temporarily use pooled connection for this search
+            self.connection = pooled_connection
         
-        # LEGACY FALLBACK: Use corrected search if available
-        if hasattr(self, 'integration') and self.integration and INTEGRATION_AVAILABLE:
-            try:
-                search_params = {
-                    'entity_type': entity_type,
-                    'limit': max_results,
-                    'use_regex': use_regex,
-                    'logical_operator': logical_operator,
-                    'include_relationships': include_relationships
-                }
-                
-                if isinstance(search_criteria, dict):
-                    search_params.update(search_criteria)
-                
-                results = self.integration.search_entities_corrected(search_params)
-                logger.info(f"✅ Legacy corrected search returned {len(results)} results")
-                return results
-                
-            except Exception as e:
-                logger.error(f"❌ Legacy search failed, using original: {e}")
+            # Clear stale cache entries if cache is getting too large
+            if len(self.query_cache) > 100:
+                logger.info("Clearing query cache due to size limit")
+                self.query_cache.clear()
+            
+            # OPTIMIZED INTEGRATION: Use ultra-fast optimized queries
+            if self.db_queries and DATABASE_QUERIES_AVAILABLE:
+                try:
+                    # Convert search criteria to optimized format
+                    search_params = self._convert_to_optimized_params(
+                        search_criteria, entity_type, max_results, use_regex, 
+                        logical_operator, include_relationships
+                    )
+                    
+                    logger.info(f"🚀 Using optimized search for {len(search_params)} parameters")
+                    logger.debug(f"Search params: {json.dumps(search_params, indent=2)}")
+                    
+                    # Get optimized query and execute
+                    query, params = optimized_db_queries.build_lightning_fast_search(search_params)
+                    
+                    logger.debug(f"Generated query: {query[:500]}...")
+                    logger.debug(f"Query params: {params}")
+                    
+                    with self.connection.cursor() as cursor:
+                        logger.info(f"🔌 Executing query with pooled connection: {self.connection is not None}")
+                        start_time = datetime.now()
+                        
+                        # Databricks uses pyformat style parameters, so we can pass the dict directly
+                        cursor.execute(query, params)
+                        
+                        raw_results = cursor.fetchall()
+                        columns = [desc[0] for desc in cursor.description]
+                        execution_time = (datetime.now() - start_time).total_seconds()
+                        logger.info(f"Query executed in {execution_time:.2f}s, returned {len(raw_results)} raw results")
+                        if len(raw_results) == 0:
+                            logger.warning(f"⚠️ Query returned no results for params: {params}")
+                    
+                    # Convert to dict format
+                    dict_results = []
+                    logger.info(f"🔍 Query returned columns: {columns}")
+                    for i, row in enumerate(raw_results):
+                        row_dict = dict(zip(columns, row))
+                        if i == 0:  # Log first row data
+                            logger.info(f"🔍 First row data sample - entity_id: {row_dict.get('entity_id')}, has events: {'critical_events' in row_dict}")
+                        dict_results.append(row_dict)
+                    
+                    # Process results with optimized handling
+                    processed_results = optimized_db_queries.process_search_results(dict_results)
+                    
+                    logger.info(f"✅ Optimized search returned {len(processed_results)} results")
+                    return processed_results
+                    
+                except Exception as e:
+                    logger.error(f"❌ Optimized search failed, falling back to legacy: {e}")
+                    # Fall through to legacy method
+            
+            # LEGACY FALLBACK: Use corrected search if available
+            if hasattr(self, 'integration') and self.integration and INTEGRATION_AVAILABLE:
+                try:
+                    search_params = {
+                        'entity_type': entity_type,
+                        'limit': max_results,
+                        'use_regex': use_regex,
+                        'logical_operator': logical_operator,
+                        'include_relationships': include_relationships
+                    }
+                    
+                    if isinstance(search_criteria, dict):
+                        search_params.update(search_criteria)
+                    
+                    results = self.integration.search_entities_corrected(search_params)
+                    logger.info(f"✅ Legacy corrected search returned {len(results)} results")
+                    return results
+                    
+                except Exception as e:
+                    logger.error(f"❌ Legacy search failed, using original: {e}")
+            
+            # FINAL FALLBACK: Original search method
+            return self._original_search_data(search_criteria, entity_type, max_results, 
+                                            use_regex, logical_operator, include_relationships)
         
-        # FINAL FALLBACK: Original search method
-        return self._original_search_data(search_criteria, entity_type, max_results, 
-                                        use_regex, logical_operator, include_relationships)
+        finally:
+            # ENTERPRISE SCALABILITY: Always return connection to pool
+            if pooled_connection:
+                # Restore original connection reference
+                self.connection = original_connection
+                # Return pooled connection to pool for reuse
+                db_connection_pool.return_connection(pooled_connection)
+                logger.debug("🔌 Connection returned to pool")
     
     def _original_search_data(self, search_criteria, entity_type, max_results=100, use_regex=False, 
                              logical_operator='AND', include_relationships=True):
@@ -8759,10 +8897,9 @@ async def create_search_interface():
                                         on_click=lambda: app_instance._entity_bookmarks_manager()
                                     ).props('outline').classes('text-xs px-1 py-0.5')
                 
-                # SAFE SEARCH VALIDATION: Simple check only on button click (no event listeners)
+                # SAFE SEARCH VALIDATION: Lightweight validation with visual feedback
                 def validate_search_criteria():
-                    """Simple validation - only checks when search button is clicked"""
-                    # Check if any meaningful search criteria is provided
+                    """Check if any meaningful search criteria is provided"""
                     has_criteria = any([
                         entity_id_input.value and entity_id_input.value.strip(),
                         entity_name_input.value and entity_name_input.value.strip(),
@@ -8772,9 +8909,23 @@ async def create_search_interface():
                         bvd_id_input.value and bvd_id_input.value.strip(),
                         country_input.value and country_input.value.strip(),
                         event_category_input.value and event_category_input.value.strip(),
-                        boolean_query_input.value and boolean_query_input.value.strip()
+                        query_builder_input.value and query_builder_input.value.strip()
                     ])
                     return has_criteria
+                
+                def update_search_button_state():
+                    """Update search button appearance based on input state"""
+                    try:
+                        if validate_search_criteria():
+                            search_button.enable()
+                            search_button.classes(remove='bg-gray-400 cursor-not-allowed', add='bg-primary')
+                            search_button.tooltip = None
+                        else:
+                            search_button.disable()
+                            search_button.classes(remove='bg-primary', add='bg-gray-400 cursor-not-allowed')
+                            search_button.tooltip = 'Please enter at least one search criterion'
+                    except:
+                        pass  # Ignore errors to prevent UI breaking
 
                 # Search controls
                 with ui.row().classes('w-full gap-2 justify-center mt-4'):
@@ -8842,7 +8993,48 @@ async def create_search_interface():
                         'Entity Search',
                         on_click=safe_search_wrapper,
                         icon='search'
-                    ).classes('bg-primary text-white text-lg px-4 py-2')
+                    ).classes('bg-gray-400 cursor-not-allowed text-white text-lg px-4 py-2')
+                    search_button.disable()  # Start disabled
+                    search_button.tooltip = 'Please enter at least one search criterion'
+                    
+                    # Add lightweight input change listeners (throttled to prevent performance issues)
+                    last_update_time = [0]  # Use list to allow modification in nested function
+                    
+                    def throttled_update():
+                        """Throttled update to prevent excessive validation calls"""
+                        current_time = time.time()
+                        if current_time - last_update_time[0] > 0.5:  # Update max every 500ms
+                            last_update_time[0] = current_time
+                            update_search_button_state()
+                    
+                    # Add change handlers to key input fields only (minimal set to reduce overhead)
+                    entity_id_input.on('input', lambda: throttled_update())
+                    entity_name_input.on('input', lambda: throttled_update())
+                    risk_id_input.on('input', lambda: throttled_update())
+                    country_input.on('input', lambda: throttled_update())
+                    query_builder_input.on('input', lambda: throttled_update())
+                    
+                    # Initial state update
+                    update_search_button_state()
+                    
+                    # Add database connection status indicator
+                    connection_status = ui.label('🟡 Connecting to database...').classes('text-xs text-yellow-600 mt-2')
+                    
+                    async def update_connection_status():
+                        """Update connection status display"""
+                        while True:
+                            await asyncio.sleep(1)  # Check every second
+                            if app_instance._database_initialized and app_instance.connection:
+                                connection_status.text = '🟢 Database connected'
+                                connection_status.classes = 'text-xs text-green-600 mt-2'
+                                break
+                            elif app_instance.connection:
+                                connection_status.text = '🟢 Database connected'
+                                connection_status.classes = 'text-xs text-green-600 mt-2'
+                                break
+                    
+                    # Start connection status monitoring
+                    asyncio.create_task(update_connection_status())
                     
                     # Search button with validation - prevents empty database calls
                 # Users can click search anytime for better responsiveness
@@ -8867,418 +9059,431 @@ async def create_search_interface():
             """Execute comprehensive advanced search with all original search_tool.py fields"""
             results_container.clear()
             
-            # PERFORMANCE FIX: Initialize database connection asynchronously if not ready
-            if not app_instance._database_initialized:
-                await app_instance.init_database_connection_async()
+            # ENTERPRISE SCALABILITY: Rate limiting and connection management
+            user_id = user_app_instance.user_id or "anonymous"
             
-            # Build search criteria - same logic as original search_tool.py
-            search_criteria = {}
-            
-            # Core entity fields
-            if entity_id:
-                search_criteria['entity_id'] = entity_id.strip()
-            if entity_name:
-                search_criteria['entity_name'] = entity_name.strip()
-            if risk_id:
-                search_criteria['risk_id'] = risk_id.strip()
-            if source_item_id:
-                search_criteria['source_item_id'] = source_item_id.strip()
-            if system_id:
-                search_criteria['systemId'] = system_id.strip()
-            if bvd_id:
-                search_criteria['bvdid'] = bvd_id.strip()
-                
-            # Address fields
-            if address:
-                search_criteria['address'] = address.strip()
-            if city:
-                search_criteria['city'] = city.strip()
-            if province:
-                search_criteria['province'] = province.strip()
-            if country:
-                search_criteria['country'] = country.strip()
-                
-            # Source fields
-            if source_name:
-                search_criteria['source_name'] = source_name.strip()
-            if source_key:
-                search_criteria['source_key'] = source_key.strip()
-                
-            # Identification fields
-            if identification_type:
-                search_criteria['identification_type'] = identification_type.strip()
-            if identification_value:
-                search_criteria['identification_value'] = identification_value.strip()
-                
-            # Event category fields
-            if event_category:
-                search_criteria['event_category'] = event_category.strip()
-            if event_sub_category:
-                search_criteria['event_sub_category'] = event_sub_category.strip()
-                
-            # Date range filter - same as original
-            if use_date_range:
-                search_criteria['entity_date'] = (entity_year, year_range)
-            
-            # Enterprise Advanced Filters
-            if min_relationships and min_relationships > 0:
-                search_criteria['min_relationships'] = min_relationships
-            
-            if geographic_risk_min and geographic_risk_min > 0:
-                search_criteria['geographic_risk_min'] = geographic_risk_min
-            
-            if pep_priority_min and pep_priority_min > 0:
-                search_criteria['min_pep_priority'] = pep_priority_min
-            
-            if recent_activity_days and recent_activity_days > 0:
-                search_criteria['recent_activity_days'] = recent_activity_days
-            
-            if source_systems and source_systems.strip():
-                systems_list = [s.strip() for s in source_systems.split(',') if s.strip()]
-                search_criteria['source_systems'] = systems_list
-            
-            if risk_severities:
-                search_criteria['risk_severity'] = risk_severities
-            
-            # Advanced query criteria handling
-            if only_recent_events:
-                search_criteria['only_recent_events'] = True
-                if recent_events_years:
-                    search_criteria['recent_events_years'] = recent_events_years
-                
-            if exclude_acquitted:
-                search_criteria['exclude_acquitted'] = True
-                
-            if has_relationships:
-                search_criteria['has_relationships'] = True
-            
-            # Risk score range filter - defensive handling
-            if risk_score_range:
-                if isinstance(risk_score_range, dict):
-                    if risk_score_range.get('min', 0) > 0:
-                        search_criteria['risk_score_min'] = risk_score_range['min']
-                    if risk_score_range.get('max', 100) < 100:
-                        search_criteria['risk_score_max'] = risk_score_range['max']
-                else:
-                    logger.warning(f"Expected dict for risk_score_range but got {type(risk_score_range)}: {risk_score_range}")
-                    # Set defaults if not a dict
-                    search_criteria['risk_score_min'] = 0
-                    search_criteria['risk_score_max'] = 100
-            
-            # Enhanced Boolean query processing with proper parser
-            if boolean_query and boolean_query.strip():
-                try:
-                    # Parse the boolean query using the proper parser
-                    parsed_query = app_instance._parse_boolean_query(boolean_query)
-                    
-                    if parsed_query['valid']:
-                        logger.info(f"Parsed boolean query with {len(parsed_query['conditions'])} conditions")
-                        
-                        # Apply parsed conditions to search criteria
-                        for condition in parsed_query['conditions']:
-                            field = condition['field']
-                            operator = condition['operator']
-                            value = condition['value']
-                            
-                            # Map to search criteria based on field and operator
-                            if field == 'entity_name':
-                                if operator in ['CONTAINS', 'LIKE']:
-                                    search_criteria['entity_name'] = value
-                                elif operator in ['=', 'EQUALS']:
-                                    search_criteria['entity_name'] = value
-                            elif field == 'entity_id':
-                                search_criteria['entity_id'] = value
-                            elif field == 'risk_id':
-                                search_criteria['risk_id'] = value
-                            elif field == 'country':
-                                search_criteria['country'] = value
-                            elif field == 'city':
-                                search_criteria['city'] = value
-                            elif field == 'event_category':
-                                if operator == 'IN':
-                                    # Parse IN clause: "SAN,TER,WLT" -> ["SAN", "TER", "WLT"]
-                                    categories = [cat.strip() for cat in value.split(',')]
-                                    search_criteria['event_categories'] = categories
-                                else:
-                                    search_criteria['event_category'] = value
-                            elif field == 'event_sub_category':
-                                search_criteria['event_sub_category'] = value
-                            elif field == 'pep_type':
-                                search_criteria['pep_levels'] = [value] if isinstance(value, str) else value
-                            elif field == 'pep_rating':
-                                search_criteria['pep_ratings'] = [value] if isinstance(value, str) else value
-                            elif field == 'birth_year':
-                                if operator in ['>', '>=']:
-                                    search_criteria['birth_year_min'] = int(value)
-                                elif operator in ['<', '<=']:
-                                    search_criteria['birth_year_max'] = int(value)
-                                else:
-                                    search_criteria['birth_year'] = int(value)
-                            elif field == 'risk_score':
-                                if operator in ['>', '>=']:
-                                    search_criteria['risk_score_min'] = float(value)
-                                elif operator in ['<', '<=']:
-                                    search_criteria['risk_score_max'] = float(value)
-                        
-                        ui.notify(f'✅ Applied {len(parsed_query["conditions"])} boolean conditions', type='positive')
-                    else:
-                        logger.warning(f"Invalid boolean query: {parsed_query['error']}")
-                        ui.notify(f'❌ Boolean query error: {parsed_query["error"]}', type='negative')
-                        
-                except Exception as e:
-                    logger.warning(f"Boolean query parsing error: {e}")
-                    ui.notify('Invalid boolean query syntax. Please validate your query first.', type='warning')
-            
-            # Update performance settings based on user input
-            if enable_caching is not None:
-                app_instance.query_optimization['enable_query_cache'] = enable_caching
-            if enable_parallel is not None:
-                app_instance.query_optimization['enable_parallel_subqueries'] = enable_parallel
-            if enable_streaming is not None:
-                app_instance.performance_settings['enable_result_streaming'] = enable_streaming
-            if batch_size:
-                app_instance.performance_settings['stream_batch_size'] = batch_size
-            if timeout_seconds:
-                app_instance.performance_settings['query_timeout_seconds'] = timeout_seconds
-            
-            # PEP levels
-            if pep_levels:
-                search_criteria['pep_levels'] = pep_levels
-            
-            # PEP ratings
-            if pep_ratings:
-                search_criteria['pep_ratings'] = pep_ratings
-            
-            # Single event filters
-            if single_event_only:
-                search_criteria['single_event_only'] = True
-                if single_event_code and single_event_code.strip():
-                    search_criteria['single_event_code'] = single_event_code.strip().upper()
-            
-            # Build comprehensive risk codes list from all severity levels
-            all_risk_codes = []
-            if critical_risks:
-                all_risk_codes.extend(critical_risks)
-            if valuable_risks:
-                all_risk_codes.extend(valuable_risks)
-            if investigative_risks:
-                all_risk_codes.extend(investigative_risks)
-            if probative_risks:
-                all_risk_codes.extend(probative_risks)
-            
-            # Enhanced risk code filtering with better logic
-            # Apply severity filter if specified and combine intelligently with specific selections
-            if severity_filter and severity_filter != 'all':
-                severity_risk_codes = []
-                if severity_filter == 'critical':
-                    severity_risk_codes = [code for code, severity in app_instance.risk_code_severities.items() if float(severity) >= 80]
-                elif severity_filter == 'valuable':
-                    severity_risk_codes = [code for code, severity in app_instance.risk_code_severities.items() if 60 <= float(severity) < 80]
-                elif severity_filter == 'investigative':
-                    severity_risk_codes = [code for code, severity in app_instance.risk_code_severities.items() if 40 <= float(severity) < 60]
-                elif severity_filter == 'probative':
-                    severity_risk_codes = [code for code, severity in app_instance.risk_code_severities.items() if float(severity) < 40]
-                
-                if all_risk_codes:
-                    # If user selected specific codes AND a severity filter, handle based on logical operator
-                    if logical_operator == 'OR':
-                        # OR logic: include codes from specific selection OR severity filter
-                        all_risk_codes = list(set(all_risk_codes + severity_risk_codes))
-                    else:
-                        # AND logic: intersection of user selection and severity filter
-                        all_risk_codes = [code for code in all_risk_codes if code in severity_risk_codes]
-                        if not all_risk_codes:
-                            # If no intersection, inform user but don't fail the search
-                            ui.notify('Selected risk codes do not match the severity filter. Using severity filter only.', type='info')
-                            all_risk_codes = severity_risk_codes
-                else:
-                    # Use all codes from severity filter
-                    all_risk_codes = severity_risk_codes
-                    
-                logger.info(f"Applied severity filter '{severity_filter}': {len(all_risk_codes)} risk codes selected")
-            
-            if all_risk_codes:
-                search_criteria['risk_codes'] = all_risk_codes
-                
-            # Store risk score range for post-processing - defensive handling
-            if risk_score_range and isinstance(risk_score_range, dict):
-                search_criteria['risk_score_min'] = risk_score_range.get('min', 0)
-                search_criteria['risk_score_max'] = risk_score_range.get('max', 100)
-            else:
-                if risk_score_range:
-                    logger.warning(f"Invalid risk_score_range type: {type(risk_score_range)}, value: {risk_score_range}")
-                search_criteria['risk_score_min'] = 0
-                search_criteria['risk_score_max'] = 100
-            
-            # Validate and provide feedback on filter criteria
-            if not search_criteria:
-                ui.notify('Please enter at least one search criterion', type='warning')
+            # Check rate limits before proceeding
+            if not search_rate_limiter.can_search(user_id):
+                with results_container:
+                    ui.label('Rate limit exceeded. Please wait before searching again.').classes('text-warning text-center p-4')
                 return
             
-            # Check for potentially conflicting criteria and provide guidance
-            validation_warnings = []
-            
-            # Check risk score range vs specific risk codes
-            if 'risk_score_min' in search_criteria and 'risk_codes' in search_criteria:
-                min_code_severity = min([app_instance.risk_code_severities.get(code, 50) for code in search_criteria['risk_codes']])
-                if search_criteria['risk_score_min'] > min_code_severity:
-                    validation_warnings.append(f"Risk score minimum ({search_criteria['risk_score_min']}) may exclude selected risk codes")
-            
-            # Check PEP levels vs minimum relationships
-            if 'pep_levels' in search_criteria and 'min_relationships' in search_criteria:
-                if search_criteria['min_relationships'] > 10:
-                    validation_warnings.append("High minimum relationships filter may exclude many PEP entities")
-            
-            # Check geographic risk vs country filters
-            if 'geographic_risk_min' in search_criteria and 'country' in search_criteria:
-                country = search_criteria['country'].upper()
-                country_risk = app_instance.geographic_risk_multipliers.get(country, 1.0)
-                if search_criteria['geographic_risk_min'] > country_risk * 50:  # Rough estimation
-                    validation_warnings.append(f"Geographic risk filter may exclude entities from {country}")
-            
-            # Provide warnings to user
-            if validation_warnings:
-                for warning in validation_warnings:
-                    ui.notify(warning, type='info')
-                logger.info(f"Filter validation warnings: {validation_warnings}")
-            
-            # Log final search criteria for debugging
-            logger.info(f"Final search criteria: {list(search_criteria.keys())} with logical operator: {logical_operator}")
-            logger.info(f"🔍 DEBUG: search_criteria = {search_criteria}")
+            # Register search start for rate limiting
+            search_rate_limiter.start_search(user_id)
             
             try:
-                # Disable search button and clear results
-                search_button.props('loading').disable()
-                results_container.clear()
+                # PERFORMANCE FIX: Initialize database connection asynchronously if not ready
+                if not app_instance._database_initialized:
+                    await app_instance.init_database_connection_async()
                 
-                # Show loading indicator with proper layout
-                with results_container:
-                    with ui.row().classes('w-full justify-center p-8'):
-                        ui.spinner(size='lg')
-                        ui.label('Searching database... Please wait').classes('ml-4 text-lg')
+                # Build search criteria - same logic as original search_tool.py
+                search_criteria = {}
                 
-                # Force UI update before starting search
-                await asyncio.sleep(0.1)
+                # Core entity fields
+                if entity_id:
+                    search_criteria['entity_id'] = entity_id.strip()
+                if entity_name:
+                    search_criteria['entity_name'] = entity_name.strip()
+                if risk_id:
+                    search_criteria['risk_id'] = risk_id.strip()
+                if source_item_id:
+                    search_criteria['source_item_id'] = source_item_id.strip()
+                if system_id:
+                    search_criteria['systemId'] = system_id.strip()
+                if bvd_id:
+                    search_criteria['bvdid'] = bvd_id.strip()
                 
-                # PERFORMANCE FIX: Ensure database connection is ready before search
-                if not app_instance.connection:
-                    with results_container:
-                        ui.label('Connecting to database...').classes('text-center p-4')
-                    await asyncio.sleep(0.1)  # Allow UI update
-                    app_instance.ensure_database_connection()
+                # Address fields
+                if address:
+                    search_criteria['address'] = address.strip()
+                if city:
+                    search_criteria['city'] = city.strip()
+                if province:
+                    search_criteria['province'] = province.strip()
+                if country:
+                    search_criteria['country'] = country.strip()
+                
+                # Source fields
+                if source_name:
+                    search_criteria['source_name'] = source_name.strip()
+                if source_key:
+                    search_criteria['source_key'] = source_key.strip()
                     
+                # Identification fields
+                if identification_type:
+                    search_criteria['identification_type'] = identification_type.strip()
+                if identification_value:
+                    search_criteria['identification_value'] = identification_value.strip()
+                    
+                # Event category fields
+                if event_category:
+                    search_criteria['event_category'] = event_category.strip()
+                if event_sub_category:
+                    search_criteria['event_sub_category'] = event_sub_category.strip()
+                    
+                # Date range filter - same as original
+                if use_date_range:
+                    search_criteria['entity_date'] = (entity_year, year_range)
+                
+                # Enterprise Advanced Filters
+                if min_relationships and min_relationships > 0:
+                    search_criteria['min_relationships'] = min_relationships
+                
+                if geographic_risk_min and geographic_risk_min > 0:
+                    search_criteria['geographic_risk_min'] = geographic_risk_min
+                
+                if pep_priority_min and pep_priority_min > 0:
+                    search_criteria['min_pep_priority'] = pep_priority_min
+                
+                if recent_activity_days and recent_activity_days > 0:
+                    search_criteria['recent_activity_days'] = recent_activity_days
+                
+                if source_systems and source_systems.strip():
+                    systems_list = [s.strip() for s in source_systems.split(',') if s.strip()]
+                    search_criteria['source_systems'] = systems_list
+                
+                if risk_severities:
+                    search_criteria['risk_severity'] = risk_severities
+                
+                # Advanced query criteria handling
+                if only_recent_events:
+                    search_criteria['only_recent_events'] = True
+                    if recent_events_years:
+                        search_criteria['recent_events_years'] = recent_events_years
+                    
+                if exclude_acquitted:
+                    search_criteria['exclude_acquitted'] = True
+                    
+                if has_relationships:
+                    search_criteria['has_relationships'] = True
+                
+                # Risk score range filter - defensive handling
+                if risk_score_range:
+                    if isinstance(risk_score_range, dict):
+                        if risk_score_range.get('min', 0) > 0:
+                            search_criteria['risk_score_min'] = risk_score_range['min']
+                        if risk_score_range.get('max', 100) < 100:
+                            search_criteria['risk_score_max'] = risk_score_range['max']
+                    else:
+                        logger.warning(f"Expected dict for risk_score_range but got {type(risk_score_range)}: {risk_score_range}")
+                        # Set defaults if not a dict
+                        search_criteria['risk_score_min'] = 0
+                        search_criteria['risk_score_max'] = 100
+                
+                # Enhanced Boolean query processing with proper parser
+                if boolean_query and boolean_query.strip():
+                    try:
+                        # Parse the boolean query using the proper parser
+                        parsed_query = app_instance._parse_boolean_query(boolean_query)
+                        
+                        if parsed_query['valid']:
+                            logger.info(f"Parsed boolean query with {len(parsed_query['conditions'])} conditions")
+                            
+                            # Apply parsed conditions to search criteria
+                            for condition in parsed_query['conditions']:
+                                field = condition['field']
+                                operator = condition['operator']
+                                value = condition['value']
+                                
+                                # Map to search criteria based on field and operator
+                                if field == 'entity_name':
+                                    if operator in ['CONTAINS', 'LIKE']:
+                                        search_criteria['entity_name'] = value
+                                    elif operator in ['=', 'EQUALS']:
+                                        search_criteria['entity_name'] = value
+                                elif field == 'entity_id':
+                                    search_criteria['entity_id'] = value
+                                elif field == 'risk_id':
+                                    search_criteria['risk_id'] = value
+                                elif field == 'country':
+                                    search_criteria['country'] = value
+                                elif field == 'city':
+                                    search_criteria['city'] = value
+                                elif field == 'event_category':
+                                    if operator == 'IN':
+                                        # Parse IN clause: "SAN,TER,WLT" -> ["SAN", "TER", "WLT"]
+                                        categories = [cat.strip() for cat in value.split(',')]
+                                        search_criteria['event_categories'] = categories
+                                    else:
+                                        search_criteria['event_category'] = value
+                                elif field == 'event_sub_category':
+                                    search_criteria['event_sub_category'] = value
+                                elif field == 'pep_type':
+                                    search_criteria['pep_levels'] = [value] if isinstance(value, str) else value
+                                elif field == 'pep_rating':
+                                    search_criteria['pep_ratings'] = [value] if isinstance(value, str) else value
+                                elif field == 'birth_year':
+                                    if operator in ['>', '>=']:
+                                        search_criteria['birth_year_min'] = int(value)
+                                    elif operator in ['<', '<=']:
+                                        search_criteria['birth_year_max'] = int(value)
+                                    else:
+                                        search_criteria['birth_year'] = int(value)
+                                elif field == 'risk_score':
+                                    if operator in ['>', '>=']:
+                                        search_criteria['risk_score_min'] = float(value)
+                                    elif operator in ['<', '<=']:
+                                        search_criteria['risk_score_max'] = float(value)
+                            
+                            ui.notify(f'✅ Applied {len(parsed_query["conditions"])} boolean conditions', type='positive')
+                        else:
+                            logger.warning(f"Invalid boolean query: {parsed_query['error']}")
+                            ui.notify(f'❌ Boolean query error: {parsed_query["error"]}', type='negative')
+                            
+                    except Exception as e:
+                        logger.warning(f"Boolean query parsing error: {e}")
+                        ui.notify('Invalid boolean query syntax. Please validate your query first.', type='warning')
+                
+                # Update performance settings based on user input
+                if enable_caching is not None:
+                    app_instance.query_optimization['enable_query_cache'] = enable_caching
+                if enable_parallel is not None:
+                    app_instance.query_optimization['enable_parallel_subqueries'] = enable_parallel
+                if enable_streaming is not None:
+                    app_instance.performance_settings['enable_result_streaming'] = enable_streaming
+                if batch_size:
+                    app_instance.performance_settings['stream_batch_size'] = batch_size
+                if timeout_seconds:
+                    app_instance.performance_settings['query_timeout_seconds'] = timeout_seconds
+                
+                # PEP levels
+                if pep_levels:
+                    search_criteria['pep_levels'] = pep_levels
+                
+                # PEP ratings
+                if pep_ratings:
+                    search_criteria['pep_ratings'] = pep_ratings
+                
+                # Single event filters
+                if single_event_only:
+                    search_criteria['single_event_only'] = True
+                    if single_event_code and single_event_code.strip():
+                        search_criteria['single_event_code'] = single_event_code.strip().upper()
+                
+                # Build comprehensive risk codes list from all severity levels
+                all_risk_codes = []
+                if critical_risks:
+                    all_risk_codes.extend(critical_risks)
+                if valuable_risks:
+                    all_risk_codes.extend(valuable_risks)
+                if investigative_risks:
+                    all_risk_codes.extend(investigative_risks)
+                if probative_risks:
+                    all_risk_codes.extend(probative_risks)
+                
+                # Enhanced risk code filtering with better logic
+                # Apply severity filter if specified and combine intelligently with specific selections
+                if severity_filter and severity_filter != 'all':
+                    severity_risk_codes = []
+                    if severity_filter == 'critical':
+                        severity_risk_codes = [code for code, severity in app_instance.risk_code_severities.items() if float(severity) >= 80]
+                    elif severity_filter == 'valuable':
+                        severity_risk_codes = [code for code, severity in app_instance.risk_code_severities.items() if 60 <= float(severity) < 80]
+                    elif severity_filter == 'investigative':
+                        severity_risk_codes = [code for code, severity in app_instance.risk_code_severities.items() if 40 <= float(severity) < 60]
+                    elif severity_filter == 'probative':
+                        severity_risk_codes = [code for code, severity in app_instance.risk_code_severities.items() if float(severity) < 40]
+                    
+                    if all_risk_codes:
+                        # If user selected specific codes AND a severity filter, handle based on logical operator
+                        if logical_operator == 'OR':
+                            # OR logic: include codes from specific selection OR severity filter
+                            all_risk_codes = list(set(all_risk_codes + severity_risk_codes))
+                        else:
+                            # AND logic: intersection of user selection and severity filter
+                            all_risk_codes = [code for code in all_risk_codes if code in severity_risk_codes]
+                            if not all_risk_codes:
+                                # If no intersection, inform user but don't fail the search
+                                ui.notify('Selected risk codes do not match the severity filter. Using severity filter only.', type='info')
+                                all_risk_codes = severity_risk_codes
+                    else:
+                        # Use all codes from severity filter
+                        all_risk_codes = severity_risk_codes
+                        
+                    logger.info(f"Applied severity filter '{severity_filter}': {len(all_risk_codes)} risk codes selected")
+                
+                if all_risk_codes:
+                    search_criteria['risk_codes'] = all_risk_codes
+                    
+                # Store risk score range for post-processing - defensive handling
+                if risk_score_range and isinstance(risk_score_range, dict):
+                    search_criteria['risk_score_min'] = risk_score_range.get('min', 0)
+                    search_criteria['risk_score_max'] = risk_score_range.get('max', 100)
+                else:
+                    if risk_score_range:
+                        logger.warning(f"Invalid risk_score_range type: {type(risk_score_range)}, value: {risk_score_range}")
+                    search_criteria['risk_score_min'] = 0
+                    search_criteria['risk_score_max'] = 100
+                
+                # Validate and provide feedback on filter criteria
+                if not search_criteria:
+                    ui.notify('Please enter at least one search criterion', type='warning')
+                    return
+                
+                # Check for potentially conflicting criteria and provide guidance
+                validation_warnings = []
+                
+                # Check risk score range vs specific risk codes
+                if 'risk_score_min' in search_criteria and 'risk_codes' in search_criteria:
+                    min_code_severity = min([app_instance.risk_code_severities.get(code, 50) for code in search_criteria['risk_codes']])
+                    if search_criteria['risk_score_min'] > min_code_severity:
+                        validation_warnings.append(f"Risk score minimum ({search_criteria['risk_score_min']}) may exclude selected risk codes")
+                
+                # Check PEP levels vs minimum relationships
+                if 'pep_levels' in search_criteria and 'min_relationships' in search_criteria:
+                    if search_criteria['min_relationships'] > 10:
+                        validation_warnings.append("High minimum relationships filter may exclude many PEP entities")
+                
+                # Check geographic risk vs country filters
+                if 'geographic_risk_min' in search_criteria and 'country' in search_criteria:
+                    country = search_criteria['country'].upper()
+                    country_risk = app_instance.geographic_risk_multipliers.get(country, 1.0)
+                    if search_criteria['geographic_risk_min'] > country_risk * 50:  # Rough estimation
+                        validation_warnings.append(f"Geographic risk filter may exclude entities from {country}")
+                
+                # Provide warnings to user
+                if validation_warnings:
+                    for warning in validation_warnings:
+                        ui.notify(warning, type='info')
+                    logger.info(f"Filter validation warnings: {validation_warnings}")
+                
+                # Log final search criteria for debugging
+                logger.info(f"Final search criteria: {list(search_criteria.keys())} with logical operator: {logical_operator}")
+                logger.info(f"🔍 DEBUG: search_criteria = {search_criteria}")
+                
+                try:
+                    # Disable search button and clear results
+                    search_button.props('loading').disable()
+                    results_container.clear()
+                    
+                    # Show loading indicator with proper layout
+                    with results_container:
+                        with ui.row().classes('w-full justify-center p-8'):
+                            ui.spinner(size='lg')
+                            ui.label('Searching database... Please wait').classes('ml-4 text-lg')
+                    
+                    # Force UI update before starting search
+                    await asyncio.sleep(0.1)
+                    
+                    # PERFORMANCE FIX: Ensure database connection is ready before search
                     if not app_instance.connection:
                         with results_container:
-                            ui.label('Database connection failed. Please try again.').classes('text-negative text-center p-4')
-                        return
-                
-                # Perform search
-                raw_results = await asyncio.to_thread(
-                    app_instance.search_data,
-                    search_criteria,
-                    entity_type,
-                    max_results,
-                    use_regex,
-                    logical_operator,
-                    True  # include_relationships
-                )
-                
-                # Process results
-                processed_results = app_instance.process_results(raw_results, True)
-                
-                # Apply risk score range filtering (post-processing)
-                risk_score_min = search_criteria.get('risk_score_min', 0)
-                risk_score_max = search_criteria.get('risk_score_max', 100)
-                
-                # Apply advanced minimum risk score filter
-                advanced_min_score = search_criteria.get('min_risk_score', 0)
-                effective_min_score = max(risk_score_min, advanced_min_score)
-                
-                if effective_min_score > 0 or risk_score_max < 100:
-                    processed_results = [
-                        entity for entity in processed_results 
-                        if effective_min_score <= entity.get('risk_score', 0) <= risk_score_max
-                    ]
-                
-                app_instance.current_results = raw_results
-                app_instance.last_search_results = raw_results  # Additional backup for session persistence
-                app_instance.filtered_data = processed_results  # Store filtered results too
-                app_instance.results_timestamp = time.time()  # Track when results were created
-                
-                # Store in client-specific data store
-                client_id = ClientDataManager.get_client_id()
-                ClientDataManager.store_client_data(client_id, raw_results)
-                
-                # Store client ID for this search session
-                app_instance.current_client_id = client_id
-                app_instance.results_timestamp = int(time.time())
-                
-                logger.info(f"Stored {len(raw_results)} results for client {client_id}")
-                
-                # Parse JSON fields in all entities before setting filtered_data
-                parsed_results = []
-                for entity in processed_results:
-                    parsed_entity = app_instance._parse_json_fields(entity)
-                    parsed_results.append(parsed_entity)
-                
-                app_instance.filtered_data = parsed_results
-                logger.info(f"JSON parsing completed for {len(parsed_results)} entities")
-                
-                # Notify all tabs that search results have been updated
-                app_instance.notify_search_update()
-                
-                # Display results with debugging
-                logger.info(f"About to display {len(parsed_results)} results in UI")
-                
-                # Clear the loading spinner first
-                results_container.clear()
-                
-                # Force UI update to ensure loading state is cleared
-                await asyncio.sleep(0.05)
-                
-                with results_container:
-                    if parsed_results:
-                        logger.info(f"Parsed results sample: {parsed_results[0] if parsed_results else 'No results'}")
-                        # Modern results summary card
-                        with ui.card().classes('w-full glass-card mb-4'):
-                            with ui.row().classes('items-center justify-between p-4'):
-                                with ui.row().classes('items-center gap-4'):
-                                    ui.icon('search', size='lg', color='primary')
-                                    ui.label(f'Found {len(parsed_results)} entities').classes('text-h5 font-bold')
+                            ui.label('Connecting to database...').classes('text-center p-4')
+                        await asyncio.sleep(0.1)  # Allow UI update
+                        app_instance.ensure_database_connection()
+                        
+                        if not app_instance.connection:
+                            with results_container:
+                                ui.label('Database connection failed. Please try again.').classes('text-negative text-center p-4')
+                            return
+                    
+                    # Perform search
+                    raw_results = await asyncio.to_thread(
+                        app_instance.search_data,
+                        search_criteria,
+                        entity_type,
+                        max_results,
+                        use_regex,
+                        logical_operator,
+                        True  # include_relationships
+                    )
+                    
+                    # Process results
+                    processed_results = app_instance.process_results(raw_results, True)
+                    
+                    # Apply risk score range filtering (post-processing)
+                    risk_score_min = search_criteria.get('risk_score_min', 0)
+                    risk_score_max = search_criteria.get('risk_score_max', 100)
+                    
+                    # Apply advanced minimum risk score filter
+                    advanced_min_score = search_criteria.get('min_risk_score', 0)
+                    effective_min_score = max(risk_score_min, advanced_min_score)
+                    
+                    if effective_min_score > 0 or risk_score_max < 100:
+                        processed_results = [
+                            entity for entity in processed_results 
+                            if effective_min_score <= entity.get('risk_score', 0) <= risk_score_max
+                        ]
+                    
+                    app_instance.current_results = raw_results
+                    app_instance.last_search_results = raw_results  # Additional backup for session persistence
+                    app_instance.filtered_data = processed_results  # Store filtered results too
+                    app_instance.results_timestamp = time.time()  # Track when results were created
+                    
+                    # Store in client-specific data store
+                    client_id = ClientDataManager.get_client_id()
+                    ClientDataManager.store_client_data(client_id, raw_results)
+                    
+                    # Store client ID for this search session
+                    app_instance.current_client_id = client_id
+                    app_instance.results_timestamp = int(time.time())
+                    
+                    logger.info(f"Stored {len(raw_results)} results for client {client_id}")
+                    
+                    # Parse JSON fields in all entities before setting filtered_data
+                    parsed_results = []
+                    for entity in processed_results:
+                        parsed_entity = app_instance._parse_json_fields(entity)
+                        parsed_results.append(parsed_entity)
+                    
+                    app_instance.filtered_data = parsed_results
+                    logger.info(f"JSON parsing completed for {len(parsed_results)} entities")
+                    
+                    # Notify all tabs that search results have been updated
+                    app_instance.notify_search_update()
+                    
+                    # Display results with debugging
+                    logger.info(f"About to display {len(parsed_results)} results in UI")
+                    
+                    # Clear the loading spinner first
+                    results_container.clear()
+                    
+                    # Force UI update to ensure loading state is cleared
+                    await asyncio.sleep(0.05)
+                    
+                    with results_container:
+                        if parsed_results:
+                            logger.info(f"Parsed results sample: {parsed_results[0] if parsed_results else 'No results'}")
+                            # Modern results summary card
+                            with ui.card().classes('w-full glass-card mb-4'):
+                                with ui.row().classes('items-center justify-between p-4'):
+                                    with ui.row().classes('items-center gap-4'):
+                                        ui.icon('search', size='lg', color='primary')
+                                        ui.label(f'Found {len(parsed_results)} entities').classes('text-h5 font-bold')
+                                        
+                                        # Risk distribution badges
+                                        risk_counts = {'critical': 0, 'valuable': 0, 'investigative': 0, 'probative': 0}
+                                        for entity in parsed_results:
+                                            severity = entity.get('risk_severity', 'probative').lower() if entity.get('risk_severity') else 'probative'
+                                            if severity in risk_counts:
+                                                risk_counts[severity] += 1
+                                        
+                                        for severity, count in risk_counts.items():
+                                            if count > 0:
+                                                # Display with proper formatting
+                                                badge_class = f'risk-{severity} px-3 py-1 rounded-full text-xs font-medium'
+                                                ui.badge(f'{severity.title()}: {count}').classes(badge_class)
                                     
-                                    # Risk distribution badges
-                                    risk_counts = {'critical': 0, 'valuable': 0, 'investigative': 0, 'probative': 0}
-                                    for entity in parsed_results:
-                                        severity = entity.get('risk_severity', 'probative').lower() if entity.get('risk_severity') else 'probative'
-                                        if severity in risk_counts:
-                                            risk_counts[severity] += 1
+                                    ui.space()
                                     
-                                    for severity, count in risk_counts.items():
-                                        if count > 0:
-                                            # Display with proper formatting
-                                            badge_class = f'risk-{severity} px-3 py-1 rounded-full text-xs font-medium'
-                                            ui.badge(f'{severity.title()}: {count}').classes(badge_class)
-                                
-                                ui.space()
-                                
-                                # Export section
-                                with ui.row().classes('gap-2'):
-                                    ui.label('Export:').classes('text-sm font-medium')
-                                    ui.button(
-                                        'CSV',
-                                        on_click=lambda: export_results('csv'),
-                                        icon='table_chart'
-                                    ).props('outline color=primary').classes('text-sm px-2 py-1')
-                                    ui.button(
-                                        'Excel',
-                                        on_click=lambda: export_results('xlsx'),
-                                        icon='grid_on'
-                                    ).props('outline color=green').classes('text-sm px-2 py-1')
-                                    ui.button(
-                                        'JSON',
-                                        on_click=lambda: export_results('json'),
-                                        icon='code'
-                                    ).props('outline color=orange').classes('text-sm px-2 py-1')
+                                    # Export section
+                                    with ui.row().classes('gap-2'):
+                                        ui.label('Export:').classes('text-sm font-medium')
+                                        ui.button(
+                                            'CSV',
+                                            on_click=lambda: export_results('csv'),
+                                            icon='table_chart'
+                                        ).props('outline color=primary').classes('text-sm px-2 py-1')
+                                        ui.button(
+                                            'Excel',
+                                            on_click=lambda: export_results('xlsx'),
+                                            icon='grid_on'
+                                        ).props('outline color=green').classes('text-sm px-2 py-1')
+                                        ui.button(
+                                            'JSON',
+                                            on_click=lambda: export_results('json'),
+                                            icon='code'
+                                        ).props('outline color=orange').classes('text-sm px-2 py-1')
                         
                         # Risk severity distribution summary
                         severity_counts = {}
@@ -9779,24 +9984,36 @@ async def create_search_interface():
                                                 ui.badge(risk_code, color=color)
                                                 ui.label(f'{description} (Score: {severity_score})').classes('flex-1')
                                             ui.chip(f'{count} events').classes('text-sm')
-                    else:
-                        ui.label('No results found').classes('text-h6 text-grey')
+                        else:
+                            ui.label('No results found').classes('text-h6 text-grey')
+                    
+                    ui.notify(f'Found {len(parsed_results)} results', type='positive')
+                    
+                    # Force UI update after results are displayed
+                    await asyncio.sleep(0.1)
                 
-                ui.notify(f'Found {len(parsed_results)} results', type='positive')
-                
-                # Force UI update after results are displayed
-                await asyncio.sleep(0.1)
-                
-            except Exception as e:
-                logger.error(f"Search error: {e}")
-                results_container.clear()
-                with results_container:
-                    ui.label(f'Search failed: {str(e)}').classes('text-negative')
+                except Exception as e:
+                    logger.error(f"Search error: {e}")
+                    results_container.clear()
+                    with results_container:
+                        ui.label(f'Search failed: {str(e)}').classes('text-negative')
+                finally:
+                    # Re-enable search button and remove loading state
+                    search_button.props(remove='loading').enable()
+                    # Force final UI update to ensure button state is reflected
+                    await asyncio.sleep(0.05)
+                    
+            except Exception as outer_e:
+                logger.error(f"Outer search error: {outer_e}")
+                # Fallback error handling for outer try block
+                if 'results_container' in locals():
+                    results_container.clear()
+                    with results_container:
+                        ui.label(f'Critical search error: {str(outer_e)}').classes('text-negative')
+                        
             finally:
-                # Re-enable search button and remove loading state
-                search_button.props(remove='loading').enable()
-                # Force final UI update to ensure button state is reflected
-                await asyncio.sleep(0.05)
+                # ENTERPRISE SCALABILITY: Clean up rate limiter - this is for the outer try block
+                search_rate_limiter.end_search(user_id)
         
         def show_entity_details(entity):
             """Display comprehensive entity details in a dialog"""
