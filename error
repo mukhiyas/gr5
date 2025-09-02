@@ -1,7 +1,16 @@
-INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
-INFO:__main__:Query executed in 27.91s, returned 5 raw results
+ 100}
+INFO:__main__:🚀 Using optimized search for 3 parameters
+INFO:optimized_database_queries:🔍 Searching individual tables with prefix: individual
+INFO:optimized_database_queries:🔍 Name search for: 'hunter biden' (length: 12)
+INFO:optimized_database_queries:✅ Added individual name filters for: 'hunter biden'
+INFO:optimized_database_queries:🔍 Query filters count: base=1, performance=0, total=1
+INFO:optimized_database_queries:🔍 Query parameters: ['name_exact', 'name_contains', 'name_starts_with', 'name_ends_with']
+INFO:optimized_database_queries:🔧 Using config-based events - Critical: 8, High: 10, Medium: 10, Low: 8
+INFO:optimized_database_queries:📋 Query built with 1 filters, limit: 5
+INFO:__main__:🔌 Executing query with pooled connection: True
 INFO:databricks.sql.auth.retry:Received status code 200 for POST request
 INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:__main__:Query executed in 0.43s, returned 5 raw results
 INFO:__main__:🔍 Query returned columns: ['entity_id', 'risk_id', 'entity_name', 'recordDefinitionType', 'systemId', 'entityDate', 'pep_data', 'critical_events', 'primary_address', 'key_aliases', 'relationships', 'date_of_birth', 'calculated_risk_score']
 INFO:__main__:🔍 First row data sample - entity_id: 255400238, has events: True
 INFO:optimized_database_queries:🔄 Processing 5 raw results
