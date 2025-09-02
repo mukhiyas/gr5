@@ -9025,6 +9025,10 @@ async def create_search_interface():
                     country_input.on('input', lambda: throttled_update())
                     query_builder_input.on('input', lambda: throttled_update())
                     
+                    # IMMEDIATE validation for debugging (bypass throttling)
+                    entity_name_input.on('input', lambda: update_search_button_state())
+                    entity_id_input.on('input', lambda: update_search_button_state())
+                    
                     # Initial state update
                     update_search_button_state()
                     
