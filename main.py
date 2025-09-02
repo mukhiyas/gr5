@@ -175,10 +175,20 @@ class DatabaseConnectionPool:
     def return_connection(self, connection):
         """Return connection to pool"""
         try:
-            if connection and not connection.closed:
-                self.connections.put(connection, timeout=1)
+            # Check if connection is valid - Databricks connections don't have .closed attribute
+            if connection:
+                try:
+                    # Test if connection is still valid by checking if we can get cursor
+                    test_cursor = connection.cursor()
+                    test_cursor.close()
+                    # Connection is valid, return to pool
+                    self.connections.put(connection, timeout=1)
+                except:
+                    # Connection is invalid/closed, decrease counter
+                    with self.pool_lock:
+                        self.total_created = max(0, self.total_created - 1)
             else:
-                # Connection is closed, decrease counter
+                # Connection is None, decrease counter
                 with self.pool_lock:
                     self.total_created = max(0, self.total_created - 1)
         except queue.Full:
