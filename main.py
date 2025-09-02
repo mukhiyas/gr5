@@ -9073,20 +9073,25 @@ async def create_search_interface():
                     def throttled_update():
                         """Throttled update to prevent excessive validation calls"""
                         current_time = time.time()
-                        if current_time - last_update_time[0] > 0.5:  # Update max every 500ms
+                        if current_time - last_update_time[0] > 0.1:  # Update max every 100ms (faster response)
                             last_update_time[0] = current_time
                             update_search_button_state()
                     
-                    # Add change handlers to key input fields only (minimal set to reduce overhead)
-                    entity_id_input.on('input', lambda: throttled_update())
-                    entity_name_input.on('input', lambda: throttled_update())
-                    risk_id_input.on('input', lambda: throttled_update())
-                    country_input.on('input', lambda: throttled_update())
-                    query_builder_input.on('input', lambda: throttled_update())
+                    # COMPREHENSIVE event handler registration - all validated fields
+                    input_fields = [
+                        entity_id_input, entity_name_input, risk_id_input,
+                        source_item_id_input, system_id_input, bvd_id_input,
+                        country_input, event_category_input, query_builder_input
+                    ]
                     
-                    # IMMEDIATE validation for debugging (bypass throttling)
-                    entity_name_input.on('input', lambda: update_search_button_state())
-                    entity_id_input.on('input', lambda: update_search_button_state())
+                    # Register single throttled handler for all fields (no duplicates)
+                    registered_count = 0
+                    for field in input_fields:
+                        if field:  # Safety check
+                            field.on('input', lambda: throttled_update())
+                            registered_count += 1
+                    
+                    logger.info(f"✅ Registered input handlers for {registered_count} fields")
                     
                     # Initial state update
                     update_search_button_state()
