@@ -8968,9 +8968,13 @@ async def create_search_interface():
                             query_builder_input.value and query_builder_input.value.strip()
                         ]
                         has_criteria = any(criteria_values)
-                        # Debug logging
-                        if entity_name_input.value:
-                            logger.info(f"🔍 Search validation: entity_name='{entity_name_input.value}', has_criteria={has_criteria}")
+                        # Debug logging - show ALL field values
+                        logger.info(f"🔍 VALIDATION DEBUG:")
+                        logger.info(f"  entity_id: '{entity_id_input.value}' -> {bool(entity_id_input.value and entity_id_input.value.strip())}")
+                        logger.info(f"  entity_name: '{entity_name_input.value}' -> {bool(entity_name_input.value and entity_name_input.value.strip())}")
+                        logger.info(f"  risk_id: '{risk_id_input.value}' -> {bool(risk_id_input.value and risk_id_input.value.strip())}")
+                        logger.info(f"  country: '{country_input.value}' -> {bool(country_input.value and country_input.value.strip())}")
+                        logger.info(f"  FINAL RESULT: has_criteria={has_criteria}")
                         return has_criteria
                     except Exception as e:
                         logger.error(f"Search validation error: {e}")
