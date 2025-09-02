@@ -1,20 +1,10 @@
-INFO:__main__:✅ Loaded 182 codes from database:
-INFO:__main__:   - entity_attribute: 29 codes
-INFO:__main__:   - event_category: 67 codes
-INFO:__main__:   - event_sub_category: 36 codes
-INFO:__main__:   - relationship_direction: 2 codes
-INFO:__main__:   - relationship_type: 48 codes
-INFO:__main__:   Risk codes: 68 → 68 (+0 from DB)
-INFO:__main__:   PEP codes: 19 → 19 (+0 from DB)
-INFO:__main__:   Added 1 missing risk codes from debug analysis
-INFO:__main__:🔄 Merged database codes with existing dictionaries
-INFO:__main__:Code dictionaries loaded asynchronously
-INFO:__main__:🔍 VALIDATION DEBUG:
-INFO:__main__:  entity_id: '' -> False
-INFO:__main__:  entity_name: 'donald' -> True
-INFO:__main__:  risk_id: '' -> False
-INFO:__main__:  country: '' -> False
-INFO:__main__:  FINAL RESULT: has_criteria=True
-/Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr5-master/main.py:8993: RuntimeWarning: coroutine 'create_search_interface.<locals>.perform_search' was never awaited
-  perform_search(
-RuntimeWarning: Enable tracemalloc to get the object allocation traceback
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:__main__:Query executed in 27.91s, returned 5 raw results
+INFO:databricks.sql.auth.retry:Received status code 200 for POST request
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:__main__:🔍 Query returned columns: ['entity_id', 'risk_id', 'entity_name', 'recordDefinitionType', 'systemId', 'entityDate', 'pep_data', 'critical_events', 'primary_address', 'key_aliases', 'relationships', 'date_of_birth', 'calculated_risk_score']
+INFO:__main__:🔍 First row data sample - entity_id: 255400238, has events: True
+INFO:optimized_database_queries:🔄 Processing 5 raw results
+INFO:optimized_database_queries:✅ Processed 5 results successfully
+INFO:__main__:✅ Optimized search returned 5 results
+ERROR:__main__:Search error: 'Connection' object has no attribute 'closed'
