@@ -8984,13 +8984,13 @@ async def create_search_interface():
                 with ui.row().classes('w-full gap-2 justify-center mt-4'):
                     ui.button('Clear All Fields', on_click=clear_search, icon='clear').props('outline').classes('text-lg px-4 py-2')
                     # Store search button reference for state management during loading
-                    def safe_search_wrapper():
+                    async def safe_search_wrapper():
                         """Wrapper that validates before performing search"""
                         if not validate_search_criteria():
                             ui.notify('Please enter at least one search criterion (Entity ID, Name, Risk ID, Country, etc.)', type='warning')
                             return
                         # Proceed with search if validation passes
-                        perform_search(
+                        await perform_search(
                             entity_type_select.value,
                             entity_id_input.value,
                             entity_name_input.value,
