@@ -9097,6 +9097,28 @@ async def create_search_interface():
                     # Create the handler function with proper closure
                     input_change_handler = create_input_handler()
                     
+                    # COMPREHENSIVE field verification before handler registration
+                    logger.info("🔍 Verifying all input field variables exist...")
+                    
+                    # Check each field variable is defined and accessible
+                    field_check = {
+                        'entity_id_input': entity_id_input,
+                        'entity_name_input': entity_name_input, 
+                        'risk_id_input': risk_id_input,
+                        'source_item_id_input': source_item_id_input,
+                        'system_id_input': system_id_input,
+                        'bvd_id_input': bvd_id_input,
+                        'country_input': country_input,
+                        'event_category_input': event_category_input,
+                        'query_builder_input': query_builder_input
+                    }
+                    
+                    for name, field in field_check.items():
+                        if field is None:
+                            logger.error(f"❌ CRITICAL: {name} is None!")
+                        else:
+                            logger.info(f"✅ {name} exists: {type(field)} with label '{getattr(field, 'label', 'no label')}'")
+                    
                     # COMPREHENSIVE event handler registration - all validated fields
                     input_fields = [
                         entity_id_input, entity_name_input, risk_id_input,
@@ -9104,14 +9126,22 @@ async def create_search_interface():
                         country_input, event_category_input, query_builder_input
                     ]
                     
-                    # Register handlers with proper closure capture
+                    # Register handlers with comprehensive error handling and verification
+                    logger.info("🔧 Starting event handler registration...")
                     registered_count = 0
-                    for field in input_fields:
-                        if field:  # Safety check
-                            field.on('input', input_change_handler)
-                            registered_count += 1
+                    for i, field in enumerate(input_fields):
+                        if field:
+                            try:
+                                # Test simple handler first
+                                field.on('input', lambda: logger.info(f"🚨 SIMPLE HANDLER TRIGGERED for field {i}"))
+                                registered_count += 1
+                                logger.info(f"✅ Handler registered for field {i}: {getattr(field, 'label', 'unnamed')}")
+                            except Exception as e:
+                                logger.error(f"❌ Failed to register handler for field {i}: {e}")
+                        else:
+                            logger.warning(f"⚠️ Field {i} is None or invalid")
                     
-                    logger.info(f"✅ Registered input handlers for {registered_count} fields with proper closures")
+                    logger.info(f"✅ Registration complete: {registered_count}/{len(input_fields)} handlers registered")
                     
                     # Initial state update
                     update_search_button_state()
