@@ -175,20 +175,19 @@ class DatabaseConnectionPool:
     def return_connection(self, connection):
         """Return connection to pool"""
         try:
-            # Check if connection is valid - Databricks connections don't have .closed attribute
-            if connection:
+            logger.debug(f"🔌 Attempting to return connection: {type(connection)}")
+            
+            # Simple approach - just try to return to pool without checking connection state
+            if connection is not None:
                 try:
-                    # Test if connection is still valid by checking if we can get cursor
-                    test_cursor = connection.cursor()
-                    test_cursor.close()
-                    # Connection is valid, return to pool
                     self.connections.put(connection, timeout=1)
-                except:
-                    # Connection is invalid/closed, decrease counter
+                    logger.debug("🔌 Connection returned to pool successfully")
+                except Exception as e:
+                    logger.warning(f"🔌 Connection not returned to pool: {e}")
                     with self.pool_lock:
                         self.total_created = max(0, self.total_created - 1)
             else:
-                # Connection is None, decrease counter
+                logger.debug("🔌 Connection is None, not returning to pool")
                 with self.pool_lock:
                     self.total_created = max(0, self.total_created - 1)
         except queue.Full:
@@ -1813,11 +1812,16 @@ class EntitySearchApp:
         finally:
             # ENTERPRISE SCALABILITY: Always return connection to pool
             if pooled_connection:
-                # Restore original connection reference
-                self.connection = original_connection
-                # Return pooled connection to pool for reuse
-                db_connection_pool.return_connection(pooled_connection)
-                logger.debug("🔌 Connection returned to pool")
+                try:
+                    # Restore original connection reference
+                    self.connection = original_connection
+                    # Return pooled connection to pool for reuse
+                    logger.debug("🔌 About to return connection to pool...")
+                    db_connection_pool.return_connection(pooled_connection)
+                    logger.debug("🔌 Connection returned to pool successfully")
+                except Exception as e:
+                    logger.error(f"🔌 Error returning connection to pool: {e}")
+                    # Don't re-raise, just log the error
     
     def _original_search_data(self, search_criteria, entity_type, max_results=100, use_regex=False, 
                              logical_operator='AND', include_relationships=True):
