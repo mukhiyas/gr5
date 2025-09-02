@@ -9064,7 +9064,7 @@ async def create_search_interface():
                     def create_input_handler():
                         """Factory function to create proper closure for throttled_update"""
                         def handler():
-                            logger.info("🚨 INPUT HANDLER TRIGGERED!")
+                            logger.info("🚨 REAL INPUT HANDLER TRIGGERED - USER IS TYPING!")
                             try:
                                 current_time = time.time()
                                 if current_time - last_update_time[0] > 0.1:  # 100ms throttle
@@ -9115,8 +9115,8 @@ async def create_search_interface():
                     for i, field in enumerate(input_fields):
                         if field:
                             try:
-                                # Test simple handler first
-                                field.on('input', lambda: logger.info(f"🚨 SIMPLE HANDLER TRIGGERED for field {i}"))
+                                # Register ACTUAL validation handler that enables/disables search button
+                                field.on('input', input_change_handler)
                                 registered_count += 1
                                 logger.info(f"✅ Handler registered for field {i}: {getattr(field, 'label', 'unnamed')}")
                             except Exception as e:
