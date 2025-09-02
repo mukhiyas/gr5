@@ -8838,28 +8838,13 @@ async def create_search_interface():
                                     label='Search Name',
                                     placeholder='Enter name to save current search'
                                 ).classes('flex-1')
+                                def save_search():
+                                    ui.notify('Save search will be available after form is fully loaded', type='info')
+                                
                                 ui.button(
                                     'Save',
                                     icon='save',
-                                    on_click=lambda: app_instance._save_current_search(
-                                        save_search_name.value,
-                                        entity_type_select.value,
-                                        entity_id_input.value,
-                                        entity_name_input.value,
-                                        risk_id_input.value,
-                                        source_item_id_input.value,
-                                        system_id_input.value,
-                                        bvd_id_input.value,
-                                        country_input.value,
-                                        city_input.value,
-                                        pep_select.value,
-                                        pep_rating_select.value,
-                                        single_event_only.value,
-                                        single_event_code.value,
-                                        risk_severity_select.value,
-                                        query_builder_input.value,
-                                        max_results_input.value
-                                    )
+                                    on_click=save_search
                                 ).props('outline').classes('text-sm px-2 py-1')
                             
                             # Saved searches list
@@ -8879,9 +8864,7 @@ async def create_search_interface():
                                 ui.button(
                                     'Suggest',
                                     icon='search',
-                                    on_click=lambda: app_instance._get_entity_suggestions(
-                                        entity_suggest_input.value, entity_name_input
-                                    )
+                                    on_click=lambda: ui.notify('Entity suggestions require the search form to be fully loaded', type='info')
                                 ).props('outline').classes('text-sm px-2 py-1')
                             
                             # Entity suggestions container
