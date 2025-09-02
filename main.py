@@ -8712,35 +8712,27 @@ async def create_search_interface():
                     # Set initial disabled state and tooltip
                     search_button.tooltip = 'Please enter at least one search criterion (Entity ID, Name, Risk ID, Country, etc.)'
                 
-                # Add event listeners to all input fields to update button state
+                # Optimized validation with debouncing to prevent performance issues
+                import time
+                last_validation_time = 0
+                
+                def debounced_validation():
+                    """Debounced validation to prevent excessive calls"""
+                    nonlocal last_validation_time
+                    current_time = time.time()
+                    if current_time - last_validation_time > 0.5:  # 500ms debounce
+                        last_validation_time = current_time
+                        update_search_button_state()
+                
+                # Add event listeners only to key fields to prevent performance issues
                 def setup_validation_listeners():
-                    """Setup event listeners for search validation"""
-                    # Core entity fields
-                    entity_id_input.on_value_change(lambda: update_search_button_state())
-                    entity_name_input.on_value_change(lambda: update_search_button_state())
-                    risk_id_input.on_value_change(lambda: update_search_button_state())
-                    source_item_id_input.on_value_change(lambda: update_search_button_state())
-                    system_id_input.on_value_change(lambda: update_search_button_state())
-                    bvd_id_input.on_value_change(lambda: update_search_button_state())
-                    
-                    # Geographic fields
-                    country_input.on_value_change(lambda: update_search_button_state())
-                    city_input.on_value_change(lambda: update_search_button_state())
-                    address_input.on_value_change(lambda: update_search_button_state())
-                    
-                    # Event/Risk fields
-                    event_category_input.on_value_change(lambda: update_search_button_state())
-                    event_sub_category_input.on_value_change(lambda: update_search_button_state())
-                    
-                    # Selection fields
-                    pep_select.on_value_change(lambda: update_search_button_state())
-                    critical_risk_select.on_value_change(lambda: update_search_button_state())
-                    valuable_risk_select.on_value_change(lambda: update_search_button_state())
-                    investigative_risk_select.on_value_change(lambda: update_search_button_state())
-                    probative_risk_select.on_value_change(lambda: update_search_button_state())
-                    
-                    # Query builder
-                    query_builder_input.on_value_change(lambda: update_search_button_state())
+                    """Setup optimized event listeners for search validation"""
+                    # Only listen to the most important fields to reduce server load
+                    entity_id_input.on_value_change(lambda: debounced_validation())
+                    entity_name_input.on_value_change(lambda: debounced_validation())
+                    risk_id_input.on_value_change(lambda: debounced_validation())
+                    country_input.on_value_change(lambda: debounced_validation())
+                    query_builder_input.on_value_change(lambda: debounced_validation())
                 
                 # Setup validation listeners
                 setup_validation_listeners()
@@ -11026,8 +11018,8 @@ async def create_sql_analysis_interface():
         # Initial load
         update_search_results()
         
-        # Auto-refresh every 3 seconds to detect new search results
-        robust_timer_manager.create_robust_timer(3.0, update_search_results, "sql_analysis_refresh")
+        # Auto-refresh every 10 seconds to detect new search results (increased from 3s to reduce server load)
+        robust_timer_manager.create_robust_timer(10.0, update_search_results, "sql_analysis_refresh")
                         
     except Exception as e:
         logger.error(f"Error creating SQL analysis interface: {e}")
