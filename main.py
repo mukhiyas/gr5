@@ -950,8 +950,13 @@ class EntitySearchApp:
         self.load_settings_from_file()
         self.apply_environment_overrides()
         
-        self.init_database_connection()
-        self.load_all_code_dictionaries()
+        # PERFORMANCE FIX: Initialize database connection asynchronously
+        # to prevent blocking UI startup
+        self._database_initialized = False
+        self._initializing_database = False
+        
+        # Initialize code dictionaries in background 
+        self._code_dict_initialized = False
         
         # MODULAR INTEGRATION: Initialize database integration modules
         if INTEGRATION_AVAILABLE:
@@ -1076,43 +1081,104 @@ class EntitySearchApp:
         logger.info(f"Loaded {len(priorities)} PEP priorities from dynamic configuration")
         return priorities
     
-    def init_database_connection(self):
-        """Initialize Databricks connection using enhanced configuration"""
-            
-        # Check for placeholder values in environment
-        db_host = os.getenv("DB_HOST", "")
-        if db_host.startswith("your-") or not db_host:
-            logger.info("Database credentials not configured - skipping connection")
+    async def init_database_connection_async(self):
+        """Initialize Databricks connection asynchronously to prevent UI blocking"""
+        if self._database_initialized or self._initializing_database:
             return
             
+        self._initializing_database = True
+        
         try:
-            # Use configuration settings for connection parameters
-            connection_params = {
-                'server_hostname': db_host,
-                'http_path': os.getenv("DB_HTTP_PATH"),
-                'access_token': os.getenv("DB_ACCESS_TOKEN"),
-                'connect_timeout': self.database_config['connection_timeout']
-            }
+            # Check for placeholder values in environment
+            db_host = os.getenv("DB_HOST", "")
+            if db_host.startswith("your-") or not db_host:
+                logger.info("Database credentials not configured - skipping connection")
+                return
             
-            # Add optional parameters if configured
-            if self.database_config['enable_ssl']:
-                connection_params['ssl'] = True
+            logger.info("Connecting to Databricks asynchronously...")
+            
+            # Run connection in thread pool to prevent blocking
+            import concurrent.futures
+            
+            def connect_to_db():
+                connection_params = {
+                    'server_hostname': db_host,
+                    'http_path': os.getenv("DB_HTTP_PATH"),
+                    'access_token': os.getenv("DB_ACCESS_TOKEN"),
+                    'connect_timeout': self.database_config['connection_timeout']
+                }
                 
-            if self.database_config['enable_compression']:
-                connection_params['compression'] = True
+                # Add optional parameters if configured
+                if self.database_config['enable_ssl']:
+                    connection_params['ssl'] = True
+                    
+                if self.database_config['enable_compression']:
+                    connection_params['compression'] = True
+                
+                return sql.connect(**connection_params)
             
-            self.connection = sql.connect(**connection_params)
-            logger.info(f"Database connection successful (timeout: {self.database_config['connection_timeout']}s)")
-            
-            # MODULAR INTEGRATION: Update integration modules with new connection
-            self._update_integration_connection()
-            
+            # Execute connection in background thread with timeout
+            loop = asyncio.get_event_loop()
+            try:
+                self.connection = await asyncio.wait_for(
+                    loop.run_in_executor(None, connect_to_db), 
+                    timeout=5.0  # Max 5 seconds for connection
+                )
+                logger.info(f"Database connection successful (timeout: {self.database_config['connection_timeout']}s)")
+                self._database_initialized = True
+                
+                # MODULAR INTEGRATION: Update integration modules with new connection
+                self._update_integration_connection()
+                
+                # Initialize code dictionaries now that DB is ready
+                await self._load_code_dictionaries_async()
+                
+            except asyncio.TimeoutError:
+                logger.warning("Database connection timeout - will retry on first search")
+                self.connection = None
+                
         except Exception as e:
             logger.error(f"Database connection failed: {e}")
             self.connection = None
             
             # MODULAR INTEGRATION: Update integration modules even on failure
             self._update_integration_connection()
+        finally:
+            self._initializing_database = False
+    
+    def ensure_database_connection(self):
+        """Ensure database connection exists, initialize if needed (synchronous fallback)"""
+        if not self._database_initialized and not self._initializing_database:
+            # Fallback synchronous initialization for when async isn't available
+            self._initializing_database = True
+            try:
+                db_host = os.getenv("DB_HOST", "")
+                if db_host.startswith("your-") or not db_host:
+                    logger.info("Database credentials not configured - skipping connection")
+                    return
+                
+                connection_params = {
+                    'server_hostname': db_host,
+                    'http_path': os.getenv("DB_HTTP_PATH"),
+                    'access_token': os.getenv("DB_ACCESS_TOKEN"),
+                    'connect_timeout': min(self.database_config['connection_timeout'], 10)  # Max 10s for UI
+                }
+                
+                if self.database_config['enable_ssl']:
+                    connection_params['ssl'] = True
+                if self.database_config['enable_compression']:
+                    connection_params['compression'] = True
+                
+                self.connection = sql.connect(**connection_params)
+                self._database_initialized = True
+                self._update_integration_connection()
+                logger.info("Database connection established synchronously")
+                
+            except Exception as e:
+                logger.error(f"Database connection failed: {e}")
+                self.connection = None
+            finally:
+                self._initializing_database = False
     
     def _update_integration_connection(self):
         """Update connection for all database modules (optimized and legacy)"""
@@ -1141,9 +1207,93 @@ class EntitySearchApp:
         self._update_integration_connection()
         logger.info("Database connection updated for app and integration modules")
     
-    def load_all_code_dictionaries(self):
-        """Load all code dictionaries from database with smart caching"""
+    async def _load_code_dictionaries_async(self):
+        """Load code dictionaries asynchronously to prevent UI blocking"""
+        if self._code_dict_initialized or not self.connection:
+            return
+        
+        try:
+            logger.info("Loading code dictionaries asynchronously...")
+            # Run in thread pool to prevent blocking
+            loop = asyncio.get_event_loop()
+            await loop.run_in_executor(None, self._load_dictionaries_sync)
+            self._code_dict_initialized = True
+            logger.info("Code dictionaries loaded asynchronously")
+        except Exception as e:
+            logger.error(f"Failed to load code dictionaries asynchronously: {e}")
+    
+    def _load_dictionaries_sync(self):
+        """Synchronous dictionary loading for thread pool execution"""
         if not self.connection:
+            return
+        
+        try:
+            self.load_all_code_dictionaries()
+        except Exception as e:
+            logger.error(f"Failed to load dictionaries in sync mode: {e}")
+    
+    def load_all_code_dictionaries(self):
+        """Load all code dictionaries from database with smart caching (fallback synchronous)"""
+        if self._code_dict_initialized or not self.connection:
+            return
+        
+        try:
+            # Build query using configuration settings
+            catalog = self.database_config['catalog_name']
+            schema = self.database_config['schema_name']
+            table = self.database_config['code_dictionary_table']
+            
+            # Initialize all dictionary containers
+            self.db_event_codes = {}
+            self.db_relationship_types = {}
+            self.db_event_subcategories = {}
+            self.db_entity_attributes = {}
+            self.db_pep_codes = {}
+            self.db_risk_codes = {}
+            
+            # Load all codes from code_dictionary table grouped by type
+            query = f"""
+            SELECT code_type, code, code_description, COUNT(*) as usage_count
+            FROM {catalog}.{schema}.{table}
+            WHERE code IS NOT NULL AND code_description IS NOT NULL
+            GROUP BY code_type, code, code_description
+            ORDER BY code_type, usage_count DESC
+            """
+            
+            with self.connection.cursor() as cursor:
+                cursor.execute(query)
+                results = cursor.fetchall()
+                
+                # Organize codes by type
+                type_counts = {}
+                for code_type, code, description, usage_count in results:
+                    if code_type not in type_counts:
+                        type_counts[code_type] = 0
+                    
+                    type_counts[code_type] += 1
+                    
+                    # Map to appropriate dictionary
+                    if code_type == 'EVENT_CATEGORY':
+                        self.db_event_codes[code] = description
+                    elif code_type == 'RELATIONSHIP_TYPE':
+                        self.db_relationship_types[code] = description
+                    elif code_type == 'EVENT_SUBCATEGORY':
+                        self.db_event_subcategories[code] = description
+                    elif code_type == 'ENTITY_ATTRIBUTE':
+                        self.db_entity_attributes[code] = description
+                    elif code_type == 'PEP_CODE':
+                        self.db_pep_codes[code] = description
+                    elif code_type == 'RISK_CODE':
+                        self.db_risk_codes[code] = description
+                
+                logger.info(f"Code dictionaries loaded: {type_counts}")
+                
+        except Exception as e:
+            logger.error(f"Failed to load code dictionaries: {e}")
+    
+    def load_all_code_dictionaries(self):
+        """Load all code dictionaries from database with smart caching (fallback synchronous)"""
+        if self._code_dict_initialized or not self.connection:
             return
         
         try:
@@ -7460,6 +7610,8 @@ async def main_page():
     # Use user-specific app instance instead of global
     app_instance = user_app_instance
     
+    # PERFORMANCE FIX: Start database initialization in background for faster UI loading
+    asyncio.create_task(app_instance.init_database_connection_async())
     
     # Modern UI/UX Design Theme
     ui.add_head_html('''
@@ -8594,68 +8746,34 @@ async def create_search_interface():
                                         on_click=lambda: app_instance._entity_bookmarks_manager()
                                     ).props('outline').classes('text-xs px-1 py-0.5')
                 
-                # Search validation function
-                def validate_search_fields():
-                    """Check if at least one meaningful search criterion is provided"""
-                    # Core search fields that can drive a meaningful search
-                    core_criteria = [
+                # SAFE SEARCH VALIDATION: Simple check only on button click (no event listeners)
+                def validate_search_criteria():
+                    """Simple validation - only checks when search button is clicked"""
+                    # Check if any meaningful search criteria is provided
+                    has_criteria = any([
                         entity_id_input.value and entity_id_input.value.strip(),
                         entity_name_input.value and entity_name_input.value.strip(),
                         risk_id_input.value and risk_id_input.value.strip(),
                         source_item_id_input.value and source_item_id_input.value.strip(),
                         system_id_input.value and system_id_input.value.strip(),
                         bvd_id_input.value and bvd_id_input.value.strip(),
-                        query_builder_input.value and query_builder_input.value.strip()
-                    ]
-                    
-                    # Geographic criteria
-                    geo_criteria = [
                         country_input.value and country_input.value.strip(),
-                        city_input.value and city_input.value.strip(),
-                        address_input.value and address_input.value.strip()
-                    ]
-                    
-                    # Event/Risk criteria
-                    event_criteria = [
                         event_category_input.value and event_category_input.value.strip(),
-                        event_sub_category_input.value and event_sub_category_input.value.strip(),
-                        pep_select.value and len(pep_select.value) > 0,
-                        critical_risk_select.value and len(critical_risk_select.value) > 0,
-                        valuable_risk_select.value and len(valuable_risk_select.value) > 0,
-                        investigative_risk_select.value and len(investigative_risk_select.value) > 0,
-                        probative_risk_select.value and len(probative_risk_select.value) > 0
-                    ]
-                    
-                    # Return True if at least one meaningful criterion is provided
-                    return any(core_criteria + geo_criteria + event_criteria)
-                
-                def update_search_button_state():
-                    """Update search button state based on validation"""
-                    try:
-                        if validate_search_fields():
-                            search_button.enable()
-                            search_button.classes(remove='bg-gray-400 cursor-not-allowed', add='bg-primary')
-                            search_button.props(remove='disable')
-                            search_button.tooltip = None
-                        else:
-                            search_button.disable()
-                            search_button.classes(remove='bg-primary', add='bg-gray-400 cursor-not-allowed')
-                            search_button.props('disable')
-                            search_button.tooltip = 'Please enter at least one search criterion (Entity ID, Name, Risk ID, Country, etc.)'
-                    except Exception as e:
-                        # Fallback: just enable/disable without styling changes
-                        if validate_search_fields():
-                            search_button.enable()
-                        else:
-                            search_button.disable()
+                        boolean_query_input.value and boolean_query_input.value.strip()
+                    ])
+                    return has_criteria
 
                 # Search controls
                 with ui.row().classes('w-full gap-2 justify-center mt-4'):
                     ui.button('Clear All Fields', on_click=clear_search, icon='clear').props('outline').classes('text-lg px-4 py-2')
                     # Store search button reference for state management during loading
-                    search_button = ui.button(
-                        'Entity Search',
-                        on_click=lambda: perform_search(
+                    def safe_search_wrapper():
+                        """Wrapper that validates before performing search"""
+                        if not validate_search_criteria():
+                            ui.notify('Please enter at least one search criterion (Entity ID, Name, Risk ID, Country, etc.)', type='warning')
+                            return
+                        # Proceed with search if validation passes
+                        perform_search(
                             entity_type_select.value,
                             entity_id_input.value,
                             entity_name_input.value,
@@ -8676,66 +8794,45 @@ async def create_search_interface():
                             use_date_range.value,
                             entity_year_input.value,
                             year_range_input.value,
-                            pep_select.value,
-                            severity_filter.value,
-                            risk_score_range.value,
-                            critical_risk_select.value,
-                            valuable_risk_select.value,
-                            investigative_risk_select.value,
-                            probative_risk_select.value,
+                            pep_levels_input.value,
+                            severity_filter_input.value,
+                            risk_score_range_input.value,
+                            critical_risks_input.value,
+                            valuable_risks_input.value,
+                            investigative_risks_input.value,
+                            probative_risks_input.value,
                             min_relationships_input.value,
-                            geographic_risk_input.value,
-                            pep_priority_input.value,
-                            recent_activity_input.value,
+                            geographic_risk_min_input.value,
+                            pep_priority_min_input.value,
+                            recent_activity_days_input.value,
                             source_systems_input.value,
-                            risk_severity_select.value,
-                            query_builder_input.value,
-                            enable_caching_switch.value,
-                            enable_parallel_switch.value,
-                            enable_streaming_switch.value,
+                            risk_severities_input.value,
+                            boolean_query_input.value,
+                            enable_caching_input.value,
+                            enable_parallel_input.value,
+                            enable_streaming_input.value,
                             batch_size_input.value,
-                            timeout_input.value,
-                            logical_operator_select.value,
-                            use_regex_switch.value,
-                            int(max_results_input.value),
-                            only_recent_events.value,
-                            recent_events_years.value,
-                            exclude_acquitted.value,
-                            has_relationships.value,
-                            single_event_only.value,
-                            single_event_code.value,
-                            pep_rating_select.value
-                        ),
-                        icon='search'
-                    ).classes('bg-gray-400 cursor-not-allowed text-white text-lg px-4 py-2').props('disable')
+                            timeout_seconds_input.value,
+                            logical_operator_input.value,
+                            use_regex_input.value,
+                            max_results_input.value,
+                            only_recent_events_input.value,
+                            recent_events_years_input.value,
+                            exclude_acquitted_input.value,
+                            has_relationships_input.value,
+                            single_event_only_input.value,
+                            single_event_code_input.value,
+                            pep_ratings_input.value
+                        )
                     
-                    # Set initial disabled state and tooltip
-                    search_button.tooltip = 'Please enter at least one search criterion (Entity ID, Name, Risk ID, Country, etc.)'
-                
-                # Optimized validation with debouncing to prevent performance issues
-                import time
-                last_validation_time = 0
-                
-                def debounced_validation():
-                    """Debounced validation to prevent excessive calls"""
-                    nonlocal last_validation_time
-                    current_time = time.time()
-                    if current_time - last_validation_time > 0.5:  # 500ms debounce
-                        last_validation_time = current_time
-                        update_search_button_state()
-                
-                # Add event listeners only to key fields to prevent performance issues
-                def setup_validation_listeners():
-                    """Setup optimized event listeners for search validation"""
-                    # Only listen to the most important fields to reduce server load
-                    entity_id_input.on_value_change(lambda: debounced_validation())
-                    entity_name_input.on_value_change(lambda: debounced_validation())
-                    risk_id_input.on_value_change(lambda: debounced_validation())
-                    country_input.on_value_change(lambda: debounced_validation())
-                    query_builder_input.on_value_change(lambda: debounced_validation())
-                
-                # Setup validation listeners
-                setup_validation_listeners()
+                    search_button = ui.button(
+                        'Entity Search',
+                        on_click=safe_search_wrapper,
+                        icon='search'
+                    ).classes('bg-primary text-white text-lg px-4 py-2')
+                    
+                    # Search button with validation - prevents empty database calls
+                # Users can click search anytime for better responsiveness
         
         # Results container
         results_container = ui.column().classes('w-full gap-4')
@@ -8756,6 +8853,10 @@ async def create_search_interface():
                                 single_event_only, single_event_code, pep_ratings):
             """Execute comprehensive advanced search with all original search_tool.py fields"""
             results_container.clear()
+            
+            # PERFORMANCE FIX: Initialize database connection asynchronously if not ready
+            if not app_instance._database_initialized:
+                await app_instance.init_database_connection_async()
             
             # Build search criteria - same logic as original search_tool.py
             search_criteria = {}
@@ -9045,6 +9146,18 @@ async def create_search_interface():
                 
                 # Force UI update before starting search
                 await asyncio.sleep(0.1)
+                
+                # PERFORMANCE FIX: Ensure database connection is ready before search
+                if not app_instance.connection:
+                    with results_container:
+                        ui.label('Connecting to database...').classes('text-center p-4')
+                    await asyncio.sleep(0.1)  # Allow UI update
+                    app_instance.ensure_database_connection()
+                    
+                    if not app_instance.connection:
+                        with results_container:
+                            ui.label('Database connection failed. Please try again.').classes('text-negative text-center p-4')
+                        return
                 
                 # Perform search
                 raw_results = await asyncio.to_thread(
@@ -14716,15 +14829,17 @@ if __name__ == '__main__':
         import sys
         import traceback
         
-        # Initialize database modules first
-        try:
-            _initialize_database_modules()
-        except Exception as e:
-            logger.error(f"Failed to initialize database modules: {e}")
-            logger.error(f"Traceback: {traceback.format_exc()}")
-            print("❌ Critical Error: Database initialization failed")
-            print(f"Error: {e}")
-            sys.exit(1)
+        # Initialize database modules in background (non-blocking startup)
+        def initialize_database_async():
+            try:
+                _initialize_database_modules()
+                logger.info("✅ Database modules initialized in background")
+            except Exception as e:
+                logger.warning(f"Database modules initialization delayed: {e}")
+                # Continue without database modules for now
+        
+        # Start database initialization in background thread
+        threading.Thread(target=initialize_database_async, daemon=True).start()
         
         # Initialize application with session isolation
         
