@@ -1237,6 +1237,9 @@ class EntitySearchApp:
                 logger.info("Database connection acquired from pool successfully")
                 self._database_initialized = True
                 
+                # UPDATE UI STATUS: Notify UI that database is connected
+                self._update_ui_database_status()
+                
                 # MODULAR INTEGRATION: Update integration modules with pooled connection
                 self._update_integration_connection()
                 
@@ -1259,6 +1262,7 @@ class EntitySearchApp:
                             None, sql.connect, **connection_params
                         )
                         self._database_initialized = True
+                        self._update_ui_database_status()
                         logger.info("Direct database connection established as fallback")
                     else:
                         self.connection = None
@@ -1299,6 +1303,7 @@ class EntitySearchApp:
                 
                 self.connection = sql.connect(**connection_params)
                 self._database_initialized = True
+                self._update_ui_database_status()
                 self._update_integration_connection()
                 logger.info("Database connection established synchronously")
                 
@@ -1307,6 +1312,25 @@ class EntitySearchApp:
                 self.connection = None
             finally:
                 self._initializing_database = False
+    
+    def _update_ui_database_status(self):
+        """Update UI database status indicators when connection changes"""
+        try:
+            # This will trigger UI updates for any status elements that use app_instance.connection
+            is_connected = self.connection is not None and self._database_initialized
+            logger.info(f"🔄 Updating UI database status: connected={is_connected}")
+            
+            # Force UI refresh by updating any global status variables if needed
+            # The UI elements will automatically reflect the new connection state
+            if hasattr(self, '_ui_update_callbacks'):
+                for callback in self._ui_update_callbacks:
+                    try:
+                        callback(is_connected)
+                    except Exception as e:
+                        logger.error(f"UI update callback error: {e}")
+                        
+        except Exception as e:
+            logger.error(f"Error updating UI database status: {e}")
     
     def _update_integration_connection(self):
         """Update connection for all database modules (optimized and legacy)"""
@@ -8048,9 +8072,14 @@ async def main_page():
     </style>
     ''')
     
-    # Check database connection
+    # Check database connection (will be updated dynamically)
     db_connected = app_instance.connection is not None
     ai_configured = bool(os.getenv("AI_API_KEY") and os.getenv("AI_CLIENT_ID"))
+    
+    # Create dynamic status labels that will be updated
+    db_status_container = None
+    db_status_icon = None
+    db_status_label = None
     
     # Modern animated header with gradient
     with ui.header().classes('bg-primary text-white shadow-lg'):
@@ -8069,16 +8098,42 @@ async def main_page():
             
             # Modern connection status badges
             with ui.row().classes('items-center gap-3'):
-                # Database status
-                with ui.element('div').classes(
+                # Database status (dynamic - will be updated when connection changes)
+                db_status_container = ui.element('div').classes(
                     f'px-4 py-2 rounded-full flex items-center gap-2 {"bg-green-600" if db_connected else "bg-red-600"} bg-opacity-20'
-                ):
-                    ui.icon('storage' if db_connected else 'cloud_off').classes(
+                )
+                with db_status_container:
+                    db_status_icon = ui.icon('storage' if db_connected else 'cloud_off').classes(
                         f'text-sm {"text-green-300" if db_connected else "text-red-300"}'
                     )
-                    ui.label('Database' if db_connected else 'Database Offline').classes(
+                    db_status_label = ui.label('Database' if db_connected else 'Database Offline').classes(
                         f'text-sm font-medium {"text-green-300" if db_connected else "text-red-300"}'
                     )
+                
+                # Register UI update callback for database status
+                def update_header_db_status(is_connected):
+                    """Update header database status when connection changes"""
+                    try:
+                        if is_connected:
+                            db_status_icon.props('icon=storage')
+                            db_status_icon.classes(remove='text-red-300', add='text-green-300')
+                            db_status_label.text = 'Database'
+                            db_status_label.classes(remove='text-red-300', add='text-green-300')
+                            db_status_container.classes(remove='bg-red-600', add='bg-green-600')
+                        else:
+                            db_status_icon.props('icon=cloud_off')
+                            db_status_icon.classes(remove='text-green-300', add='text-red-300')
+                            db_status_label.text = 'Database Offline'
+                            db_status_label.classes(remove='text-green-300', add='text-red-300')
+                            db_status_container.classes(remove='bg-green-600', add='bg-red-600')
+                        logger.info(f"🔄 Header status updated: {'connected' if is_connected else 'offline'}")
+                    except Exception as e:
+                        logger.error(f"Header status update error: {e}")
+                
+                # Store callback reference in app_instance
+                if not hasattr(app_instance, '_ui_update_callbacks'):
+                    app_instance._ui_update_callbacks = []
+                app_instance._ui_update_callbacks.append(update_header_db_status)
                 
                 # AI status
                 with ui.element('div').classes(
