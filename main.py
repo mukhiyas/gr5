@@ -80,6 +80,15 @@ def _initialize_database_modules():
         # Create fallback functions
         get_event_description = lambda code: f"Event {code}"
         get_event_risk_score = lambda code: 50
+        
+        # Create fallback database_driven_codes object to prevent None errors
+        class FallbackDatabaseDrivenCodes:
+            def __init__(self):
+                self.event_codes = {}
+                self.event_subcategories = {}
+                self.entity_attributes = {}
+        
+        database_driven_codes = FallbackDatabaseDrivenCodes()
 
 # Load environment variables
 load_dotenv(override=True)
@@ -7613,6 +7622,10 @@ async def main_page():
     # PERFORMANCE FIX: Start database initialization in background for faster UI loading
     asyncio.create_task(app_instance.init_database_connection_async())
     
+    # Initialize database modules if not already done
+    if database_driven_codes is None:
+        asyncio.create_task(asyncio.to_thread(_initialize_database_modules))
+    
     # Modern UI/UX Design Theme
     ui.add_head_html('''
     <style>
@@ -12456,9 +12469,9 @@ async def create_configuration_interface():
             {
                 "id": "database_driven_event_codes",
                 "title": "Event Codes Management (Database)",
-                "description": f"All event codes from database with live definitions ({len(database_driven_codes.event_codes)} codes)",
+                "description": f"All event codes from database with live definitions ({len(database_driven_codes.event_codes) if database_driven_codes else 0} codes)",
                 "icon": "code",
-                "count": len(database_driven_codes.event_codes),
+                "count": len(database_driven_codes.event_codes) if database_driven_codes else 0,
                 "status": "live_database"
             },
             {
