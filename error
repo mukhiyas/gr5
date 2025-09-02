@@ -1,3 +1,92 @@
+🌐 Access: http://localhost:8080
+============================================================
+NiceGUI ready to go on http://localhost:8080, http://10.27.173.44:8080, and http://192.168.1.127:8080
+INFO:databricks.sql.auth.retry:Received status code 200 for POST request
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:databricks.sql.client:Successfully opened session 01f0881e-7c87-1204-81f0-1f66ec3c87f9
+INFO:database_driven_codes:✅ Connected to database for live code extraction
+INFO:__main__:✅ Optimized DatabaseQueries initialized
+INFO:dynamic_config_manager:✅ Loaded configuration from user_config.json
+INFO:__main__:Loaded 1 risk scores from dynamic configuration
+INFO:__main__:Loaded 1 PEP priorities from dynamic configuration
+INFO:__main__:Loaded 2 geographic multipliers from dynamic configuration
+INFO:__main__:Settings file not found, using defaults
+INFO:__main__:Applying environment variable overrides...
+INFO:__main__:Environment variable overrides applied
+INFO:__main__:✅ Database integration initialized successfully
+INFO:__main__:Created new app instance for user 2c5eecbefaed7bc5
+INFO:__main__:Main page accessed by user 2c5eecbefaed7bc5
+INFO:__main__:Created Entity Browser for client cd513ae566b6
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Getting database connection from pool asynchronously...
+INFO:__main__:Displaying 0 entities for client cd513ae566b6
+INFO:__main__:Browser cd513ae566b6 showing empty state (available data: 0)
+INFO:databricks.sql.auth.retry:Received status code 200 for POST request
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:database_driven_codes:📋 Loaded 67 event category codes from database
+INFO:databricks.sql.auth.retry:Received status code 200 for POST request
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:database_driven_codes:📊 Loaded usage statistics for 63 codes
+INFO:databricks.sql.auth.retry:Received status code 200 for POST request
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:database_driven_codes:📋 Loaded 36 event sub-category codes
+INFO:databricks.sql.auth.retry:Received status code 200 for POST request
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:database_driven_codes:📋 Loaded 29 entity attribute codes
+INFO:database_driven_codes:✅ Successfully loaded all codes from database
+INFO:database_driven_codes:📝 No user customizations found - using database defaults
+INFO:__main__:✅ Database modules initialized successfully
+INFO:__main__:✅ Database modules initialized successfully
+INFO:__main__:✅ Database modules initialized in background
+INFO:__main__:Main page accessed by user 2c5eecbefaed7bc5
+INFO:__main__:Created Entity Browser for client 97e470e3c21f
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Displaying 0 entities for client 97e470e3c21f
+INFO:__main__:Browser 97e470e3c21f showing empty state (available data: 0)
+INFO:__main__:✅ Optimized DatabaseQueries initialized
+INFO:__main__:Loaded 1 risk scores from dynamic configuration
+INFO:__main__:Loaded 1 PEP priorities from dynamic configuration
+INFO:__main__:Loaded 2 geographic multipliers from dynamic configuration
+INFO:__main__:Settings file not found, using defaults
+INFO:__main__:Applying environment variable overrides...
+INFO:__main__:Environment variable overrides applied
+INFO:__main__:✅ Database integration initialized successfully
+INFO:__main__:Created new app instance for user 8e2c33623bbf71f8
+INFO:__main__:Main page accessed by user 8e2c33623bbf71f8
+INFO:__main__:Created Entity Browser for client f2fdd027d139
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Getting database connection from pool asynchronously...
+INFO:__main__:Displaying 0 entities for client f2fdd027d139
+INFO:__main__:Browser f2fdd027d139 showing empty state (available data: 0)
+INFO:databricks.sql.auth.retry:Received status code 200 for POST request
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:databricks.sql.client:Successfully opened session 01f0881e-7fdb-1f14-a655-da7ab9ed6b69
+INFO:__main__:Database connection acquired from pool successfully
+INFO:__main__:✅ Optimized database queries ready for use
+INFO:__main__:✅ Legacy integration modules connection updated
+INFO:__main__:Loading code dictionaries asynchronously...
+INFO:databricks.sql.auth.retry:Received status code 200 for POST request
+INFO:databricks.sql.auth.thrift_http_client:HTTP Response with status code 200, message: OK
+INFO:__main__:✅ Loaded 182 codes from database:
+INFO:__main__:   - entity_attribute: 29 codes
+INFO:__main__:   - event_category: 67 codes
+INFO:__main__:   - event_sub_category: 36 codes
+INFO:__main__:   - relationship_direction: 2 codes
+INFO:__main__:   - relationship_type: 48 codes
+INFO:__main__:   Risk codes: 68 → 68 (+0 from DB)
+INFO:__main__:   PEP codes: 19 → 19 (+0 from DB)
+INFO:__main__:   Added 1 missing risk codes from debug analysis
+INFO:__main__:🔄 Merged database codes with existing dictionaries
+INFO:__main__:Code dictionaries loaded asynchronously
 ERROR:asyncio:Task exception was never retrieved
 future: <Task finished name='Task-35' coro=<create_search_interface.<locals>.update_connection_status() done, defined at /Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr5-master/main.py:9023> exception=AttributeError("can't set attribute")>
 Traceback (most recent call last):
@@ -32,6 +121,20 @@ INFO:__main__:🔄 Merged database codes with existing dictionaries
 INFO:__main__:Code dictionaries loaded asynchronously
 ERROR:asyncio:Task exception was never retrieved
 future: <Task finished name='Task-141' coro=<create_search_interface.<locals>.update_connection_status() done, defined at /Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr5-master/main.py:9023> exception=AttributeError("can't set attribute")>
+Traceback (most recent call last):
+  File "/Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr5-master/main.py", line 9029, in update_connection_status
+    connection_status.classes = 'text-xs text-green-600 mt-2'
+AttributeError: can't set attribute
+INFO:__main__:Main page accessed by user 2c5eecbefaed7bc5
+INFO:__main__:Created Entity Browser for client 3e82fb8dcbf2
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Registered search update callback: on_search_update
+INFO:__main__:Displaying 0 entities for client 3e82fb8dcbf2
+INFO:__main__:Browser 3e82fb8dcbf2 showing empty state (available data: 0)
+ERROR:asyncio:Task exception was never retrieved
+future: <Task finished name='Task-293' coro=<create_search_interface.<locals>.update_connection_status() done, defined at /Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr5-master/main.py:9023> exception=AttributeError("can't set attribute")>
 Traceback (most recent call last):
   File "/Users/mukhiyas/Library/CloudStorage/OneDrive-moodys.com/Desktop/gr5-master/main.py", line 9029, in update_connection_status
     connection_status.classes = 'text-xs text-green-600 mt-2'
