@@ -8900,32 +8900,43 @@ async def create_search_interface():
                 # SAFE SEARCH VALIDATION: Lightweight validation with visual feedback
                 def validate_search_criteria():
                     """Check if any meaningful search criteria is provided"""
-                    has_criteria = any([
-                        entity_id_input.value and entity_id_input.value.strip(),
-                        entity_name_input.value and entity_name_input.value.strip(),
-                        risk_id_input.value and risk_id_input.value.strip(),
-                        source_item_id_input.value and source_item_id_input.value.strip(),
-                        system_id_input.value and system_id_input.value.strip(),
-                        bvd_id_input.value and bvd_id_input.value.strip(),
-                        country_input.value and country_input.value.strip(),
-                        event_category_input.value and event_category_input.value.strip(),
-                        query_builder_input.value and query_builder_input.value.strip()
-                    ])
-                    return has_criteria
+                    try:
+                        criteria_values = [
+                            entity_id_input.value and entity_id_input.value.strip(),
+                            entity_name_input.value and entity_name_input.value.strip(),
+                            risk_id_input.value and risk_id_input.value.strip(),
+                            source_item_id_input.value and source_item_id_input.value.strip(),
+                            system_id_input.value and system_id_input.value.strip(),
+                            bvd_id_input.value and bvd_id_input.value.strip(),
+                            country_input.value and country_input.value.strip(),
+                            event_category_input.value and event_category_input.value.strip(),
+                            query_builder_input.value and query_builder_input.value.strip()
+                        ]
+                        has_criteria = any(criteria_values)
+                        # Debug logging
+                        if entity_name_input.value:
+                            logger.info(f"🔍 Search validation: entity_name='{entity_name_input.value}', has_criteria={has_criteria}")
+                        return has_criteria
+                    except Exception as e:
+                        logger.error(f"Search validation error: {e}")
+                        return False
                 
                 def update_search_button_state():
                     """Update search button appearance based on input state"""
                     try:
-                        if validate_search_criteria():
+                        is_valid = validate_search_criteria()
+                        if is_valid:
                             search_button.enable()
                             search_button.classes(remove='bg-gray-400 cursor-not-allowed', add='bg-primary')
                             search_button.tooltip = None
+                            logger.info("🟢 Search button enabled - criteria found")
                         else:
                             search_button.disable()
                             search_button.classes(remove='bg-primary', add='bg-gray-400 cursor-not-allowed')
                             search_button.tooltip = 'Please enter at least one search criterion'
-                    except:
-                        pass  # Ignore errors to prevent UI breaking
+                            logger.info("🔴 Search button disabled - no criteria")
+                    except Exception as e:
+                        logger.error(f"Button state update error: {e}")
 
                 # Search controls
                 with ui.row().classes('w-full gap-2 justify-center mt-4'):
@@ -9026,11 +9037,11 @@ async def create_search_interface():
                             await asyncio.sleep(1)  # Check every second
                             if app_instance._database_initialized and app_instance.connection:
                                 connection_status.text = '🟢 Database connected'
-                                connection_status.classes = 'text-xs text-green-600 mt-2'
+                                connection_status.classes(remove='text-yellow-600', add='text-green-600')
                                 break
                             elif app_instance.connection:
                                 connection_status.text = '🟢 Database connected'
-                                connection_status.classes = 'text-xs text-green-600 mt-2'
+                                connection_status.classes(remove='text-yellow-600', add='text-green-600')
                                 break
                     
                     # Start connection status monitoring
