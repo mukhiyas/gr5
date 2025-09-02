@@ -9077,6 +9077,26 @@ async def create_search_interface():
                             last_update_time[0] = current_time
                             update_search_button_state()
                     
+                    # ARCHITECTURAL FIX: Proper closure capture for event handlers
+                    def create_input_handler():
+                        """Factory function to create proper closure for throttled_update"""
+                        def handler():
+                            logger.info("🚨 INPUT HANDLER TRIGGERED!")
+                            try:
+                                current_time = time.time()
+                                if current_time - last_update_time[0] > 0.1:  # 100ms throttle
+                                    last_update_time[0] = current_time
+                                    logger.info("🔄 Calling button state update...")
+                                    update_search_button_state()
+                                else:
+                                    logger.info("⏱️ Throttled - skipping update")
+                            except Exception as e:
+                                logger.error(f"Handler error: {e}")
+                        return handler
+                    
+                    # Create the handler function with proper closure
+                    input_change_handler = create_input_handler()
+                    
                     # COMPREHENSIVE event handler registration - all validated fields
                     input_fields = [
                         entity_id_input, entity_name_input, risk_id_input,
@@ -9084,14 +9104,14 @@ async def create_search_interface():
                         country_input, event_category_input, query_builder_input
                     ]
                     
-                    # Register single throttled handler for all fields (no duplicates)
+                    # Register handlers with proper closure capture
                     registered_count = 0
                     for field in input_fields:
                         if field:  # Safety check
-                            field.on('input', lambda: throttled_update())
+                            field.on('input', input_change_handler)
                             registered_count += 1
                     
-                    logger.info(f"✅ Registered input handlers for {registered_count} fields")
+                    logger.info(f"✅ Registered input handlers for {registered_count} fields with proper closures")
                     
                     # Initial state update
                     update_search_button_state()
