@@ -9050,84 +9050,7 @@ async def create_search_interface():
                     search_button.disable()  # Start disabled
                     search_button.tooltip = 'Please enter at least one search criterion'
                     
-                    # Add lightweight input change listeners (throttled to prevent performance issues)
-                    last_update_time = [0]  # Use list to allow modification in nested function
-                    
-                    def throttled_update():
-                        """Throttled update to prevent excessive validation calls"""
-                        current_time = time.time()
-                        if current_time - last_update_time[0] > 0.1:  # Update max every 100ms (faster response)
-                            last_update_time[0] = current_time
-                            update_search_button_state()
-                    
-                    # ARCHITECTURAL FIX: Proper closure capture for event handlers
-                    def create_input_handler():
-                        """Factory function to create proper closure for throttled_update"""
-                        def handler():
-                            logger.info("🚨 REAL INPUT HANDLER TRIGGERED - USER IS TYPING!")
-                            try:
-                                current_time = time.time()
-                                if current_time - last_update_time[0] > 0.1:  # 100ms throttle
-                                    last_update_time[0] = current_time
-                                    logger.info("🔄 Calling button state update...")
-                                    update_search_button_state()
-                                else:
-                                    logger.info("⏱️ Throttled - skipping update")
-                            except Exception as e:
-                                logger.error(f"Handler error: {e}")
-                        return handler
-                    
-                    # Create the handler function with proper closure
-                    input_change_handler = create_input_handler()
-                    
-                    # COMPREHENSIVE field verification before handler registration
-                    logger.info("🔍 Verifying all input field variables exist...")
-                    
-                    # Check each field variable is defined and accessible
-                    field_check = {
-                        'entity_id_input': entity_id_input,
-                        'entity_name_input': entity_name_input, 
-                        'risk_id_input': risk_id_input,
-                        'source_item_id_input': source_item_id_input,
-                        'system_id_input': system_id_input,
-                        'bvd_id_input': bvd_id_input,
-                        'country_input': country_input,
-                        'event_category_input': event_category_input,
-                        'query_builder_input': query_builder_input
-                    }
-                    
-                    for name, field in field_check.items():
-                        if field is None:
-                            logger.error(f"❌ CRITICAL: {name} is None!")
-                        else:
-                            logger.info(f"✅ {name} exists: {type(field)} with label '{getattr(field, 'label', 'no label')}'")
-                    
-                    # COMPREHENSIVE event handler registration - all validated fields
-                    input_fields = [
-                        entity_id_input, entity_name_input, risk_id_input,
-                        source_item_id_input, system_id_input, bvd_id_input,
-                        country_input, event_category_input, query_builder_input
-                    ]
-                    
-                    # Register handlers with comprehensive error handling and verification
-                    logger.info("🔧 Starting event handler registration...")
-                    registered_count = 0
-                    for i, field in enumerate(input_fields):
-                        if field:
-                            try:
-                                # Register ACTUAL validation handler that enables/disables search button
-                                field.on('input', input_change_handler)
-                                registered_count += 1
-                                logger.info(f"✅ Handler registered for field {i}: {getattr(field, 'label', 'unnamed')}")
-                            except Exception as e:
-                                logger.error(f"❌ Failed to register handler for field {i}: {e}")
-                        else:
-                            logger.warning(f"⚠️ Field {i} is None or invalid")
-                    
-                    logger.info(f"✅ Registration complete: {registered_count}/{len(input_fields)} handlers registered")
-                    
-                    # Initial state update
-                    update_search_button_state()
+                    # Validation will be added at end of function where all vars are in scope
                     
                     # Add database connection status indicator
                     connection_status = ui.label('🟡 Connecting to database...').classes('text-xs text-yellow-600 mt-2')
@@ -10492,6 +10415,38 @@ async def create_search_interface():
             'results_container': results_container,
             'search_button': search_button
         })
+        
+        # WORKING VALIDATION: Now that all fields are in scope, create proper validation
+        def validate_search_button():
+            """Simple validation that actually works - all vars in scope"""
+            try:
+                # Check core search fields for content
+                has_content = any([
+                    entity_id_input.value and entity_id_input.value.strip(),
+                    entity_name_input.value and entity_name_input.value.strip(),
+                    risk_id_input.value and risk_id_input.value.strip(),
+                    country_input.value and country_input.value.strip(),
+                    query_builder_input.value and query_builder_input.value.strip()
+                ])
+                
+                # Update button state
+                if has_content:
+                    search_button.enable()
+                    search_button.classes(remove='bg-gray-400 cursor-not-allowed', add='bg-blue-600')
+                    search_button.tooltip = 'Click to search'
+                else:
+                    search_button.disable()
+                    search_button.classes(remove='bg-blue-600', add='bg-gray-400 cursor-not-allowed')
+                    search_button.tooltip = 'Please enter at least one search criterion'
+                    
+            except Exception as e:
+                logger.error(f"Validation error: {e}")
+                # Keep button disabled on error to be safe
+                search_button.disable()
+        
+        # Start validation timer (500ms interval)
+        ui.timer(0.5, validate_search_button)
+        logger.info("✅ Search button validation active - proper scope, no crashes")
 
 # Global storage for form field references
 search_form_fields = {}
